@@ -902,11 +902,11 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   Widget _buildLayout(BoxConstraints constraints) {
     final screenHeight = MediaQuery.sizeOf(context).height;
     final wanted = screenHeight < 700
-        ? 160.0
+        ? 170.0
         : screenHeight < 820
-            ? 190.0
-            : 220.0;
-    final characterHeight = min(wanted, constraints.maxHeight * 0.34);
+            ? 205.0
+            : 235.0;
+    final characterHeight = min(wanted, constraints.maxHeight * 0.36);
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
       child: Column(
@@ -1382,34 +1382,37 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
     final counts = <SpecialPower, int>{
       for (final power in powers) power: _countPowerOnBoard(power),
     };
-    return SizedBox(
+    // One wooden plank carrying the four square power cards, exactly like
+    // the reference toolbar: the delivered booster art is already a finished
+    // square card, so it is shown full-bleed with a gold rim and a count
+    // badge instead of being shrunk into a round slot.
+    return Container(
+      key: const ValueKey<String>('power-tray'),
       height: height,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final trayWidth = constraints.maxWidth;
-          final trayHeight = constraints.maxHeight;
-          final slot = min(trayWidth * 0.145, trayHeight * 0.62);
-          const slotX = <double>[0.116, 0.366, 0.616, 0.866];
-          return Stack(
-            clipBehavior: Clip.none,
-            children: <Widget>[
-              Positioned.fill(
-                child: Image.asset(
-                  'assets/ui/booster-tray-four-slots.png',
-                  fit: BoxFit.fill,
-                ),
-              ),
-              for (var i = 0; i < powers.length; i++)
-                Positioned(
-                  left: trayWidth * slotX[i] - slot / 2,
-                  top: trayHeight * 0.49 - slot / 2,
-                  width: slot,
-                  height: slot,
-                  child: _powerButton(powers[i], counts[powers[i]] ?? 0),
-                ),
-            ],
-          );
-        },
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: <Color>[Color(0xFF96602C), Color(0xFF71431B)],
+        ),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: GamePalette.gold.withValues(alpha: 0.8),
+          width: 1.6,
+        ),
+        boxShadow: GamePalette.chipShadow,
+      ),
+      padding: const EdgeInsets.all(5),
+      child: Row(
+        textDirection: TextDirection.ltr,
+        children: <Widget>[
+          for (var i = 0; i < powers.length; i++) ...<Widget>[
+            if (i > 0) const SizedBox(width: 5),
+            Expanded(
+              child: _powerButton(powers[i], counts[powers[i]] ?? 0),
+            ),
+          ],
+        ],
       ),
     );
   }
@@ -1428,27 +1431,32 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
       label: '${power.persianName}، ${_fa(count)} روی صفحه',
       image: true,
       child: Opacity(
-        opacity: ready ? 1 : 0.58,
+        opacity: ready ? 1 : 0.72,
         child: Stack(
-          alignment: Alignment.center,
+          fit: StackFit.expand,
           children: <Widget>[
-            Positioned.fill(
-              child: Image.asset(
-                'assets/ui/button-powerup.png',
-                fit: BoxFit.contain,
-              ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(11),
+              child: Image.asset(power.artAsset, fit: BoxFit.cover),
             ),
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: Image.asset(power.artAsset, fit: BoxFit.contain),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(11),
+                border: Border.all(
+                  color: ready
+                      ? GamePalette.gold
+                      : GamePalette.gold.withValues(alpha: 0.45),
+                  width: ready ? 2 : 1.2,
+                ),
+              ),
             ),
             if (ready)
               Positioned(
-                right: 0,
-                bottom: 0,
+                right: 2,
+                bottom: 2,
                 child: OrchardBadge(
                   label: _fa(count),
-                  color: GamePalette.strawberry,
+                  color: GamePalette.leaf,
                   textColor: Colors.white,
                 ),
               ),
@@ -1521,9 +1529,24 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
           child: Stack(
             children: <Widget>[
               Positioned.fill(
-                child: Image.asset(
-                  active ? 'assets/ui/button-gold.png' : 'assets/ui/button-wood.png',
-                  fit: BoxFit.contain,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: active
+                        ? GamePalette.goldGradient
+                        : const LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: <Color>[Color(0xFF96602C), Color(0xFF71431B)],
+                          ),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(
+                      color: active
+                          ? const Color(0xFFFFF3D0)
+                          : GamePalette.gold.withValues(alpha: 0.7),
+                      width: 1.5,
+                    ),
+                    boxShadow: GamePalette.chipShadow,
+                  ),
                 ),
               ),
               Positioned.fill(

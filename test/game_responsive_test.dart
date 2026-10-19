@@ -47,14 +47,6 @@ Future<void> _pumpFrames(WidgetTester tester, int frames) async {
   }
 }
 
-Finder _asset(String name) => find.byWidgetPredicate(
-      (Widget widget) =>
-          widget is Image &&
-          widget.image is AssetImage &&
-          (widget.image as AssetImage).assetName == name,
-      description: 'Image.asset($name)',
-    );
-
 void main() {
   for (final device in _devices) {
     testWidgets('redesigned game screen fits ${device.name} with safe areas',
@@ -128,7 +120,7 @@ void main() {
 
       // The four-slot power tray is fully on screen, clear of the board.
       final tray = tester.getRect(
-        _asset('assets/ui/booster-tray-four-slots.png').first,
+        find.byKey(const ValueKey<String>('power-tray')),
       );
       expect(body.contains(tray.topLeft), isTrue, reason: 'tray top-left');
       expect(body.contains(tray.bottomRight), isTrue,
