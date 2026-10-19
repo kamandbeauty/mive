@@ -3,7 +3,6 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter/foundation.dart' show Listenable;
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart' show CustomPainter;
 import 'package:flutter/services.dart' show rootBundle;
@@ -325,8 +324,8 @@ class GuideRigPainter extends CustomPainter {
     required this.frame,
     required this.scale,
     required this.offset,
-    Listenable? repaint,
-  }) : super(repaint: repaint);
+    super.repaint,
+  });
 
   final GuideRig rig;
   final GuideRigFrame frame;
