@@ -1148,7 +1148,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
     // and the progress bar underneath, exactly as in the reference. A level
     // with several goals gets a taller banner so the readouts can wrap.
     return SizedBox(
-      height: goalCount > 3 ? 158 : goalCount > 1 ? 116 : 92,
+      height: goalCount > 3 ? 182 : goalCount > 1 ? 116 : 92,
       child: OrchardPanel(
         asset: 'assets/ui/goal-banner.png',
         padding: const EdgeInsets.fromLTRB(26, 12, 26, 12),
