@@ -1,0 +1,5781 @@
+{
+  "reportVersion": 1,
+  "source": "assets/data/levels.json",
+  "scope": "Static catalog integrity and planned difficulty-band validation; not strategic solvability.",
+  "runtimeBoardSmokeTest": "Not executed by this Python report. See LevelCatalog.validateStartingBoards in Flutter tests.",
+  "summary": {
+    "levelCount": 100,
+    "idSequenceValid": true,
+    "difficultyBands": [
+      {
+        "firstLevel": 1,
+        "lastLevel": 10,
+        "difficulty": "tutorial"
+      },
+      {
+        "firstLevel": 11,
+        "lastLevel": 20,
+        "difficulty": "easy"
+      },
+      {
+        "firstLevel": 21,
+        "lastLevel": 60,
+        "difficulty": "medium"
+      },
+      {
+        "firstLevel": 61,
+        "lastLevel": 100,
+        "difficulty": "hard"
+      }
+    ],
+    "moveLimitRange": [
+      24,
+      30
+    ],
+    "obstacleCellCount": 366,
+    "obstacleTypeTotals": {
+      "ice": 125,
+      "soil": 41,
+      "vine": 82,
+      "woodBox": 118
+    },
+    "specialPieceCount": 84,
+    "levelsWithObstacles": 90,
+    "levelsWithPowers": 40
+  },
+  "errors": [],
+  "warnings": [],
+  "levels": [
+    {
+      "id": 1,
+      "chapter": "tutorial",
+      "difficulty": "tutorial",
+      "moveLimit": 30,
+      "targetScore": 136,
+      "starThresholds": [
+        136,
+        166,
+        204
+      ],
+      "fruitGoals": {
+        "strawberry": 7
+      },
+      "specialPieces": [],
+      "obstacles": [],
+      "obstacleGoals": {},
+      "counts": {
+        "fruitGoalKinds": 1,
+        "specialPieces": 0,
+        "obstacleCells": 0,
+        "obstacleLayers": 0,
+        "obstacleTypes": {}
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 2,
+      "chapter": "tutorial",
+      "difficulty": "tutorial",
+      "moveLimit": 30,
+      "targetScore": 144,
+      "starThresholds": [
+        144,
+        174,
+        216
+      ],
+      "fruitGoals": {
+        "grapes": 8
+      },
+      "specialPieces": [],
+      "obstacles": [],
+      "obstacleGoals": {},
+      "counts": {
+        "fruitGoalKinds": 1,
+        "specialPieces": 0,
+        "obstacleCells": 0,
+        "obstacleLayers": 0,
+        "obstacleTypes": {}
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 3,
+      "chapter": "tutorial",
+      "difficulty": "tutorial",
+      "moveLimit": 29,
+      "targetScore": 144,
+      "starThresholds": [
+        144,
+        174,
+        216
+      ],
+      "fruitGoals": {
+        "blueberry": 8
+      },
+      "specialPieces": [],
+      "obstacles": [],
+      "obstacleGoals": {},
+      "counts": {
+        "fruitGoalKinds": 1,
+        "specialPieces": 0,
+        "obstacleCells": 0,
+        "obstacleLayers": 0,
+        "obstacleTypes": {}
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 4,
+      "chapter": "tutorial",
+      "difficulty": "tutorial",
+      "moveLimit": 29,
+      "targetScore": 152,
+      "starThresholds": [
+        152,
+        182,
+        228
+      ],
+      "fruitGoals": {
+        "orange": 9
+      },
+      "specialPieces": [],
+      "obstacles": [],
+      "obstacleGoals": {},
+      "counts": {
+        "fruitGoalKinds": 1,
+        "specialPieces": 0,
+        "obstacleCells": 0,
+        "obstacleLayers": 0,
+        "obstacleTypes": {}
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 5,
+      "chapter": "tutorial",
+      "difficulty": "tutorial",
+      "moveLimit": 28,
+      "targetScore": 152,
+      "starThresholds": [
+        152,
+        182,
+        228
+      ],
+      "fruitGoals": {
+        "lemon": 9
+      },
+      "specialPieces": [],
+      "obstacles": [],
+      "obstacleGoals": {},
+      "counts": {
+        "fruitGoalKinds": 1,
+        "specialPieces": 0,
+        "obstacleCells": 0,
+        "obstacleLayers": 0,
+        "obstacleTypes": {}
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 6,
+      "chapter": "tutorial",
+      "difficulty": "tutorial",
+      "moveLimit": 29,
+      "targetScore": 216,
+      "starThresholds": [
+        216,
+        259,
+        324
+      ],
+      "fruitGoals": {
+        "strawberry": 8,
+        "orange": 9
+      },
+      "specialPieces": [],
+      "obstacles": [],
+      "obstacleGoals": {},
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 0,
+        "obstacleLayers": 0,
+        "obstacleTypes": {}
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 7,
+      "chapter": "tutorial",
+      "difficulty": "tutorial",
+      "moveLimit": 29,
+      "targetScore": 232,
+      "starThresholds": [
+        232,
+        278,
+        348
+      ],
+      "fruitGoals": {
+        "blueberry": 9,
+        "watermelon": 10
+      },
+      "specialPieces": [],
+      "obstacles": [],
+      "obstacleGoals": {},
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 0,
+        "obstacleLayers": 0,
+        "obstacleTypes": {}
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 8,
+      "chapter": "tutorial",
+      "difficulty": "tutorial",
+      "moveLimit": 28,
+      "targetScore": 224,
+      "starThresholds": [
+        224,
+        268,
+        336
+      ],
+      "fruitGoals": {
+        "lemon": 10,
+        "grapes": 8
+      },
+      "specialPieces": [],
+      "obstacles": [],
+      "obstacleGoals": {},
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 0,
+        "obstacleLayers": 0,
+        "obstacleTypes": {}
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 9,
+      "chapter": "tutorial",
+      "difficulty": "tutorial",
+      "moveLimit": 30,
+      "targetScore": 216,
+      "starThresholds": [
+        216,
+        259,
+        324
+      ],
+      "fruitGoals": {
+        "strawberry": 8,
+        "orange": 9
+      },
+      "specialPieces": [],
+      "obstacles": [],
+      "obstacleGoals": {},
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 0,
+        "obstacleLayers": 0,
+        "obstacleTypes": {}
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 10,
+      "chapter": "tutorial",
+      "difficulty": "tutorial",
+      "moveLimit": 28,
+      "targetScore": 232,
+      "starThresholds": [
+        232,
+        278,
+        348
+      ],
+      "fruitGoals": {
+        "blueberry": 9,
+        "watermelon": 10
+      },
+      "specialPieces": [],
+      "obstacles": [],
+      "obstacleGoals": {},
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 0,
+        "obstacleLayers": 0,
+        "obstacleTypes": {}
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 11,
+      "chapter": "grove",
+      "difficulty": "easy",
+      "moveLimit": 27,
+      "targetScore": 224,
+      "starThresholds": [
+        224,
+        268,
+        336
+      ],
+      "fruitGoals": {
+        "lemon": 10,
+        "grapes": 8
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "woodBox",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 2,
+        "obstacleLayers": 3,
+        "obstacleTypes": {
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 12,
+      "chapter": "grove",
+      "difficulty": "easy",
+      "moveLimit": 29,
+      "targetScore": 216,
+      "starThresholds": [
+        216,
+        259,
+        324
+      ],
+      "fruitGoals": {
+        "strawberry": 8,
+        "orange": 9
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 20,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 27,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 43,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 3
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "woodBox": 3
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 13,
+      "chapter": "grove",
+      "difficulty": "easy",
+      "moveLimit": 27,
+      "targetScore": 232,
+      "starThresholds": [
+        232,
+        278,
+        348
+      ],
+      "fruitGoals": {
+        "blueberry": 9,
+        "watermelon": 10
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 3
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 3,
+        "obstacleLayers": 3,
+        "obstacleTypes": {
+          "woodBox": 3
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 14,
+      "chapter": "grove",
+      "difficulty": "easy",
+      "moveLimit": 28,
+      "targetScore": 224,
+      "starThresholds": [
+        224,
+        268,
+        336
+      ],
+      "fruitGoals": {
+        "lemon": 10,
+        "grapes": 8
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 37,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 46,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 4
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "woodBox": 4
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 15,
+      "chapter": "grove",
+      "difficulty": "easy",
+      "moveLimit": 27,
+      "targetScore": 216,
+      "starThresholds": [
+        216,
+        259,
+        324
+      ],
+      "fruitGoals": {
+        "strawberry": 8,
+        "orange": 9
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 21,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 29,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 42,
+          "type": "woodBox",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 3
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "woodBox": 3
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 16,
+      "chapter": "orchard",
+      "difficulty": "easy",
+      "moveLimit": 28,
+      "targetScore": 248,
+      "starThresholds": [
+        248,
+        297,
+        372
+      ],
+      "fruitGoals": {
+        "grapes": 10,
+        "lemon": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 27,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 3
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "woodBox": 3
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 17,
+      "chapter": "orchard",
+      "difficulty": "easy",
+      "moveLimit": 27,
+      "targetScore": 272,
+      "starThresholds": [
+        272,
+        326,
+        408
+      ],
+      "fruitGoals": {
+        "blueberry": 11,
+        "watermelon": 13
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 20,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 43,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 4
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "woodBox": 4
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 18,
+      "chapter": "orchard",
+      "difficulty": "easy",
+      "moveLimit": 29,
+      "targetScore": 264,
+      "starThresholds": [
+        264,
+        316,
+        396
+      ],
+      "fruitGoals": {
+        "orange": 12,
+        "strawberry": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 37,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 4
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "woodBox": 4
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 19,
+      "chapter": "orchard",
+      "difficulty": "easy",
+      "moveLimit": 27,
+      "targetScore": 288,
+      "starThresholds": [
+        288,
+        345,
+        432
+      ],
+      "fruitGoals": {
+        "lemon": 13,
+        "grapes": 13
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 36,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 46,
+          "type": "woodBox",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 4
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "woodBox": 4
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 20,
+      "chapter": "orchard",
+      "difficulty": "easy",
+      "moveLimit": 26,
+      "targetScore": 248,
+      "starThresholds": [
+        248,
+        297,
+        372
+      ],
+      "fruitGoals": {
+        "watermelon": 10,
+        "blueberry": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 21,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 28,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 42,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 4
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "woodBox": 4
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 21,
+      "chapter": "orchard",
+      "difficulty": "medium",
+      "moveLimit": 28,
+      "targetScore": 272,
+      "starThresholds": [
+        272,
+        326,
+        408
+      ],
+      "fruitGoals": {
+        "strawberry": 11,
+        "orange": 13
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 22,
+      "chapter": "orchard",
+      "difficulty": "medium",
+      "moveLimit": 27,
+      "targetScore": 264,
+      "starThresholds": [
+        264,
+        316,
+        396
+      ],
+      "fruitGoals": {
+        "grapes": 12,
+        "lemon": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 20,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 35,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 43,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 23,
+      "chapter": "orchard",
+      "difficulty": "medium",
+      "moveLimit": 26,
+      "targetScore": 288,
+      "starThresholds": [
+        288,
+        345,
+        432
+      ],
+      "fruitGoals": {
+        "blueberry": 13,
+        "watermelon": 13
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "vine",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 24,
+      "chapter": "orchard",
+      "difficulty": "medium",
+      "moveLimit": 28,
+      "targetScore": 248,
+      "starThresholds": [
+        248,
+        297,
+        372
+      ],
+      "fruitGoals": {
+        "orange": 10,
+        "strawberry": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 29,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 36,
+          "type": "vine",
+          "layers": 2
+        },
+        {
+          "cell": 46,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 25,
+      "chapter": "orchard",
+      "difficulty": "medium",
+      "moveLimit": 26,
+      "targetScore": 272,
+      "starThresholds": [
+        272,
+        326,
+        408
+      ],
+      "fruitGoals": {
+        "lemon": 11,
+        "grapes": 13
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 21,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 42,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 26,
+      "chapter": "orchard",
+      "difficulty": "medium",
+      "moveLimit": 27,
+      "targetScore": 264,
+      "starThresholds": [
+        264,
+        316,
+        396
+      ],
+      "fruitGoals": {
+        "watermelon": 12,
+        "blueberry": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "vine",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 27,
+      "chapter": "orchard",
+      "difficulty": "medium",
+      "moveLimit": 25,
+      "targetScore": 288,
+      "starThresholds": [
+        288,
+        345,
+        432
+      ],
+      "fruitGoals": {
+        "strawberry": 13,
+        "orange": 13
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 20,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 26,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "vine",
+          "layers": 2
+        },
+        {
+          "cell": 43,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 28,
+      "chapter": "orchard",
+      "difficulty": "medium",
+      "moveLimit": 27,
+      "targetScore": 248,
+      "starThresholds": [
+        248,
+        297,
+        372
+      ],
+      "fruitGoals": {
+        "grapes": 10,
+        "lemon": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 44,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 29,
+      "chapter": "orchard",
+      "difficulty": "medium",
+      "moveLimit": 26,
+      "targetScore": 272,
+      "starThresholds": [
+        272,
+        326,
+        408
+      ],
+      "fruitGoals": {
+        "blueberry": 11,
+        "watermelon": 13
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 46,
+          "type": "vine",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 30,
+      "chapter": "orchard",
+      "difficulty": "medium",
+      "moveLimit": 25,
+      "targetScore": 264,
+      "starThresholds": [
+        264,
+        316,
+        396
+      ],
+      "fruitGoals": {
+        "orange": 12,
+        "strawberry": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 21,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 26,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "vine",
+          "layers": 2
+        },
+        {
+          "cell": 42,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 31,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 28,
+      "targetScore": 256,
+      "starThresholds": [
+        256,
+        307,
+        384
+      ],
+      "fruitGoals": {
+        "grapes": 10,
+        "orange": 12
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 45,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 32,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 27,
+      "targetScore": 352,
+      "starThresholds": [
+        352,
+        422,
+        528
+      ],
+      "fruitGoals": {
+        "orange": 11,
+        "watermelon": 13,
+        "grapes": 10
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 20,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 43,
+          "type": "vine",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 33,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 29,
+      "targetScore": 376,
+      "starThresholds": [
+        376,
+        451,
+        564
+      ],
+      "fruitGoals": {
+        "watermelon": 12,
+        "grapes": 14,
+        "orange": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 26,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 34,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 26,
+      "targetScore": 264,
+      "starThresholds": [
+        264,
+        316,
+        396
+      ],
+      "fruitGoals": {
+        "grapes": 13,
+        "orange": 10
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 29,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 36,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 46,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 35,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 28,
+      "targetScore": 352,
+      "starThresholds": [
+        352,
+        422,
+        528
+      ],
+      "fruitGoals": {
+        "orange": 14,
+        "watermelon": 11,
+        "grapes": 9
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 21,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 42,
+          "type": "vine",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 36,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 27,
+      "targetScore": 336,
+      "starThresholds": [
+        336,
+        403,
+        504
+      ],
+      "fruitGoals": {
+        "watermelon": 10,
+        "grapes": 12,
+        "orange": 10
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 28,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "vine",
+          "layers": 2
+        },
+        {
+          "cell": 45,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 37,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 25,
+      "targetScore": 272,
+      "starThresholds": [
+        272,
+        326,
+        408
+      ],
+      "fruitGoals": {
+        "grapes": 11,
+        "orange": 13
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 20,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 37,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 43,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 38,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 29,
+      "targetScore": 352,
+      "starThresholds": [
+        352,
+        422,
+        528
+      ],
+      "fruitGoals": {
+        "orange": 12,
+        "watermelon": 14,
+        "grapes": 8
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "vine",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 39,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 27,
+      "targetScore": 336,
+      "starThresholds": [
+        336,
+        403,
+        504
+      ],
+      "fruitGoals": {
+        "watermelon": 13,
+        "grapes": 10,
+        "orange": 9
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 28,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "vine",
+          "layers": 2
+        },
+        {
+          "cell": 46,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 40,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 26,
+      "targetScore": 280,
+      "starThresholds": [
+        280,
+        336,
+        420
+      ],
+      "fruitGoals": {
+        "grapes": 14,
+        "orange": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 21,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 37,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 42,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 2,
+          "vine": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 41,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 28,
+      "targetScore": 344,
+      "starThresholds": [
+        344,
+        412,
+        516
+      ],
+      "fruitGoals": {
+        "orange": 10,
+        "watermelon": 12,
+        "grapes": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 36,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 1,
+        "vine": 1,
+        "soil": 1,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 42,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 27,
+      "targetScore": 336,
+      "starThresholds": [
+        336,
+        403,
+        504
+      ],
+      "fruitGoals": {
+        "watermelon": 11,
+        "grapes": 13,
+        "orange": 8
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 20,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 43,
+          "type": "soil",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "vine": 2,
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 2,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 43,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 29,
+      "targetScore": 288,
+      "starThresholds": [
+        288,
+        345,
+        432
+      ],
+      "fruitGoals": {
+        "grapes": 12,
+        "orange": 14
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 37,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 44,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 26,
+      "targetScore": 344,
+      "starThresholds": [
+        344,
+        412,
+        516
+      ],
+      "fruitGoals": {
+        "orange": 13,
+        "watermelon": 10,
+        "grapes": 10
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 21,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 29,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 36,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 46,
+          "type": "ice",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 2,
+        "ice": 1,
+        "vine": 1,
+        "soil": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 5,
+        "obstacleLayers": 7,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 45,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 28,
+      "targetScore": 368,
+      "starThresholds": [
+        368,
+        441,
+        552
+      ],
+      "fruitGoals": {
+        "watermelon": 14,
+        "grapes": 11,
+        "orange": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 21,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 27,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 42,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 1,
+        "vine": 1,
+        "soil": 1,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 46,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 27,
+      "targetScore": 256,
+      "starThresholds": [
+        256,
+        307,
+        384
+      ],
+      "fruitGoals": {
+        "grapes": 10,
+        "orange": 12
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 20,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 37,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "soil",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "vine": 2,
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 2,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 47,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 25,
+      "targetScore": 344,
+      "starThresholds": [
+        344,
+        412,
+        516
+      ],
+      "fruitGoals": {
+        "orange": 11,
+        "watermelon": 13,
+        "grapes": 9
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 20,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 43,
+          "type": "woodBox",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 48,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 29,
+      "targetScore": 368,
+      "starThresholds": [
+        368,
+        441,
+        552
+      ],
+      "fruitGoals": {
+        "watermelon": 12,
+        "grapes": 14,
+        "orange": 10
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 19,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 27,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 36,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "ice",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 2,
+        "ice": 1,
+        "vine": 1,
+        "soil": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 49,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 27,
+      "targetScore": 264,
+      "starThresholds": [
+        264,
+        316,
+        396
+      ],
+      "fruitGoals": {
+        "grapes": 13,
+        "orange": 10
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 46,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 1,
+        "vine": 1,
+        "soil": 1,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 50,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 26,
+      "targetScore": 344,
+      "starThresholds": [
+        344,
+        412,
+        516
+      ],
+      "fruitGoals": {
+        "orange": 14,
+        "watermelon": 11,
+        "grapes": 8
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 21,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 42,
+          "type": "soil",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "vine": 2,
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 5,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 2,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 51,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 28,
+      "targetScore": 328,
+      "starThresholds": [
+        328,
+        393,
+        492
+      ],
+      "fruitGoals": {
+        "watermelon": 10,
+        "grapes": 12,
+        "orange": 9
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 36,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 52,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 27,
+      "targetScore": 272,
+      "starThresholds": [
+        272,
+        326,
+        408
+      ],
+      "fruitGoals": {
+        "grapes": 11,
+        "orange": 13
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 20,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 43,
+          "type": "ice",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 2,
+        "ice": 1,
+        "vine": 1,
+        "soil": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 5,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 53,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 29,
+      "targetScore": 376,
+      "starThresholds": [
+        376,
+        451,
+        564
+      ],
+      "fruitGoals": {
+        "orange": 12,
+        "watermelon": 14,
+        "grapes": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 1,
+        "vine": 1,
+        "soil": 1,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 54,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 26,
+      "targetScore": 328,
+      "starThresholds": [
+        328,
+        393,
+        492
+      ],
+      "fruitGoals": {
+        "watermelon": 13,
+        "grapes": 10,
+        "orange": 8
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 21,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 29,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 36,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 46,
+          "type": "soil",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "vine": 2,
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 2,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 55,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 28,
+      "targetScore": 280,
+      "starThresholds": [
+        280,
+        336,
+        420
+      ],
+      "fruitGoals": {
+        "grapes": 14,
+        "orange": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 21,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 35,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 42,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 56,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 27,
+      "targetScore": 336,
+      "starThresholds": [
+        336,
+        403,
+        504
+      ],
+      "fruitGoals": {
+        "orange": 10,
+        "watermelon": 12,
+        "grapes": 10
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 20,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 28,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "ice",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 2,
+        "ice": 1,
+        "vine": 1,
+        "soil": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 5,
+        "obstacleLayers": 7,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 57,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 25,
+      "targetScore": 360,
+      "starThresholds": [
+        360,
+        432,
+        540
+      ],
+      "fruitGoals": {
+        "watermelon": 11,
+        "grapes": 13,
+        "orange": 11
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 20,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 26,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 43,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 1,
+        "vine": 1,
+        "soil": 1,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 58,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 29,
+      "targetScore": 288,
+      "starThresholds": [
+        288,
+        345,
+        432
+      ],
+      "fruitGoals": {
+        "grapes": 12,
+        "orange": 14
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 19,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 36,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "soil",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "vine": 2,
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 2,
+        "specialPieces": 0,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 2,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 59,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 27,
+      "targetScore": 336,
+      "starThresholds": [
+        336,
+        403,
+        504
+      ],
+      "fruitGoals": {
+        "orange": 13,
+        "watermelon": 10,
+        "grapes": 9
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 46,
+          "type": "woodBox",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 60,
+      "chapter": "hills",
+      "difficulty": "medium",
+      "moveLimit": 26,
+      "targetScore": 360,
+      "starThresholds": [
+        360,
+        432,
+        540
+      ],
+      "fruitGoals": {
+        "watermelon": 14,
+        "grapes": 11,
+        "orange": 10
+      },
+      "specialPieces": [],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 21,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 26,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 42,
+          "type": "ice",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 2,
+        "ice": 1,
+        "vine": 1,
+        "soil": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 0,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 61,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 27,
+      "targetScore": 344,
+      "starThresholds": [
+        344,
+        412,
+        516
+      ],
+      "fruitGoals": {
+        "blueberry": 11,
+        "lemon": 11,
+        "grapes": 11
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "areaBomb"
+        },
+        {
+          "cell": 1,
+          "power": "rainbowKite"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 1,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 2,
+        "obstacleLayers": 2,
+        "obstacleTypes": {
+          "ice": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 62,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 26,
+      "targetScore": 368,
+      "starThresholds": [
+        368,
+        441,
+        552
+      ],
+      "fruitGoals": {
+        "lemon": 12,
+        "strawberry": 12,
+        "orange": 12
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "rainbowKite"
+        },
+        {
+          "cell": 1,
+          "power": "colorBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 20,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 43,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 63,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 28,
+      "targetScore": 360,
+      "starThresholds": [
+        360,
+        432,
+        540
+      ],
+      "fruitGoals": {
+        "strawberry": 13,
+        "blueberry": 13,
+        "watermelon": 9
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "colorBomb"
+        },
+        {
+          "cell": 1,
+          "power": "lineClear"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 4,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 64,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 25,
+      "targetScore": 352,
+      "starThresholds": [
+        352,
+        422,
+        528
+      ],
+      "fruitGoals": {
+        "blueberry": 14,
+        "lemon": 10,
+        "grapes": 10
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "lineClear"
+        },
+        {
+          "cell": 1,
+          "power": "areaBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 26,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 46,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 65,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 27,
+      "targetScore": 344,
+      "starThresholds": [
+        344,
+        412,
+        516
+      ],
+      "fruitGoals": {
+        "lemon": 11,
+        "strawberry": 11,
+        "orange": 11
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "areaBomb"
+        },
+        {
+          "cell": 1,
+          "power": "rainbowKite"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 21,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 29,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 36,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 42,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 4,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 66,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 26,
+      "targetScore": 368,
+      "starThresholds": [
+        368,
+        441,
+        552
+      ],
+      "fruitGoals": {
+        "strawberry": 12,
+        "blueberry": 12,
+        "watermelon": 12
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "rainbowKite"
+        },
+        {
+          "cell": 1,
+          "power": "colorBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 20,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 3,
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 3,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 67,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 24,
+      "targetScore": 360,
+      "starThresholds": [
+        360,
+        432,
+        540
+      ],
+      "fruitGoals": {
+        "blueberry": 13,
+        "lemon": 13,
+        "grapes": 9
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "colorBomb"
+        },
+        {
+          "cell": 1,
+          "power": "lineClear"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 20,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 36,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 43,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 4,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 68,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 28,
+      "targetScore": 352,
+      "starThresholds": [
+        352,
+        422,
+        528
+      ],
+      "fruitGoals": {
+        "lemon": 14,
+        "strawberry": 10,
+        "orange": 10
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "lineClear"
+        },
+        {
+          "cell": 1,
+          "power": "areaBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 21,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 3,
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 3,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 69,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 26,
+      "targetScore": 344,
+      "starThresholds": [
+        344,
+        412,
+        516
+      ],
+      "fruitGoals": {
+        "strawberry": 11,
+        "blueberry": 11,
+        "watermelon": 11
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "areaBomb"
+        },
+        {
+          "cell": 1,
+          "power": "rainbowKite"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 46,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 4,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 70,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 25,
+      "targetScore": 368,
+      "starThresholds": [
+        368,
+        441,
+        552
+      ],
+      "fruitGoals": {
+        "blueberry": 12,
+        "lemon": 12,
+        "grapes": 12
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "rainbowKite"
+        },
+        {
+          "cell": 1,
+          "power": "colorBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 21,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 28,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 42,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 3,
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 3,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 71,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 27,
+      "targetScore": 360,
+      "starThresholds": [
+        360,
+        432,
+        540
+      ],
+      "fruitGoals": {
+        "lemon": 13,
+        "strawberry": 13,
+        "orange": 9
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "colorBomb"
+        },
+        {
+          "cell": 1,
+          "power": "lineClear"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 1,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 2,
+        "obstacleLayers": 2,
+        "obstacleTypes": {
+          "ice": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 72,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 26,
+      "targetScore": 352,
+      "starThresholds": [
+        352,
+        422,
+        528
+      ],
+      "fruitGoals": {
+        "strawberry": 14,
+        "blueberry": 10,
+        "watermelon": 10
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "lineClear"
+        },
+        {
+          "cell": 1,
+          "power": "areaBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 20,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 43,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 73,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 28,
+      "targetScore": 344,
+      "starThresholds": [
+        344,
+        412,
+        516
+      ],
+      "fruitGoals": {
+        "blueberry": 11,
+        "lemon": 11,
+        "grapes": 11
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "areaBomb"
+        },
+        {
+          "cell": 1,
+          "power": "rainbowKite"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 4,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 74,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 25,
+      "targetScore": 368,
+      "starThresholds": [
+        368,
+        441,
+        552
+      ],
+      "fruitGoals": {
+        "lemon": 12,
+        "strawberry": 12,
+        "orange": 12
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "rainbowKite"
+        },
+        {
+          "cell": 1,
+          "power": "colorBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 26,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 46,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 3,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 75,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 27,
+      "targetScore": 360,
+      "starThresholds": [
+        360,
+        432,
+        540
+      ],
+      "fruitGoals": {
+        "strawberry": 13,
+        "blueberry": 13,
+        "watermelon": 9
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "colorBomb"
+        },
+        {
+          "cell": 1,
+          "power": "lineClear"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 21,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 29,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 36,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 42,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 4,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 76,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 26,
+      "targetScore": 352,
+      "starThresholds": [
+        352,
+        422,
+        528
+      ],
+      "fruitGoals": {
+        "blueberry": 14,
+        "lemon": 10,
+        "grapes": 10
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "lineClear"
+        },
+        {
+          "cell": 1,
+          "power": "areaBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 20,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 3,
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 3,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 77,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 24,
+      "targetScore": 344,
+      "starThresholds": [
+        344,
+        412,
+        516
+      ],
+      "fruitGoals": {
+        "lemon": 11,
+        "strawberry": 11,
+        "orange": 11
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "areaBomb"
+        },
+        {
+          "cell": 1,
+          "power": "rainbowKite"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 20,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 36,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 43,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 4,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 78,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 28,
+      "targetScore": 368,
+      "starThresholds": [
+        368,
+        441,
+        552
+      ],
+      "fruitGoals": {
+        "strawberry": 12,
+        "blueberry": 12,
+        "watermelon": 12
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "rainbowKite"
+        },
+        {
+          "cell": 1,
+          "power": "colorBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 21,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 3,
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 3,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 79,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 26,
+      "targetScore": 360,
+      "starThresholds": [
+        360,
+        432,
+        540
+      ],
+      "fruitGoals": {
+        "blueberry": 13,
+        "lemon": 13,
+        "grapes": 9
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "colorBomb"
+        },
+        {
+          "cell": 1,
+          "power": "lineClear"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 46,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 4,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 2,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 80,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 25,
+      "targetScore": 352,
+      "starThresholds": [
+        352,
+        422,
+        528
+      ],
+      "fruitGoals": {
+        "lemon": 14,
+        "strawberry": 10,
+        "orange": 10
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "lineClear"
+        },
+        {
+          "cell": 1,
+          "power": "areaBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 21,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 28,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 42,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 3,
+        "woodBox": 2
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 3,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 81,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 27,
+      "targetScore": 344,
+      "starThresholds": [
+        344,
+        412,
+        516
+      ],
+      "fruitGoals": {
+        "strawberry": 11,
+        "blueberry": 11,
+        "watermelon": 11
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "areaBomb"
+        },
+        {
+          "cell": 1,
+          "power": "areaBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 27,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 36,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 45,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 1,
+        "vine": 1,
+        "soil": 1,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 4,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 82,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 26,
+      "targetScore": 368,
+      "starThresholds": [
+        368,
+        441,
+        552
+      ],
+      "fruitGoals": {
+        "blueberry": 12,
+        "lemon": 12,
+        "grapes": 12
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "rainbowKite"
+        },
+        {
+          "cell": 1,
+          "power": "rainbowKite"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 20,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 35,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 43,
+          "type": "soil",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "vine": 2,
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 2,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 83,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 28,
+      "targetScore": 360,
+      "starThresholds": [
+        360,
+        432,
+        540
+      ],
+      "fruitGoals": {
+        "lemon": 13,
+        "strawberry": 13,
+        "orange": 9
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "colorBomb"
+        },
+        {
+          "cell": 1,
+          "power": "colorBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "woodBox",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 84,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 25,
+      "targetScore": 352,
+      "starThresholds": [
+        352,
+        422,
+        528
+      ],
+      "fruitGoals": {
+        "strawberry": 14,
+        "blueberry": 10,
+        "watermelon": 10
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "lineClear"
+        },
+        {
+          "cell": 1,
+          "power": "lineClear"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 21,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 29,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 36,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 46,
+          "type": "ice",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 2,
+        "ice": 1,
+        "vine": 1,
+        "soil": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 85,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 27,
+      "targetScore": 344,
+      "starThresholds": [
+        344,
+        412,
+        516
+      ],
+      "fruitGoals": {
+        "blueberry": 11,
+        "lemon": 11,
+        "grapes": 11
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "lineClear"
+        },
+        {
+          "cell": 1,
+          "power": "areaBomb"
+        },
+        {
+          "cell": 56,
+          "power": "rainbowKite"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 21,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 42,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 1,
+        "vine": 1,
+        "soil": 1,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 3,
+        "obstacleCells": 4,
+        "obstacleLayers": 4,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 86,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 26,
+      "targetScore": 368,
+      "starThresholds": [
+        368,
+        441,
+        552
+      ],
+      "fruitGoals": {
+        "lemon": 12,
+        "strawberry": 12,
+        "orange": 12
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "lineClear"
+        },
+        {
+          "cell": 1,
+          "power": "rainbowKite"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 20,
+          "type": "vine",
+          "layers": 2
+        },
+        {
+          "cell": 28,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "soil",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "vine": 2,
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 2,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 87,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 24,
+      "targetScore": 360,
+      "starThresholds": [
+        360,
+        432,
+        540
+      ],
+      "fruitGoals": {
+        "strawberry": 13,
+        "blueberry": 13,
+        "watermelon": 9
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "lineClear"
+        },
+        {
+          "cell": 1,
+          "power": "colorBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 20,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "vine",
+          "layers": 2
+        },
+        {
+          "cell": 43,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "soil": 2,
+        "woodBox": 1,
+        "ice": 1,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 2,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 88,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 28,
+      "targetScore": 352,
+      "starThresholds": [
+        352,
+        422,
+        528
+      ],
+      "fruitGoals": {
+        "blueberry": 14,
+        "lemon": 10,
+        "grapes": 10
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "areaBomb"
+        },
+        {
+          "cell": 1,
+          "power": "rainbowKite"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 21,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "vine",
+          "layers": 2
+        },
+        {
+          "cell": 36,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "ice",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 2,
+        "ice": 1,
+        "vine": 1,
+        "soil": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 89,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 26,
+      "targetScore": 344,
+      "starThresholds": [
+        344,
+        412,
+        516
+      ],
+      "fruitGoals": {
+        "lemon": 11,
+        "strawberry": 11,
+        "orange": 11
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "areaBomb"
+        },
+        {
+          "cell": 1,
+          "power": "colorBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 46,
+          "type": "vine",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 1,
+        "vine": 1,
+        "soil": 1,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 90,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 25,
+      "targetScore": 368,
+      "starThresholds": [
+        368,
+        441,
+        552
+      ],
+      "fruitGoals": {
+        "strawberry": 12,
+        "blueberry": 12,
+        "watermelon": 12
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "rainbowKite"
+        },
+        {
+          "cell": 1,
+          "power": "colorBomb"
+        },
+        {
+          "cell": 56,
+          "power": "colorBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 21,
+          "type": "vine",
+          "layers": 2
+        },
+        {
+          "cell": 26,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 42,
+          "type": "soil",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "vine": 2,
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 3,
+        "obstacleCells": 5,
+        "obstacleLayers": 7,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 2,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 91,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 27,
+      "targetScore": 360,
+      "starThresholds": [
+        360,
+        432,
+        540
+      ],
+      "fruitGoals": {
+        "blueberry": 13,
+        "lemon": 13,
+        "grapes": 9
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "areaBomb"
+        },
+        {
+          "cell": 1,
+          "power": "areaBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 36,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 92,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 26,
+      "targetScore": 352,
+      "starThresholds": [
+        352,
+        422,
+        528
+      ],
+      "fruitGoals": {
+        "lemon": 14,
+        "strawberry": 10,
+        "orange": 10
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "rainbowKite"
+        },
+        {
+          "cell": 1,
+          "power": "rainbowKite"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 20,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 43,
+          "type": "ice",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 2,
+        "ice": 1,
+        "vine": 1,
+        "soil": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 7,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 93,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 28,
+      "targetScore": 344,
+      "starThresholds": [
+        344,
+        412,
+        516
+      ],
+      "fruitGoals": {
+        "strawberry": 11,
+        "blueberry": 11,
+        "watermelon": 11
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "colorBomb"
+        },
+        {
+          "cell": 1,
+          "power": "colorBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "ice",
+          "layers": 2
+        },
+        {
+          "cell": 26,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 44,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 1,
+        "vine": 1,
+        "soil": 1,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 4,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 94,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 25,
+      "targetScore": 368,
+      "starThresholds": [
+        368,
+        441,
+        552
+      ],
+      "fruitGoals": {
+        "blueberry": 12,
+        "lemon": 12,
+        "grapes": 12
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "lineClear"
+        },
+        {
+          "cell": 1,
+          "power": "lineClear"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 21,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 29,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 36,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 46,
+          "type": "soil",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "vine": 2,
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 2,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 95,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 27,
+      "targetScore": 360,
+      "starThresholds": [
+        360,
+        432,
+        540
+      ],
+      "fruitGoals": {
+        "lemon": 13,
+        "strawberry": 13,
+        "orange": 9
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "lineClear"
+        },
+        {
+          "cell": 1,
+          "power": "areaBomb"
+        },
+        {
+          "cell": 56,
+          "power": "lineClear"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 21,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 27,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 42,
+          "type": "woodBox",
+          "layers": 2
+        }
+      ],
+      "obstacleGoals": {
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 3,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 96,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 26,
+      "targetScore": 352,
+      "starThresholds": [
+        352,
+        422,
+        528
+      ],
+      "fruitGoals": {
+        "strawberry": 14,
+        "blueberry": 10,
+        "watermelon": 10
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "lineClear"
+        },
+        {
+          "cell": 1,
+          "power": "rainbowKite"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 18,
+          "type": "woodBox",
+          "layers": 2
+        },
+        {
+          "cell": 20,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 45,
+          "type": "ice",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 2,
+        "ice": 1,
+        "vine": 1,
+        "soil": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 97,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 24,
+      "targetScore": 344,
+      "starThresholds": [
+        344,
+        412,
+        516
+      ],
+      "fruitGoals": {
+        "blueberry": 11,
+        "lemon": 11,
+        "grapes": 11
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "lineClear"
+        },
+        {
+          "cell": 1,
+          "power": "colorBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 20,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 35,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 43,
+          "type": "vine",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "ice": 2,
+        "vine": 1,
+        "soil": 1,
+        "woodBox": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 2,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 98,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 28,
+      "targetScore": 368,
+      "starThresholds": [
+        368,
+        441,
+        552
+      ],
+      "fruitGoals": {
+        "lemon": 12,
+        "strawberry": 12,
+        "orange": 12
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "areaBomb"
+        },
+        {
+          "cell": 1,
+          "power": "rainbowKite"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "vine",
+          "layers": 1
+        },
+        {
+          "cell": 21,
+          "type": "vine",
+          "layers": 2
+        },
+        {
+          "cell": 27,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 36,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 44,
+          "type": "soil",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "vine": 2,
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 2,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 99,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 26,
+      "targetScore": 360,
+      "starThresholds": [
+        360,
+        432,
+        540
+      ],
+      "fruitGoals": {
+        "strawberry": 13,
+        "blueberry": 13,
+        "watermelon": 9
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "areaBomb"
+        },
+        {
+          "cell": 1,
+          "power": "colorBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 17,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 28,
+          "type": "ice",
+          "layers": 1
+        },
+        {
+          "cell": 37,
+          "type": "vine",
+          "layers": 2
+        },
+        {
+          "cell": 46,
+          "type": "woodBox",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "soil": 1,
+        "woodBox": 1,
+        "ice": 1,
+        "vine": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 2,
+        "obstacleCells": 4,
+        "obstacleLayers": 5,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 1
+        }
+      },
+      "configurationValid": true
+    },
+    {
+      "id": 100,
+      "chapter": "summit",
+      "difficulty": "hard",
+      "moveLimit": 25,
+      "targetScore": 352,
+      "starThresholds": [
+        352,
+        422,
+        528
+      ],
+      "fruitGoals": {
+        "blueberry": 14,
+        "lemon": 10,
+        "grapes": 10
+      },
+      "specialPieces": [
+        {
+          "cell": 0,
+          "power": "rainbowKite"
+        },
+        {
+          "cell": 1,
+          "power": "colorBomb"
+        },
+        {
+          "cell": 56,
+          "power": "areaBomb"
+        }
+      ],
+      "obstacles": [
+        {
+          "cell": 19,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 21,
+          "type": "woodBox",
+          "layers": 1
+        },
+        {
+          "cell": 26,
+          "type": "vine",
+          "layers": 2
+        },
+        {
+          "cell": 35,
+          "type": "soil",
+          "layers": 1
+        },
+        {
+          "cell": 42,
+          "type": "ice",
+          "layers": 1
+        }
+      ],
+      "obstacleGoals": {
+        "woodBox": 2,
+        "ice": 1,
+        "vine": 1,
+        "soil": 1
+      },
+      "counts": {
+        "fruitGoalKinds": 3,
+        "specialPieces": 3,
+        "obstacleCells": 5,
+        "obstacleLayers": 6,
+        "obstacleTypes": {
+          "ice": 1,
+          "soil": 1,
+          "vine": 1,
+          "woodBox": 2
+        }
+      },
+      "configurationValid": true
+    }
+  ]
+}

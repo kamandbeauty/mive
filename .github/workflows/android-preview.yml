@@ -1,0 +1,346 @@
+name: Android preview APKs
+
+on:
+  push:
+    branches:
+      # Every Arena working branch carries this workflow, so run analyze,
+      # tests and the split APK build for each task branch as it is pushed.
+      - 'arena/**'
+  workflow_dispatch:
+    inputs:
+      run_emulator:
+        description: Run the official Google Android emulator smoke test
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  build-apks:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Set up Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: Resolve packages
+        run: flutter pub get
+      - name: Analyze Dart and Flutter sources
+        shell: bash
+        run: |
+          set +e
+          flutter analyze > /tmp/flutter-analyze.log 2>&1
+          result=$?
+          cat /tmp/flutter-analyze.log
+          if [ "$result" -ne 0 ]; then
+            details=$(tail -n 30 /tmp/flutter-analyze.log | tr '\n' ' ')
+            details=${details//'%'/'%25'}
+            echo "::error::Flutter analyzer failed (exit $result). $details"
+          fi
+          exit "$result"
+      - name: Run unit and widget tests
+        shell: bash
+        run: |
+          set +e
+          flutter test > /tmp/flutter-test.log 2>&1
+          result=$?
+          cat /tmp/flutter-test.log
+          if [ "$result" -ne 0 ]; then
+            details=$(grep -E -A 6 -B 2 'TestFailure|Expected:|Actual:|The following .* was thrown|Test description was:' /tmp/flutter-test.log | tail -n 120 | tr '\n' ' ')
+            details=${details//'%'/'%25'}
+            echo "::error::Flutter unit/widget tests failed (exit $result). $details"
+          fi
+          exit "$result"
+      - name: Validate level simulation report
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          report_path = Path('build/level_difficulty_simulation.json')
+          report = json.loads(report_path.read_text())
+          levels = report['levels']
+          assert report['reportVersion'] == 1
+          assert len(levels) == 100, f"expected 100 levels, found {len(levels)}"
+          assert [level['levelId'] for level in levels] == list(range(1, 101))
+          assert report['trialCount'] == 300
+          assert report['simulationErrors'] == [], report['simulationErrors']
+          assert all(len(level['trials']) == 3 for level in levels)
+
+          verified_bands = {}
+          for difficulty, expected in report['difficultyBands'].items():
+              samples = [
+                  trial
+                  for level in levels if level['difficulty'] == difficulty
+                  for trial in level['trials']
+              ]
+              scores = sorted(trial['score'] for trial in samples)
+              moves = sorted(trial['movesUsed'] for trial in samples)
+              actual = {
+                  'trials': len(samples),
+                  'observedRequirementCompletions': sum(t['requirementsMet'] for t in samples),
+                  'stalledBoardCount': sum(t['stalled'] for t in samples),
+                  'cascadeLimitRecoveries': sum(t['cascadeLimitRecoveries'] for t in samples),
+                  'medianScore': scores[len(scores) // 2] if scores else None,
+                  'medianMovesConsumed': moves[len(moves) // 2] if moves else None,
+              }
+              assert actual == expected, f'{difficulty} summary mismatch: {actual} != {expected}'
+              verified_bands[difficulty] = actual
+
+          summary = {
+              'levelCount': len(levels),
+              'trialCount': report['trialCount'],
+              'simulationErrors': report['simulationErrors'],
+              'policy': report['policy'],
+              'interpretation': report['interpretation'],
+              'difficultyBands': verified_bands,
+          }
+          encoded = json.dumps(summary, ensure_ascii=False, sort_keys=True)
+          print(f'VALIDATED_LEVEL_SIMULATION_REPORT {encoded}')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as output:
+              output.write('## شبیه‌سازی دشواری ۱۰۰ مرحله\n\n')
+              output.write(f"- اجراهای معتبر: {report['trialCount']} (۳ seed ثابت برای هر مرحله)\n")
+              output.write('- این نتایج فقط برای سیاست تصادفیِ قانونی گزارش شده‌اند؛ نرخ برد انسان یا تعادل بازیکن نیستند.\n\n')
+              output.write('| دشواری | اجراها | تکمیل هدف مشاهده‌شده | صفحهٔ متوقف | میانهٔ امتیاز | میانهٔ حرکت |\n')
+              output.write('|---|---:|---:|---:|---:|---:|\n')
+              for difficulty, band in verified_bands.items():
+                  output.write(
+                      f"| {difficulty} | {band['trials']} | "
+                      f"{band['observedRequirementCompletions']} | {band['stalledBoardCount']} | "
+                      f"{band['medianScore']} | {band['medianMovesConsumed']} |\n"
+                  )
+              output.write(f"\nسیاست: {report['policy']}\n")
+
+      - name: Build split release APKs
+        shell: bash
+        run: |
+          set +e
+          flutter build apk --release --split-per-abi > /tmp/flutter-build.log 2>&1
+          result=$?
+          cat /tmp/flutter-build.log
+          if [ "$result" -ne 0 ]; then
+            details=$(tail -n 50 /tmp/flutter-build.log | tr '\n' ' ')
+            details=${details//'%'/'%25'}
+            details=${details//':'/'%3A'}
+            details=${details//$'\r'/'%0D'}
+            echo "::error::Android release APK build failed (exit $result). $details"
+          fi
+          exit "$result"
+      - name: Validate split APKs and ABI payloads
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import os
+          from pathlib import Path
+          from zipfile import ZipFile
+
+          apk_dir = Path('build/app/outputs/flutter-apk')
+          variants = {
+              'arm64-v8a': 'app-arm64-v8a-release.apk',
+              'armeabi-v7a': 'app-armeabi-v7a-release.apk',
+              'x86_64': 'app-x86_64-release.apk',
+          }
+          lines = [
+              '## APKهای Release ساخته‌شده',
+              '',
+              '| ABI | حجم (bytes) | SHA-256 کوتاه |',
+              '|---|---:|---|',
+          ]
+          for abi, filename in variants.items():
+              path = apk_dir / filename
+              assert path.is_file() and path.stat().st_size > 0, f'missing or empty APK: {path}'
+              with ZipFile(path) as archive:
+                  assert archive.testzip() is None, f'corrupt APK archive: {path}'
+                  native_libs = [
+                      name for name in archive.namelist()
+                      if name.startswith(f'lib/{abi}/') and name.endswith('.so')
+                  ]
+                  assert native_libs, f'{path} contains no native libraries for {abi}'
+              digest = hashlib.sha256(path.read_bytes()).hexdigest()
+              print(f'APK_ABI {abi} {path.stat().st_size} bytes sha256={digest}')
+              lines.append(f'| {abi} | {path.stat().st_size} | `{digest[:16]}` |')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a', encoding='utf-8') as output:
+              output.write('\n'.join(lines) + '\n')
+          PY
+      # This is intentionally gated: use workflow_dispatch or include [emulator-qa]
+      # in a push commit message when the slow full-device QA pass is required.
+      - name: Test installed APK on Google Android emulator
+        if: ${{ (github.event_name == 'workflow_dispatch' && inputs.run_emulator) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[emulator-qa]')) }}
+        timeout-minutes: 40
+        shell: bash
+        env:
+          EMULATOR_IMAGE: us-docker.pkg.dev/android-emulator-268719/images/30-google-x64:30.1.2
+        run: |
+          set -Eeuo pipefail
+          exec > >(tee -a /tmp/google-emulator-step.log) 2>&1
+          emulator_qa_stage='container setup and release startup'
+          failure_report() {
+            result=$?
+            if [ "$result" -ne 0 ]; then
+              details=$(sed -E '/ImpellerValidationBreak|raster identical/d' /tmp/google-emulator-step.log | tail -n 80 | tr '\n' ' ')
+              details=${details//'%'/'%25'}
+              echo "::error::Google emulator smoke test failed during ${emulator_qa_stage} (exit $result). $details"
+            fi
+            docker rm -f fruit-match-emulator >/dev/null 2>&1 || true
+            exit "$result"
+          }
+          trap failure_report EXIT
+
+          if [ ! -e /dev/kvm ]; then
+            echo "::error::Google emulator container requires KVM; /dev/kvm is unavailable on this runner."
+            exit 1
+          fi
+          sdk_root="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          if [ ! -x "$sdk_root/platform-tools/adb" ]; then
+            sdk_root=$(find /usr/local/lib/android/sdk "$HOME/Android/Sdk" /opt/android-sdk -path '*/platform-tools/adb' -type f -print -quit 2>/dev/null | sed 's#/platform-tools/adb$##')
+          fi
+          if [ -z "$sdk_root" ] || [ ! -x "$sdk_root/platform-tools/adb" ]; then
+            echo "::error::Android SDK platform-tools (adb) were not found on the runner."
+            exit 1
+          fi
+          export PATH="$sdk_root/platform-tools:$PATH"
+          adb version
+          echo 'Disk space before Google emulator image pull:'
+          df -h /
+          for component in emulator system-images ndk; do
+            if [ -e "$sdk_root/$component" ]; then
+              du -sh "$sdk_root/$component"
+              rm -rf "$sdk_root/$component"
+            fi
+          done
+          echo 'Disk space after removing unused host emulator tooling:'
+          df -h /
+          mkdir -p "$HOME/.android"
+          adb start-server
+          if [ ! -f "$HOME/.android/adbkey" ]; then adb keygen "$HOME/.android/adbkey"; fi
+          echo "Pulling official Google Android emulator image: $EMULATOR_IMAGE"
+          docker pull "$EMULATOR_IMAGE"
+          docker run --pull=never -d --name fruit-match-emulator \
+            -e "ADBKEY=$(cat "$HOME/.android/adbkey")" \
+            -e 'EMULATOR_PARAMS=-cores 2 -memory 2048 -no-audio -gpu swiftshader_indirect' \
+            --device /dev/kvm \
+            --publish 8554:8554/tcp \
+            --publish 5555:5555/tcp \
+            "$EMULATOR_IMAGE"
+
+          connected=false
+          for attempt in $(seq 1 60); do
+            adb connect 127.0.0.1:5555 >/dev/null 2>&1 || true
+            if [ "$(adb -s 127.0.0.1:5555 get-state 2>/dev/null || true)" = device ]; then
+              connected=true
+              break
+            fi
+            sleep 3
+          done
+          if [ "$connected" != true ]; then
+            echo "::error::Could not connect ADB to the Google emulator container."
+            exit 1
+          fi
+
+          booted=false
+          for attempt in $(seq 1 60); do
+            if [ "$(adb -s 127.0.0.1:5555 shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')" = 1 ]; then
+              booted=true
+              break
+            fi
+            sleep 3
+          done
+          if [ "$booted" != true ]; then
+            echo "::error::Google emulator did not finish booting."
+            exit 1
+          fi
+
+          device=127.0.0.1:5555
+          adb -s "$device" install -r build/app/outputs/flutter-apk/app-x86_64-release.apk
+          adb -s "$device" logcat -c
+          adb -s "$device" shell am start -n com.studiojavid.puzzle/.MainActivity
+          sleep 12
+          adb -s "$device" exec-out screencap -p > build/google-emulator-screen.png
+          mkdir -p build/emulator-shots
+          cp build/google-emulator-screen.png build/emulator-shots/home.png
+          if adb -s "$device" logcat -d -s AndroidRuntime:E | grep -q 'FATAL EXCEPTION'; then
+            echo "::error::Release APK crashed during startup on the Google emulator."
+            exit 1
+          fi
+          activity_state=$(adb -s "$device" shell dumpsys activity activities)
+          if ! grep -q 'com.studiojavid.puzzle' <<< "$activity_state"; then
+            echo "::error::The fruit-match activity is not in Android's foreground activity stack."
+            exit 1
+          fi
+          # flutter drive installs its instrumented debug APK. Remove the
+          # release package already smoke-launched above to avoid a version-
+          # downgrade install attempt during the integration test setup.
+          adb -s "$device" uninstall com.studiojavid.puzzle >/dev/null 2>&1 || true
+          adb -s "$device" logcat -c
+          emulator_qa_stage='production-flow and deterministic power/obstacle integration target'
+          echo 'Running the production-flow and deterministic power/obstacle integration target.'
+          timeout --signal=TERM --kill-after=30s 900s \
+            flutter drive --driver=test_driver/integration_test.dart \
+              --target=integration_test/app_test.dart \
+              -d "$device" \
+              --keep-app-running
+          echo 'Production-flow integration target passed.'
+          # Capture the live board after the production flow, while the app is
+          # still running in its final state.
+          adb -s "$device" exec-out screencap -p > build/emulator-shots/game.png || true
+
+          emulator_qa_stage='force-stop before fresh instrumentation launch'
+          echo 'Force-stopping the app; the persistence integration target will launch it afresh.'
+          adb connect 127.0.0.1:5555 >/dev/null 2>&1 || true
+          adb -s "$device" wait-for-device
+          adb -s "$device" shell am force-stop com.studiojavid.puzzle
+
+          # Keep the first instrumented app alive until the explicit force-stop,
+          # then flutter drive launches a fresh app process for the persistence target.
+          emulator_qa_stage='fresh-launch persistence integration target'
+          echo 'Running the fresh-launch persistence integration target.'
+          timeout --signal=TERM --kill-after=30s 900s \
+            flutter drive --driver=test_driver/integration_test.dart \
+              --target=integration_test/persistence_relaunch_test.dart \
+              -d "$device"
+          echo 'Fresh-launch persistence target passed.'
+          if adb -s "$device" logcat -d -s AndroidRuntime:E | grep -q 'FATAL EXCEPTION'; then
+            echo "::error::An Android runtime crash occurred during integration or relaunch."
+            exit 1
+          fi
+      - name: Upload emulator screenshots
+        if: ${{ always() && ((github.event_name == 'workflow_dispatch' && inputs.run_emulator) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[emulator-qa]'))) }}
+        continue-on-error: true
+        uses: actions/upload-artifact@v4
+        with:
+          name: emulator-screenshots
+          path: build/emulator-shots/
+          if-no-files-found: ignore
+      - name: Publish draft test release
+        if: ${{ github.event_name == 'push' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          tag="studiojavid-puzzle-preview-${GITHUB_SHA::7}"
+          apk_dir="build/app/outputs/flutter-apk"
+          gh release create "$tag" \
+            "$apk_dir/app-arm64-v8a-release.apk" \
+            "$apk_dir/app-armeabi-v7a-release.apk" \
+            "$apk_dir/app-x86_64-release.apk" \
+            "build/level_difficulty_simulation.json" \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
+            --draft \
+            --prerelease \
+            --title "میوه‌چین — Android preview ${GITHUB_SHA::7}" \
+            --notes "Unofficial test build for Studio Javid. Signed with the debug key; not suitable for store release. Source is licensed under GPL-3.0."

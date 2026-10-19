@@ -1,0 +1,52 @@
+name: puzzle
+description: "میوه‌چین؛ بازی جورچین میوه‌ای آفلاین"
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: '>=3.12.0 <4.0.0'
+  flutter: '>=3.44.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  shared_preferences: ^2.5.3
+  adivery:
+    git:
+      url: https://github.com/adivery/adivery-flutter-plugin.git
+      ref: 4.10.0-alpha.2
+
+# shared_preferences_android 2.5.0's new JNI implementation fails on some
+# Android runtimes with NoSuchMethodError in SharedPreferencesApiRegistrar.getAll.
+# Keep the last compatible implementation until the upstream JNI regression is fixed.
+dependency_overrides:
+  shared_preferences_android: 2.4.28
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/orchard_match_background.png
+    - assets/images/
+    - assets/game/fruits/
+    - assets/game/characters/
+    - assets/game/characters/rig/
+    - assets/data/levels.json
+    - assets/characters/rig/manifest.json
+    - assets/characters/rig/layers/
+    - assets/characters/rig/sockets/
+    - assets/backgrounds/
+    - assets/ui/
+    - assets/ui/labels/
+    - assets/boosters/
+    - assets/fruit/
+    - assets/decorations/
+    - assets/effects/
