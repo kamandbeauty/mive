@@ -1092,10 +1092,10 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
         // Wooden two-cell stats panel, exactly as in the reference: moves on
         // one side, score / target with a star on the other.
         SizedBox(
-          height: 58,
+          height: 62,
           child: OrchardPanel(
             asset: 'assets/ui/hud-panel.png',
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
             child: Row(
               children: <Widget>[
                 Expanded(
@@ -1179,7 +1179,9 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Row(
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
@@ -1219,6 +1221,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             const SizedBox(width: 4),
             const Icon(Icons.star_rounded, size: 18, color: GamePalette.gold),
           ],
+          ),
         ),
         const SizedBox(height: 1),
         const Text('امتیاز', style: TextStyle(color: Color(0xFFFFE3B3), fontSize: 10, fontWeight: FontWeight.w800, height: 1.1)),
