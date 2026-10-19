@@ -936,118 +936,118 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   }
 
   Widget _buildHeader() {
+    // Physical layout of the reference: title plaque on the left, the two
+    // round gold buttons (pause, hint) on the right. The row is pinned LTR so
+    // the Persian RTL ambient direction cannot mirror it back.
     return SizedBox(
       height: 54,
-      child: Row(
-        children: <Widget>[
-          Expanded(child: _buildTitlePlaque()),
-          const SizedBox(width: 6),
-          _headerButton(
-            icon: Icons.pause_rounded,
-            tooltip: 'مکث',
-            onPressed: _phase.acceptsInput ? _pause : null,
-          ),
-          const SizedBox(width: 4),
-          _headerButton(
-            icon: Icons.lightbulb_rounded,
-            tooltip: 'راهنمایی',
-            plate: 'assets/ui/button-gold.png',
-            iconColor: GamePalette.chocolate,
-            onPressed: _phase.acceptsInput ? _showHint : null,
-          ),
-        ],
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Row(
+          children: <Widget>[
+            Expanded(child: _buildTitlePlaque()),
+            const SizedBox(width: 6),
+            _headerButton(
+              icon: Icons.pause_rounded,
+              tooltip: 'مکث',
+              onPressed: _phase.acceptsInput ? _pause : null,
+            ),
+            const SizedBox(width: 4),
+            _headerButton(
+              icon: Icons.lightbulb_rounded,
+              tooltip: 'راهنمایی',
+              plate: 'assets/ui/button-gold.png',
+              iconColor: GamePalette.chocolate,
+              onPressed: _phase.acceptsInput ? _showHint : null,
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  /// Wooden title plaque from the reference layout: strawberry medallion,
-  /// game title and the current level/chapter underneath it.
+  /// Wooden title plaque from the reference layout. The finished plaque
+  /// artwork already carries the strawberry medallion on its left side, so
+  /// the title and level line are overlaid on the empty wooden field.
   Widget _buildTitlePlaque() {
-    return OrchardPanel(
-      asset: 'assets/ui/title-plaque-wood-blank.png',
-      padding: const EdgeInsetsDirectional.fromSTEB(9, 3, 14, 3),
-      child: Row(
-        children: <Widget>[
-          SizedBox(
-            width: 40,
-            height: 40,
-            child: Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                Positioned.fill(
-                  child: Image.asset(
-                    'assets/ui/button-gold.png',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Image.asset(
-                    'assets/fruit/strawberry.png',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        return Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
+            Image.asset(
+              'assets/ui/title-plaque.png',
+              fit: BoxFit.fill,
+              filterQuality: FilterQuality.medium,
             ),
-          ),
-          const SizedBox(width: 7),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(
-                    'میوه‌چین',
-                    style: TextStyle(
-                      color: Color(0xFFFFF6E2),
-                      fontSize: 20,
-                      fontWeight: FontWeight.w900,
-                      height: 1.05,
-                      shadows: <Shadow>[
-                        Shadow(color: Color(0xAA3A1C08), blurRadius: 5, offset: Offset(0, 2)),
-                      ],
-                    ),
-                  ),
-                ),
-                Row(
-                  children: <Widget>[
-                    Text(
-                      'مرحله ${_fa(widget.level.id)}',
-                      maxLines: 1,
+            Positioned(
+              left: width * 0.26,
+              right: 12,
+              top: 0,
+              bottom: 0,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  const FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      'میوه‌چین',
+                      textDirection: TextDirection.rtl,
                       style: TextStyle(
-                        color: GamePalette.cream.withValues(alpha: 0.98),
-                        fontSize: 9.5,
+                        color: Color(0xFFFFF6E2),
+                        fontSize: 20,
                         fontWeight: FontWeight.w900,
-                        shadows: const <Shadow>[
-                          Shadow(color: Color(0xAA2C1608), blurRadius: 4),
+                        height: 1.05,
+                        shadows: <Shadow>[
+                          Shadow(color: Color(0xAA3A1C08), blurRadius: 5, offset: Offset(0, 2)),
                         ],
                       ),
                     ),
-                    Flexible(
-                      child: Text(
-                        ' • ${widget.level.chapterTitle}',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: GamePalette.cream.withValues(alpha: 0.88),
-                          fontSize: 9.5,
-                          fontWeight: FontWeight.w700,
-                          shadows: const <Shadow>[
-                            Shadow(color: Color(0xAA2C1608), blurRadius: 4),
-                          ],
+                  ),
+                  Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          'مرحله ${_fa(widget.level.id)}',
+                          maxLines: 1,
+                          style: TextStyle(
+                            color: GamePalette.cream.withValues(alpha: 0.98),
+                            fontSize: 9.5,
+                            fontWeight: FontWeight.w900,
+                            shadows: const <Shadow>[
+                              Shadow(color: Color(0xAA2C1608), blurRadius: 4),
+                            ],
+                          ),
                         ),
-                      ),
+                        Flexible(
+                          child: Text(
+                            ' • ${widget.level.chapterTitle}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: GamePalette.cream.withValues(alpha: 0.88),
+                              fontSize: 9.5,
+                              fontWeight: FontWeight.w700,
+                              shadows: const <Shadow>[
+                                Shadow(color: Color(0xAA2C1608), blurRadius: 4),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        );
+      },
     );
   }
 
@@ -1137,7 +1137,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
           height: widget.level.obstacleGoals.isEmpty ? 74 : 108,
           child: OrchardPanel(
             asset: 'assets/ui/goal-banner.png',
-            padding: const EdgeInsets.fromLTRB(26, 7, 26, 8),
+            padding: const EdgeInsets.fromLTRB(42, 7, 42, 8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -1320,8 +1320,8 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               ),
               // One unified wooden dock: the four-slot power tray on top and
               // the three inventory boosters underneath it.
-              PositionedDirectional(
-                end: 0,
+              Positioned(
+                right: 0,
                 bottom: 0,
                 width: controlsWidth,
                 child: _buildControlDock(trayHeight, boosterHeight),
@@ -1547,8 +1547,8 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                   label: _fa(count),
                   color: enabled || active
                       ? (active ? GamePalette.orange : GamePalette.leaf)
-                      : const Color(0xFFCBBBA4),
-                  textColor: Colors.white,
+                      : GamePalette.gold,
+                  textColor: enabled || active ? Colors.white : _chocolate,
                 ),
               ),
             ],
