@@ -1139,7 +1139,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
           height: widget.level.obstacleGoals.isEmpty ? 74 : 126,
           child: OrchardPanel(
             asset: 'assets/ui/goal-banner.png',
-            padding: const EdgeInsets.fromLTRB(40, 7, 48, 8),
+            padding: const EdgeInsets.fromLTRB(44, 7, 62, 8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -1149,7 +1149,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                       'هدف مرحله',
                       style: TextStyle(
                         color: _chocolate,
-                        fontSize: 12.5,
+                        fontSize: 12,
                         fontWeight: FontWeight.w900,
                         height: 1.1,
                       ),
@@ -1347,12 +1347,12 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               // board above and the character herself.
               if (caption != null)
                 Positioned(
-                  left: characterWidth * 0.82,
+                  left: characterWidth + 4,
                   right: 2,
                   top: 0,
                   height: max(38.0, height - dockHeight - 4),
                   child: Align(
-                    alignment: Alignment.bottomLeft,
+                    alignment: Alignment.bottomCenter,
                     child: OrchardBubble(
                       key: ValueKey<String>(caption),
                       message: caption,
@@ -1643,7 +1643,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             scale: complete ? 1.15 : 1,
             duration: _motion(const Duration(milliseconds: 260)),
             curve: Curves.easeOutBack,
-            child: Image.asset(kind.assetPath, width: 20, height: 20, fit: BoxFit.contain),
+            child: Image.asset(kind.assetPath, width: 19, height: 19, fit: BoxFit.contain),
           ),
           const SizedBox(width: 2),
           Flexible(
@@ -1765,26 +1765,6 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                 ),
               ),
             ),
-          // Leafy corner sprigs keep the orchard-frame feel of the old art.
-          Positioned(
-            top: -size * 0.012,
-            left: -size * 0.012,
-            width: size * 0.17,
-            child: IgnorePointer(
-              child: Image.asset('assets/decorations/flower-vine.png', fit: BoxFit.contain),
-            ),
-          ),
-          Positioned(
-            top: -size * 0.012,
-            right: -size * 0.012,
-            width: size * 0.17,
-            child: IgnorePointer(
-              child: Transform.flip(
-                flipX: true,
-                child: Image.asset('assets/decorations/flower-vine.png', fit: BoxFit.contain),
-              ),
-            ),
-          ),
         ],
       ),
     );

@@ -41,22 +41,28 @@ class GuideRigAnimator {
   }) {
     final t = seconds;
     final env = reduceMotion ? 0.0 : _settle(t);
-    switch (mood) {
-      case OrchardGirlMood.idle:
-        return _idle(t, env);
-      case OrchardGirlMood.happy:
-        return _happy(t, env);
-      case OrchardGirlMood.excited:
-        return _excited(t, env);
-      case OrchardGirlMood.celebrate:
-        return _celebrate(t, env);
-      case OrchardGirlMood.encourage:
-        return _encourage(t, env);
-      case OrchardGirlMood.sad:
-        return _sad(t, env);
-      case OrchardGirlMood.harvest:
-        return _harvest(t, env);
-    }
+    final raw = switch (mood) {
+      OrchardGirlMood.idle => _idle(t, env),
+      OrchardGirlMood.happy => _happy(t, env),
+      OrchardGirlMood.excited => _excited(t, env),
+      OrchardGirlMood.celebrate => _celebrate(t, env),
+      OrchardGirlMood.encourage => _encourage(t, env),
+      OrchardGirlMood.sad => _sad(t, env),
+      OrchardGirlMood.harvest => _harvest(t, env),
+    };
+    // The delivered joint pivots are approximate: at full amplitude the
+    // limbs visibly detach and the figure falls apart on a real phone.
+    // Keeping every rotation at 60% keeps the performance readable while
+    // shoulders, elbows and the neck stay composed.
+    return RigPose(<String, BonePose>{
+      for (final entry in raw.bones.entries)
+        entry.key: BonePose(
+          angle: entry.value.angle * 0.6,
+          dx: entry.value.dx * 0.6,
+          dy: entry.value.dy * 0.6,
+          scale: entry.value.scale,
+        ),
+    });
   }
 
   /// 0 → 1 over the first 0.7 s, so a pose change always eases out of rest.
@@ -81,7 +87,7 @@ class GuideRigAnimator {
       'armRFore': BonePose(angle: 0.8 * breathe),
       'armRHand': BonePose(angle: 0.6 * breathe),
       'armLUpper': BonePose(angle: -0.35 * breathe),
-      'basket': BonePose(angle: 1.65 * breathe),
+      'basket': BonePose(angle: 2.6 * breathe),
       'skirt': BonePose(angle: 0.25 * breathe),
     });
   }
