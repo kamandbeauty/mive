@@ -1134,7 +1134,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
         // Levels that also target obstacles get a taller banner so their
         // chips wrap on a second row instead of squeezing the fruit goals.
         SizedBox(
-          height: widget.level.obstacleGoals.isEmpty ? 74 : 108,
+          height: widget.level.obstacleGoals.isEmpty ? 74 : 126,
           child: OrchardPanel(
             asset: 'assets/ui/goal-banner.png',
             padding: const EdgeInsets.fromLTRB(42, 7, 42, 8),
