@@ -58,7 +58,7 @@ void main() {
       tester.widget<Semantics>(find.byKey(const ValueKey<String>('fruit-cell-1'))).properties.enabled,
       isFalse,
     );
-    expect(find.text('جعبهٔ چوبی ۰/۱'), findsOneWidget);
+    expect(find.text('جعبهٔ چوبی ۰ از ۱'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

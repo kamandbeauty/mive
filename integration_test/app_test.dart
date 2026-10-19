@@ -370,7 +370,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey<String>('fruit-cell-20')));
     await _pumpFor(tester, const Duration(milliseconds: 500));
     for (final type in BoardObstacleType.values) {
-      expect(find.text('${type.persianName} ۱/۱'), findsOneWidget, reason: '$type should be hit');
+      expect(find.text('${type.persianName} ۱ از ۱'), findsOneWidget, reason: '$type should be hit');
     }
     expect(find.text('۲۹'), findsOneWidget);
     expect(tester.takeException(), isNull);

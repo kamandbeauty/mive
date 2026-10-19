@@ -116,7 +116,7 @@ void main() {
     );
     await _pumpFor(tester, const Duration(milliseconds: 300));
 
-    expect(find.text('جعبهٔ چوبی ۰/۱'), findsOneWidget);
+    expect(find.text('جعبهٔ چوبی ۰ از ۱'), findsOneWidget);
     expect(
       tester.widget<Semantics>(find.byKey(const ValueKey<String>('fruit-cell-0'))).properties.enabled,
       isFalse,
@@ -131,7 +131,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey<String>('fruit-cell-0')));
     await _pumpFor(tester, const Duration(seconds: 3));
 
-    expect(find.text('جعبهٔ چوبی ۱/۱'), findsOneWidget);
+    expect(find.text('جعبهٔ چوبی ۱ از ۱'), findsOneWidget);
     expect(_boosterLabel(tester, BoosterType.hammer), contains('۱ عدد'));
     expect(find.byKey(const ValueKey<String>('booster-hammer')), findsOneWidget);
     expect(find.byTooltip('مکث'), findsOneWidget);

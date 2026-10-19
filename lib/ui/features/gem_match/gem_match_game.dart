@@ -981,7 +981,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   Widget _buildStatsPanel() {
     return OrchardPanel(
       asset: 'assets/ui/hud-panel.png',
-      padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+      padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
       child: Row(
         children: <Widget>[
           Expanded(
@@ -1057,10 +1057,11 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                             ],
                           ),
                         ),
-                        ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 78),
-                          child: Text(
-                            ' • ${widget.level.chapterTitle}',
+                        if (width >= 170)
+                          ConstrainedBox(
+                            constraints: const BoxConstraints(maxWidth: 78),
+                            child: Text(
+                              ' • ${widget.level.chapterTitle}',
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
@@ -1143,7 +1144,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
     // and the progress bar underneath, exactly as in the reference. A level
     // with several goals gets a taller banner so the readouts can wrap.
     return SizedBox(
-      height: goalCount > 1 ? 112 : 92,
+      height: goalCount > 3 ? 158 : goalCount > 1 ? 116 : 92,
       child: OrchardPanel(
         asset: 'assets/ui/goal-banner.png',
         padding: const EdgeInsets.fromLTRB(26, 12, 26, 12),
@@ -1204,7 +1205,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               maxLines: 1,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 20,
+                fontSize: 16,
                 height: 1.05,
                 fontWeight: FontWeight.w900,
                 shadows: <Shadow>[
@@ -1216,7 +1217,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               ' / ',
               style: TextStyle(
                 color: Color(0xFFFFE3B3),
-                fontSize: 14,
+                fontSize: 11,
                 fontWeight: FontWeight.w900,
               ),
             ),
@@ -1227,23 +1228,23 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                 maxLines: 1,
                 style: const TextStyle(
                   color: Color(0xFFFFE3B3),
-                  fontSize: 16,
+                  fontSize: 13,
                   height: 1.05,
                   fontWeight: FontWeight.w900,
                 ),
               ),
             ),
             const SizedBox(width: 4),
-            const Icon(Icons.star_rounded, size: 18, color: GamePalette.gold),
+            const Icon(Icons.star_rounded, size: 14, color: GamePalette.gold),
           ],
           ),
         ),
         const SizedBox(height: 1),
-        const Text('امتیاز', style: TextStyle(color: Color(0xFFFFE3B3), fontSize: 10, fontWeight: FontWeight.w800, height: 1.1)),
+        const Text('امتیاز', style: TextStyle(color: Color(0xFFFFE3B3), fontSize: 8.5, fontWeight: FontWeight.w800, height: 1.1)),
         const SizedBox(height: 2),
         Container(
-          width: 22,
-          height: 2.5,
+          width: 18,
+          height: 2,
           decoration: BoxDecoration(
             color: GamePalette.orange,
             borderRadius: BorderRadius.circular(2),
@@ -1271,7 +1272,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               maxLines: 1,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 20,
+                fontSize: 16,
                 height: 1.05,
                 fontWeight: FontWeight.w900,
                 shadows: <Shadow>[
@@ -1281,11 +1282,14 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             ),
           ),
           const SizedBox(height: 1),
-          Text(label, style: const TextStyle(color: Color(0xFFFFE3B3), fontSize: 10, fontWeight: FontWeight.w800, height: 1.1)),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(label, style: const TextStyle(color: Color(0xFFFFE3B3), fontSize: 8.5, fontWeight: FontWeight.w800, height: 1.1)),
+          ),
           const SizedBox(height: 2),
           Container(
-            width: 22,
-            height: 2.5,
+            width: 18,
+            height: 2,
             decoration: BoxDecoration(
               color: accent,
               borderRadius: BorderRadius.circular(2),
@@ -1626,7 +1630,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
           scale: complete ? 1.15 : 1,
           duration: _motion(const Duration(milliseconds: 260)),
           curve: Curves.easeOutBack,
-          child: Image.asset(kind.assetPath, width: 30, height: 30, fit: BoxFit.contain),
+          child: Image.asset(kind.assetPath, width: 27, height: 27, fit: BoxFit.contain),
         ),
         const SizedBox(width: 7),
         AnimatedSwitcher(
@@ -1641,7 +1645,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             maxLines: 1,
             style: TextStyle(
               color: complete ? _leaf : _chocolate,
-              fontSize: 15,
+              fontSize: 13.5,
               fontWeight: FontWeight.w900,
             ),
           ),
