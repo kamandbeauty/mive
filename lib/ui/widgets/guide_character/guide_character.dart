@@ -210,7 +210,7 @@ class _GuideCharacterState extends State<GuideCharacter>
   @override
   void dispose() {
     _disposed = true;
-    WidgetsBinding.instance.removeObserver(_lifecycle);
+    WidgetsBinding.instance.removeObserver(this);
     widget.controller?.removeListener(_onControllerChanged);
     if (_ticker.isActive) {
       _ticker.stop();

@@ -3,7 +3,9 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart' show Listenable;
 import 'package:flutter/painting.dart';
+import 'package:flutter/rendering.dart' show CustomPainter;
 import 'package:flutter/services.dart' show rootBundle;
 
 // Jointed renderer for the orchard guide.
