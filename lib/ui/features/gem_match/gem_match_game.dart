@@ -982,8 +982,8 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               filterQuality: FilterQuality.medium,
             ),
             Positioned(
-              left: width * 0.26,
-              right: 12,
+              left: width * 0.27,
+              right: 22,
               top: 0,
               bottom: 0,
               child: Column(
@@ -998,7 +998,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                       textDirection: TextDirection.rtl,
                       style: TextStyle(
                         color: Color(0xFFFFF6E2),
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.w900,
                         height: 1.05,
                         shadows: <Shadow>[
@@ -1007,10 +1007,11 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                       ),
                     ),
                   ),
+                  const SizedBox(height: 1),
                   Directionality(
                     textDirection: TextDirection.rtl,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text(
                           'مرحله ${_fa(widget.level.id)}',
@@ -1024,7 +1025,8 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                             ],
                           ),
                         ),
-                        Flexible(
+                        ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 120),
                           child: Text(
                             ' • ${widget.level.chapterTitle}',
                             maxLines: 1,
@@ -1113,7 +1115,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
           height: 62,
           child: OrchardPanel(
             asset: 'assets/ui/hud-panel.png',
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            padding: const EdgeInsets.fromLTRB(20, 9, 20, 3),
             child: Row(
               children: <Widget>[
                 Expanded(
@@ -1137,7 +1139,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
           height: widget.level.obstacleGoals.isEmpty ? 74 : 126,
           child: OrchardPanel(
             asset: 'assets/ui/goal-banner.png',
-            padding: const EdgeInsets.fromLTRB(42, 7, 42, 8),
+            padding: const EdgeInsets.fromLTRB(48, 7, 58, 8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -1160,7 +1162,12 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                             Expanded(
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: 2),
-                                child: _goalChip(entry.key, entry.value),
+                                child: Center(
+                                  child: ConstrainedBox(
+                                    constraints: const BoxConstraints(maxWidth: 118),
+                                    child: _goalChip(entry.key, entry.value),
+                                  ),
+                                ),
                               ),
                             ),
                         ],
@@ -1245,6 +1252,15 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
         ),
         const SizedBox(height: 1),
         const Text('امتیاز', style: TextStyle(color: Color(0xFFFFE3B3), fontSize: 10, fontWeight: FontWeight.w800, height: 1.1)),
+        const SizedBox(height: 2),
+        Container(
+          width: 22,
+          height: 2.5,
+          decoration: BoxDecoration(
+            color: GamePalette.orange,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
       ],
     );
   }
@@ -1305,8 +1321,17 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
           return Stack(
             clipBehavior: Clip.none,
             children: <Widget>[
-              // The guide stands fully visible at the bottom edge, exactly
-              // like the reference; nothing is stacked on top of her.
+              // One unified wooden dock: the four-slot power tray on top and
+              // the three inventory boosters underneath it.
+              Positioned(
+                right: 0,
+                bottom: 0,
+                width: controlsWidth,
+                child: _buildControlDock(trayHeight, boosterHeight),
+              ),
+              // The guide is drawn last, in front of everything in her zone,
+              // standing on the bottom edge so her legs and shoes are fully
+              // out and visible — never tucked behind the dock or the board.
               Positioned(
                 left: 0,
                 bottom: 0,
@@ -1317,14 +1342,6 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                   height: height,
                   paused: _phase == GamePhase.paused,
                 ),
-              ),
-              // One unified wooden dock: the four-slot power tray on top and
-              // the three inventory boosters underneath it.
-              Positioned(
-                right: 0,
-                bottom: 0,
-                width: controlsWidth,
-                child: _buildControlDock(trayHeight, boosterHeight),
               ),
               // Her speech bubble floats beside her face, clear of both the
               // board above and the character herself.
@@ -1650,23 +1667,32 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   }
 
   Widget _buildBoard(double size) {
-    final inner = size * 0.785;
+    // Slim wooden frame instead of the chunky board-frame art: the old frame
+    // ate ~21% of the board on every side and shrank the fruit. A thin wood
+    // rim with a gold edge keeps the orchard look while the 8x8 grid takes
+    // ~94% of the (already full-width) board, so fruit render ~20% larger.
+    final frame = size * 0.030;
+    final inner = size - frame * 2;
     final gap = size * 0.008;
-    return SizedBox(
+    return Container(
       key: const ValueKey<String>('game-board-frame'),
       width: size,
       height: size,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: <Color>[Color(0xFF9A6330), Color(0xFF6E3E17)],
+        ),
+        borderRadius: BorderRadius.circular(size * 0.045),
+        border: Border.all(color: GamePalette.gold, width: 2),
+        boxShadow: GamePalette.panelShadow,
+      ),
+      padding: EdgeInsets.all(frame),
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          Image.asset(
-            'assets/ui/board-frame.png',
-            fit: BoxFit.fill,
-            filterQuality: FilterQuality.medium,
-          ),
-          Align(
-            alignment: const Alignment(0, 0.014),
-            child: SizedBox(
+          SizedBox(
               width: inner,
               height: inner,
               child: ClipRRect(
@@ -1737,6 +1763,25 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                       ),
                   ],
                 ),
+              ),
+            ),
+          // Leafy corner sprigs keep the orchard-frame feel of the old art.
+          Positioned(
+            top: -size * 0.012,
+            left: -size * 0.012,
+            width: size * 0.17,
+            child: IgnorePointer(
+              child: Image.asset('assets/decorations/flower-vine.png', fit: BoxFit.contain),
+            ),
+          ),
+          Positioned(
+            top: -size * 0.012,
+            right: -size * 0.012,
+            width: size * 0.17,
+            child: IgnorePointer(
+              child: Transform.flip(
+                flipX: true,
+                child: Image.asset('assets/decorations/flower-vine.png', fit: BoxFit.contain),
               ),
             ),
           ),
