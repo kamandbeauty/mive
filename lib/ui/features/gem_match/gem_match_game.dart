@@ -936,17 +936,27 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   }
 
   Widget _buildHeader() {
-    // Physical layout of the reference: title plaque on the left, the two
-    // round gold buttons (pause, hint) on the right. The row is pinned LTR so
-    // the Persian RTL ambient direction cannot mirror it back.
+    // Single top row from the reference: title plaque, then the moves/score
+    // panel, then the two round buttons (pause, hint) — all inline, left to
+    // right. The row is pinned LTR so the Persian RTL ambient direction
+    // cannot mirror it back.
+    const rowHeight = 64.0;
     return SizedBox(
-      height: 54,
+      height: rowHeight,
       child: Directionality(
         textDirection: TextDirection.ltr,
         child: Row(
           children: <Widget>[
-            Expanded(child: _buildTitlePlaque()),
+            Expanded(
+              flex: 9,
+              child: SizedBox(height: rowHeight, child: _buildTitlePlaque()),
+            ),
             const SizedBox(width: 6),
+            Expanded(
+              flex: 11,
+              child: SizedBox(height: rowHeight, child: _buildStatsPanel()),
+            ),
+            const SizedBox(width: 5),
             _headerButton(
               icon: Icons.pause_rounded,
               tooltip: 'مکث',
@@ -962,6 +972,28 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Wooden moves/score panel, now living inline in the header row instead of
+  /// its own banner underneath.
+  Widget _buildStatsPanel() {
+    return OrchardPanel(
+      asset: 'assets/ui/hud-panel.png',
+      padding: const EdgeInsets.fromLTRB(14, 8, 14, 8),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: _statBlock(
+              'حرکت باقی‌مانده',
+              _fa(_moves),
+              GamePalette.sky,
+              key: const ValueKey<String>('stat-moves-value'),
+            ),
+          ),
+          Expanded(child: _buildScoreStat()),
+        ],
       ),
     );
   }
@@ -1106,94 +1138,50 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
     final target = widget.level.fruitGoals.values.fold<int>(0, (sum, value) => sum + value) +
         widget.level.obstacleGoals.values.fold<int>(0, (sum, value) => sum + value);
     final progress = target == 0 ? 0.0 : (collected / target).clamp(0.0, 1.0).toDouble();
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        // Wooden two-cell stats panel, exactly as in the reference: moves on
-        // one side, score / target with a star on the other.
-        SizedBox(
-          height: 62,
-          child: OrchardPanel(
-            asset: 'assets/ui/hud-panel.png',
-            padding: const EdgeInsets.fromLTRB(20, 9, 20, 3),
-            child: Row(
+    final goalCount = widget.level.fruitGoals.length + widget.level.obstacleGoals.length;
+    // Cream goal banner: "هدف مرحله", the plain icon + "X از Y" goal readout
+    // and the progress bar underneath, exactly as in the reference. A level
+    // with several goals gets a taller banner so the readouts can wrap.
+    return SizedBox(
+      height: goalCount > 1 ? 112 : 92,
+      child: OrchardPanel(
+        asset: 'assets/ui/goal-banner.png',
+        padding: const EdgeInsets.fromLTRB(26, 12, 26, 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
               children: <Widget>[
-                Expanded(
-                  child: _statBlock(
-                    'حرکت باقی‌مانده',
-                    _fa(_moves),
-                    GamePalette.sky,
-                    key: const ValueKey<String>('stat-moves-value'),
+                const Text(
+                  'هدف مرحله',
+                  style: TextStyle(
+                    color: _chocolate,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w900,
+                    height: 1.1,
                   ),
                 ),
-                Expanded(child: _buildScoreStat()),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 6),
-        // Cream goal banner: "هدف مرحله", goal chips and the progress bar.
-        // Levels that also target obstacles get a taller banner so their
-        // chips wrap on a second row instead of squeezing the fruit goals.
-        SizedBox(
-          height: widget.level.obstacleGoals.isEmpty ? 74 : 126,
-          child: OrchardPanel(
-            asset: 'assets/ui/goal-banner.png',
-            padding: const EdgeInsets.fromLTRB(44, 7, 62, 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    const Text(
-                      'هدف مرحله',
-                      style: TextStyle(
-                        color: _chocolate,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w900,
-                        height: 1.1,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Row(
-                        children: <Widget>[
-                          for (final entry in widget.level.fruitGoals.entries)
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 2),
-                                child: Center(
-                                  child: ConstrainedBox(
-                                    constraints: const BoxConstraints(maxWidth: 118),
-                                    child: _goalChip(entry.key, entry.value),
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                if (widget.level.obstacleGoals.isNotEmpty) ...<Widget>[
-                  const SizedBox(height: 4),
-                  Wrap(
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Wrap(
                     alignment: WrapAlignment.center,
-                    spacing: 5,
+                    spacing: 16,
                     runSpacing: 4,
                     children: <Widget>[
+                      for (final entry in widget.level.fruitGoals.entries)
+                        _goalChip(entry.key, entry.value),
                       for (final entry in widget.level.obstacleGoals.entries)
                         _obstacleGoalChip(entry.key, entry.value),
                     ],
                   ),
-                ],
-                const SizedBox(height: 5),
-                OrchardProgressBar(value: progress, height: 11),
+                ),
               ],
             ),
-          ),
+            const SizedBox(height: 8),
+            OrchardProgressBar(value: progress, height: 18),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -1598,6 +1586,8 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
     );
   }
 
+  /// Plain icon + "current از goal" readout, no chip box — matches the
+  /// reference banner, which prints the goal straight on the parchment.
   Widget _obstacleGoalChip(BoardObstacleType type, int goal) {
     final current = _obstaclesCollected[type] ?? 0;
     final complete = current >= goal;
@@ -1607,62 +1597,56 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
       BoardObstacleType.vine => Icons.park_rounded,
       BoardObstacleType.soil => Icons.grass_rounded,
     };
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
-      decoration: BoxDecoration(
-        color: complete ? const Color(0xFFE2F3D8) : const Color(0xFFF0E2CF),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: complete ? const Color(0xFF8CCB72) : const Color(0xFFE0CBAE),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Icon(icon, size: 22, color: _leaf),
+        const SizedBox(width: 6),
+        Text(
+          '${type.persianName} ${_fa(current)} از ${_fa(goal)}',
+          style: TextStyle(
+            color: complete ? _leaf : _chocolate,
+            fontSize: 13,
+            fontWeight: FontWeight.w900,
+          ),
         ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 15, color: _leaf),
-          const SizedBox(width: 4),
-          Text('${type.persianName} ${_fa(current)}/${_fa(goal)}',
-              style: const TextStyle(color: _brown, fontSize: 9, fontWeight: FontWeight.w800)),
-        ],
-      ),
+      ],
     );
   }
 
+  /// Plain icon + "current از goal" readout, no chip box — matches the
+  /// reference banner (single orange icon with "۹ از ۹" beside it).
   Widget _goalChip(FruitKind kind, int goal) {
     final current = _collected[kind] ?? 0;
     final complete = current >= goal;
-    return AnimatedContainer(
-      duration: _motion(const Duration(milliseconds: 260)),
-      curve: Curves.easeOutCubic,
-      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
-      decoration: BoxDecoration(color: complete ? const Color(0xFFE2F3D8) : const Color(0xFFF0E2CF), borderRadius: BorderRadius.circular(11), border: Border.all(color: complete ? const Color(0xFF8CCB72) : const Color(0xFFE0CBAE))),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AnimatedScale(
-            scale: complete ? 1.15 : 1,
-            duration: _motion(const Duration(milliseconds: 260)),
-            curve: Curves.easeOutBack,
-            child: Image.asset(kind.assetPath, width: 19, height: 19, fit: BoxFit.contain),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        AnimatedScale(
+          scale: complete ? 1.15 : 1,
+          duration: _motion(const Duration(milliseconds: 260)),
+          curve: Curves.easeOutBack,
+          child: Image.asset(kind.assetPath, width: 30, height: 30, fit: BoxFit.contain),
+        ),
+        const SizedBox(width: 7),
+        AnimatedSwitcher(
+          duration: _motion(const Duration(milliseconds: 180)),
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: animation,
+            child: ScaleTransition(scale: animation, child: child),
           ),
-          const SizedBox(width: 2),
-          Flexible(
-            child: AnimatedSwitcher(
-              duration: _motion(const Duration(milliseconds: 180)),
-              transitionBuilder: (child, animation) => FadeTransition(
-                opacity: animation,
-                child: ScaleTransition(scale: animation, child: child),
-              ),
-              child: Text(
-                '${_fa(current)}/${_fa(goal)}',
-                key: ValueKey<int>(current),
-                maxLines: 1,
-                style: TextStyle(color: complete ? _leaf : _brown, fontSize: 9.5, fontWeight: FontWeight.w900),
-              ),
+          child: Text(
+            '${_fa(current)} از ${_fa(goal)}',
+            key: ValueKey<int>(current),
+            maxLines: 1,
+            style: TextStyle(
+              color: complete ? _leaf : _chocolate,
+              fontSize: 15,
+              fontWeight: FontWeight.w900,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
