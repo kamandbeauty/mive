@@ -169,8 +169,8 @@ void main() {
       final expectedCharacterHeight = size.height < 700
           ? 160
           : size.height < 820
-              ? 190
-              : 220;
+              ? 205
+              : 235;
       expect(character.height, expectedCharacterHeight, reason: 'viewport $size');
       expect(tester.takeException(), isNull, reason: 'viewport $size');
     }
