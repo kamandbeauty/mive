@@ -1139,7 +1139,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
           height: widget.level.obstacleGoals.isEmpty ? 74 : 126,
           child: OrchardPanel(
             asset: 'assets/ui/goal-banner.png',
-            padding: const EdgeInsets.fromLTRB(48, 7, 58, 8),
+            padding: const EdgeInsets.fromLTRB(40, 7, 48, 8),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -1634,7 +1634,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
     return AnimatedContainer(
       duration: _motion(const Duration(milliseconds: 260)),
       curve: Curves.easeOutCubic,
-      padding: const EdgeInsets.symmetric(horizontal: 3, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 4),
       decoration: BoxDecoration(color: complete ? const Color(0xFFE2F3D8) : const Color(0xFFF0E2CF), borderRadius: BorderRadius.circular(11), border: Border.all(color: complete ? const Color(0xFF8CCB72) : const Color(0xFFE0CBAE))),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -1643,9 +1643,9 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             scale: complete ? 1.15 : 1,
             duration: _motion(const Duration(milliseconds: 260)),
             curve: Curves.easeOutBack,
-            child: Image.asset(kind.assetPath, width: 22, height: 22, fit: BoxFit.contain),
+            child: Image.asset(kind.assetPath, width: 20, height: 20, fit: BoxFit.contain),
           ),
-          const SizedBox(width: 3),
+          const SizedBox(width: 2),
           Flexible(
             child: AnimatedSwitcher(
               duration: _motion(const Duration(milliseconds: 180)),
@@ -1657,7 +1657,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                 '${_fa(current)}/${_fa(goal)}',
                 key: ValueKey<int>(current),
                 maxLines: 1,
-                style: TextStyle(color: complete ? _leaf : _brown, fontSize: 10, fontWeight: FontWeight.w900),
+                style: TextStyle(color: complete ? _leaf : _brown, fontSize: 9.5, fontWeight: FontWeight.w900),
               ),
             ),
           ),
