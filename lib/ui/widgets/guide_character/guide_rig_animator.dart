@@ -81,7 +81,7 @@ class GuideRigAnimator {
       'armRFore': BonePose(angle: 0.8 * breathe),
       'armRHand': BonePose(angle: 0.6 * breathe),
       'armLUpper': BonePose(angle: -0.35 * breathe),
-      'basket': BonePose(angle: 1.15 * breathe),
+      'basket': BonePose(angle: 1.65 * breathe),
       'skirt': BonePose(angle: 0.25 * breathe),
     });
   }

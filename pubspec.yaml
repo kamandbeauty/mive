@@ -41,6 +41,7 @@ flutter:
     - assets/game/characters/rig/
     - assets/data/levels.json
     - assets/characters/rig/manifest.json
+    - assets/characters/expressions/happy/
     - assets/characters/rig/layers/
     - assets/characters/rig/sockets/
     - assets/backgrounds/

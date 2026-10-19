@@ -247,6 +247,8 @@ void main() {
         expect(tester.takeException(), isNull, reason: event.name);
       }
     }
+    // Let the controller's reaction reset timer fire before the test ends.
+    await tester.pump(const Duration(seconds: 3));
   });
 
   testWidgets('paused and Reduce Motion stop the ticker', (tester) async {
