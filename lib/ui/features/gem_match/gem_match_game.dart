@@ -1042,7 +1042,10 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                   const SizedBox(height: 1),
                   Directionality(
                     textDirection: TextDirection.rtl,
-                    child: Row(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         Text(
@@ -1075,6 +1078,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                           ),
                         ),
                       ],
+                    ),
                     ),
                   ),
                 ],
@@ -1633,7 +1637,8 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
           child: Image.asset(kind.assetPath, width: 27, height: 27, fit: BoxFit.contain),
         ),
         const SizedBox(width: 7),
-        AnimatedSwitcher(
+        Flexible(
+          child: AnimatedSwitcher(
           duration: _motion(const Duration(milliseconds: 180)),
           transitionBuilder: (child, animation) => FadeTransition(
             opacity: animation,
@@ -1648,6 +1653,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               fontSize: 13.5,
               fontWeight: FontWeight.w900,
             ),
+          ),
           ),
         ),
       ],
