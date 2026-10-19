@@ -62,7 +62,7 @@ class GuideCharacter extends StatefulWidget {
 }
 
 class _GuideCharacterState extends State<GuideCharacter>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   final GuideRigAnimator _animator = GuideRigAnimator();
   final GuideRigFrame _frame = GuideRigFrame();
   final _Repaint _repaint = _Repaint();
@@ -86,7 +86,7 @@ class _GuideCharacterState extends State<GuideCharacter>
     _frame.mood = _expressionForMood[_mood] ?? 'happy';
     _ticker = createTicker(_onTick);
     widget.controller?.addListener(_onControllerChanged);
-    WidgetsBinding.instance.addObserver(_lifecycle);
+    WidgetsBinding.instance.addObserver(this);
     final state = WidgetsBinding.instance.lifecycleState;
     _appLifecyclePaused = state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused ||
@@ -105,7 +105,8 @@ class _GuideCharacterState extends State<GuideCharacter>
     }
   }
 
-  void _lifecycle(AppLifecycleState state) {
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     final paused = state == AppLifecycleState.inactive ||
         state == AppLifecycleState.paused ||
         state == AppLifecycleState.hidden;

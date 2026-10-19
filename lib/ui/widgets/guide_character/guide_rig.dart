@@ -81,7 +81,7 @@ class RigPose {
   RigPose blend(RigPose other, double t) {
     final ids = <String>{...bones.keys, ...other.bones.keys};
     return RigPose(<String, BonePose>{
-      for (final id in ids) bone(id).lerpTo(other.bone(id), t),
+      for (final id in ids) id: bone(id).lerpTo(other.bone(id), t),
     });
   }
 
