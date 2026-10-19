@@ -937,60 +937,10 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
 
   Widget _buildHeader() {
     return SizedBox(
-      height: 52,
+      height: 54,
       child: Row(
         children: <Widget>[
-          SizedBox(
-            width: 46,
-            height: 46,
-            child: Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                Positioned.fill(
-                  child: Image.asset(
-                    'assets/ui/button-gold.png',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(9),
-                  child: Image.asset(
-                    'assets/fruit/strawberry.png',
-                    fit: BoxFit.contain,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                FittedBox(
-                  fit: BoxFit.scaleDown,
-                  alignment: AlignmentDirectional.centerStart,
-                  child: const Text('میوه‌چین', style: GamePalette.titleStyle),
-                ),
-                Text(
-                  widget.level.chapterTitle,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: GamePalette.cream.withValues(alpha: 0.92),
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    shadows: const <Shadow>[
-                      Shadow(color: Color(0xAA2C1608), blurRadius: 4),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 6),
-          _buildLevelBadge(),
+          Expanded(child: _buildTitlePlaque()),
           const SizedBox(width: 6),
           _headerButton(
             icon: Icons.pause_rounded,
@@ -1004,6 +954,79 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             plate: 'assets/ui/button-gold.png',
             iconColor: GamePalette.chocolate,
             onPressed: _phase.acceptsInput ? _showHint : null,
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Wooden title plaque from the reference layout: strawberry medallion,
+  /// game title and the current level/chapter underneath it.
+  Widget _buildTitlePlaque() {
+    return OrchardPanel(
+      asset: 'assets/ui/title-plaque-wood-blank.png',
+      padding: const EdgeInsetsDirectional.fromSTEB(9, 3, 14, 3),
+      child: Row(
+        children: <Widget>[
+          SizedBox(
+            width: 40,
+            height: 40,
+            child: Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                Positioned.fill(
+                  child: Image.asset(
+                    'assets/ui/button-gold.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Image.asset(
+                    'assets/fruit/strawberry.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 7),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                    'میوه‌چین',
+                    style: TextStyle(
+                      color: Color(0xFFFFF6E2),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                      height: 1.05,
+                      shadows: <Shadow>[
+                        Shadow(color: Color(0xAA3A1C08), blurRadius: 5, offset: Offset(0, 2)),
+                      ],
+                    ),
+                  ),
+                ),
+                Text(
+                  'مرحله ${_fa(widget.level.id)} • ${widget.level.chapterTitle}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: GamePalette.cream.withValues(alpha: 0.95),
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w800,
+                    shadows: const <Shadow>[
+                      Shadow(color: Color(0xAA2C1608), blurRadius: 4),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -1050,28 +1073,6 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
     );
   }
 
-  Widget _buildLevelBadge() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        gradient: GamePalette.goldGradient,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFFFF3D0), width: 1.6),
-        boxShadow: GamePalette.chipShadow,
-      ),
-      child: Text(
-        'مرحله ${_fa(widget.level.id)}',
-        maxLines: 1,
-        style: const TextStyle(
-          color: _chocolate,
-          fontSize: 12,
-          height: 1.1,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
-    );
-  }
-
   Widget _buildHud() {
     final collected = widget.level.fruitGoals.entries.fold<int>(
           0,
@@ -1085,31 +1086,17 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
     final target = widget.level.fruitGoals.values.fold<int>(0, (sum, value) => sum + value) +
         widget.level.obstacleGoals.values.fold<int>(0, (sum, value) => sum + value);
     final progress = target == 0 ? 0.0 : (collected / target).clamp(0.0, 1.0).toDouble();
-    return Container(
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: <Color>[GamePalette.creamLight, GamePalette.creamDeep],
-        ),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: GamePalette.wood, width: 3),
-        boxShadow: GamePalette.panelShadow,
-      ),
-      padding: const EdgeInsets.all(3),
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(12, 8, 12, 9),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: GamePalette.gold.withValues(alpha: 0.85),
-            width: 1.4,
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Row(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        // Wooden two-cell stats panel, exactly as in the reference: moves on
+        // one side, score / target with a star on the other.
+        SizedBox(
+          height: 58,
+          child: OrchardPanel(
+            asset: 'assets/ui/hud-panel.png',
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
+            child: Row(
               children: <Widget>[
                 Expanded(
                   child: _statBlock(
@@ -1119,64 +1106,125 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                     key: const ValueKey<String>('stat-moves-value'),
                   ),
                 ),
-                _hudDivider(),
-                Expanded(
-                  child: _statBlock(
-                    'امتیاز',
-                    _fa(_score),
-                    GamePalette.orange,
-                    key: const ValueKey<String>('stat-score-value'),
-                  ),
-                ),
-                _hudDivider(),
-                Expanded(
-                  child: _statBlock(
-                    'هدف',
-                    _fa(widget.level.targetScore),
-                    GamePalette.leaf,
-                    key: const ValueKey<String>('stat-target-value'),
-                  ),
-                ),
+                Expanded(child: _buildScoreStat()),
               ],
             ),
-            const SizedBox(height: 6),
-            Row(
-              children: <Widget>[
-                for (final entry in widget.level.fruitGoals.entries)
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 2),
-                      child: _goalChip(entry.key, entry.value),
-                    ),
-                  ),
-              ],
-            ),
-            if (widget.level.obstacleGoals.isNotEmpty) ...<Widget>[
-              const SizedBox(height: 4),
-              Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 5,
-                runSpacing: 4,
-                children: <Widget>[
-                  for (final entry in widget.level.obstacleGoals.entries)
-                    _obstacleGoalChip(entry.key, entry.value),
-                ],
-              ),
-            ],
-            const SizedBox(height: 6),
-            OrchardProgressBar(value: progress, height: 12),
-          ],
+          ),
         ),
-      ),
+        const SizedBox(height: 6),
+        // Cream goal banner: "هدف مرحله", goal chips and the progress bar.
+        SizedBox(
+          height: 74,
+          child: OrchardPanel(
+            asset: 'assets/ui/goal-banner.png',
+            padding: const EdgeInsets.fromLTRB(26, 7, 26, 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    const Text(
+                      'هدف مرحله',
+                      style: TextStyle(
+                        color: _chocolate,
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w900,
+                        height: 1.1,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Row(
+                        children: <Widget>[
+                          for (final entry in widget.level.fruitGoals.entries)
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 2),
+                                child: _goalChip(entry.key, entry.value),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    if (widget.level.obstacleGoals.isNotEmpty) ...<Widget>[
+                      const SizedBox(width: 4),
+                      Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 5,
+                        runSpacing: 4,
+                        children: <Widget>[
+                          for (final entry in widget.level.obstacleGoals.entries)
+                            _obstacleGoalChip(entry.key, entry.value),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+                const SizedBox(height: 5),
+                OrchardProgressBar(value: progress, height: 11),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _hudDivider() => Container(
-        width: 1,
-        height: 30,
-        margin: const EdgeInsets.symmetric(horizontal: 6),
-        color: GamePalette.wood.withValues(alpha: 0.20),
-      );
+  /// Score cell of the wooden panel: "score / target" with a gold star, laid
+  /// out like the reference. The target keeps its own keyed [Text] so tests
+  /// can still read the raw target value.
+  Widget _buildScoreStat() {
+    return Column(
+      key: const ValueKey<String>('stat-score-value'),
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              _fa(_score),
+              maxLines: 1,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                height: 1.05,
+                fontWeight: FontWeight.w900,
+                shadows: <Shadow>[
+                  Shadow(color: Color(0xAA3A1C08), blurRadius: 4, offset: Offset(0, 1)),
+                ],
+              ),
+            ),
+            const Text(
+              ' / ',
+              style: TextStyle(
+                color: Color(0xFFFFE3B3),
+                fontSize: 14,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            Container(
+              key: const ValueKey<String>('stat-target-value'),
+              child: Text(
+                _fa(widget.level.targetScore),
+                maxLines: 1,
+                style: const TextStyle(
+                  color: Color(0xFFFFE3B3),
+                  fontSize: 16,
+                  height: 1.05,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.star_rounded, size: 18, color: GamePalette.gold),
+          ],
+        ),
+        const SizedBox(height: 1),
+        const Text('امتیاز', style: TextStyle(color: Color(0xFFFFE3B3), fontSize: 10, fontWeight: FontWeight.w800, height: 1.1)),
+      ],
+    );
+  }
 
   Widget _statBlock(
     String label,
@@ -1187,6 +1235,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
       Column(
         key: key,
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           FittedBox(
             fit: BoxFit.scaleDown,
@@ -1194,15 +1243,18 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               value,
               maxLines: 1,
               style: const TextStyle(
-                color: _chocolate,
-                fontSize: 19,
+                color: Colors.white,
+                fontSize: 20,
                 height: 1.05,
                 fontWeight: FontWeight.w900,
+                shadows: <Shadow>[
+                  Shadow(color: Color(0xAA3A1C08), blurRadius: 4, offset: Offset(0, 1)),
+                ],
               ),
             ),
           ),
           const SizedBox(height: 1),
-          Text(label, style: GamePalette.labelStyle),
+          Text(label, style: const TextStyle(color: Color(0xFFFFE3B3), fontSize: 10, fontWeight: FontWeight.w800, height: 1.1)),
           const SizedBox(height: 2),
           Container(
             width: 22,
@@ -1218,8 +1270,9 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   Widget _buildCharacterZone(double height) {
     final caption = _orchardGirl.caption;
     final characterWidth = height * GuideCharacter.aspect;
-    final trayHeight = (height * 0.28).clamp(40.0, 60.0).toDouble();
-    final boosterHeight = (height * 0.27).clamp(36.0, 56.0).toDouble();
+    final trayHeight = (height * 0.30).clamp(42.0, 58.0).toDouble();
+    final boosterHeight = (height * 0.26).clamp(38.0, 50.0).toDouble();
+    final dockHeight = trayHeight + boosterHeight + 17;
     return SizedBox(
       height: height,
       child: LayoutBuilder(
@@ -1229,6 +1282,8 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
           return Stack(
             clipBehavior: Clip.none,
             children: <Widget>[
+              // The guide stands fully visible at the bottom edge, exactly
+              // like the reference; nothing is stacked on top of her.
               Positioned(
                 left: 0,
                 bottom: 0,
@@ -1240,37 +1295,61 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                   paused: _phase == GamePhase.paused,
                 ),
               ),
+              // One unified wooden dock: the four-slot power tray on top and
+              // the three inventory boosters underneath it.
               PositionedDirectional(
                 end: 0,
                 bottom: 0,
                 width: controlsWidth,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    _buildPowerTray(trayHeight),
-                    const SizedBox(height: 5),
-                    _buildBoosterBar(boosterHeight),
-                  ],
-                ),
+                child: _buildControlDock(trayHeight, boosterHeight),
               ),
-              PositionedDirectional(
-                start: characterWidth * 0.55,
-                end: 0,
-                top: 0,
-                height: max(0.0, height - trayHeight - boosterHeight - 10),
-                child: Align(
-                  alignment: AlignmentDirectional.bottomEnd,
-                  child: caption == null
-                      ? const SizedBox.shrink()
-                      : OrchardBubble(
-                          key: ValueKey<String>(caption),
-                          message: caption,
-                        ),
+              // Her speech bubble floats beside her face, clear of both the
+              // board above and the character herself.
+              if (caption != null)
+                Positioned(
+                  left: characterWidth * 0.82,
+                  right: 2,
+                  top: 0,
+                  height: max(38.0, height - dockHeight - 4),
+                  child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: OrchardBubble(
+                      key: ValueKey<String>(caption),
+                      message: caption,
+                    ),
+                  ),
                 ),
-              ),
             ],
           );
         },
+      ),
+    );
+  }
+
+  /// The single bottom-right control dock from the reference layout.
+  Widget _buildControlDock(double trayHeight, double boosterHeight) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: <Color>[Color(0xFF8A5427), Color(0xFF673812)],
+        ),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: GamePalette.gold.withValues(alpha: 0.75),
+          width: 1.6,
+        ),
+        boxShadow: GamePalette.panelShadow,
+      ),
+      padding: const EdgeInsets.all(6),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          _buildPowerTray(trayHeight),
+          const SizedBox(height: 5),
+          _buildBoosterBar(boosterHeight),
+        ],
       ),
     );
   }
