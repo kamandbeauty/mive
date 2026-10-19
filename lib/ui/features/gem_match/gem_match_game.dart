@@ -1012,18 +1012,36 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                     ),
                   ),
                 ),
-                Text(
-                  'مرحله ${_fa(widget.level.id)} • ${widget.level.chapterTitle}',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: GamePalette.cream.withValues(alpha: 0.95),
-                    fontSize: 9.5,
-                    fontWeight: FontWeight.w800,
-                    shadows: const <Shadow>[
-                      Shadow(color: Color(0xAA2C1608), blurRadius: 4),
-                    ],
-                  ),
+                Row(
+                  children: <Widget>[
+                    Text(
+                      'مرحله ${_fa(widget.level.id)}',
+                      maxLines: 1,
+                      style: TextStyle(
+                        color: GamePalette.cream.withValues(alpha: 0.98),
+                        fontSize: 9.5,
+                        fontWeight: FontWeight.w900,
+                        shadows: const <Shadow>[
+                          Shadow(color: Color(0xAA2C1608), blurRadius: 4),
+                        ],
+                      ),
+                    ),
+                    Flexible(
+                      child: Text(
+                        ' • ${widget.level.chapterTitle}',
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: GamePalette.cream.withValues(alpha: 0.88),
+                          fontSize: 9.5,
+                          fontWeight: FontWeight.w700,
+                          shadows: const <Shadow>[
+                            Shadow(color: Color(0xAA2C1608), blurRadius: 4),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -1113,8 +1131,10 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
         ),
         const SizedBox(height: 6),
         // Cream goal banner: "هدف مرحله", goal chips and the progress bar.
+        // Levels that also target obstacles get a taller banner so their
+        // chips wrap on a second row instead of squeezing the fruit goals.
         SizedBox(
-          height: 74,
+          height: widget.level.obstacleGoals.isEmpty ? 74 : 108,
           child: OrchardPanel(
             asset: 'assets/ui/goal-banner.png',
             padding: const EdgeInsets.fromLTRB(26, 7, 26, 8),
@@ -1146,20 +1166,20 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                         ],
                       ),
                     ),
-                    if (widget.level.obstacleGoals.isNotEmpty) ...<Widget>[
-                      const SizedBox(width: 4),
-                      Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 5,
-                        runSpacing: 4,
-                        children: <Widget>[
-                          for (final entry in widget.level.obstacleGoals.entries)
-                            _obstacleGoalChip(entry.key, entry.value),
-                        ],
-                      ),
-                    ],
                   ],
                 ),
+                if (widget.level.obstacleGoals.isNotEmpty) ...<Widget>[
+                  const SizedBox(height: 4),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 5,
+                    runSpacing: 4,
+                    children: <Widget>[
+                      for (final entry in widget.level.obstacleGoals.entries)
+                        _obstacleGoalChip(entry.key, entry.value),
+                    ],
+                  ),
+                ],
                 const SizedBox(height: 5),
                 OrchardProgressBar(value: progress, height: 11),
               ],
