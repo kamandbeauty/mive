@@ -982,8 +982,8 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               filterQuality: FilterQuality.medium,
             ),
             Positioned(
-              left: width * 0.27,
-              right: 22,
+              left: width * 0.24,
+              right: 16,
               top: 0,
               bottom: 0,
               child: Column(
@@ -1026,7 +1026,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                           ),
                         ),
                         ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 120),
+                          constraints: const BoxConstraints(maxWidth: 78),
                           child: Text(
                             ' • ${widget.level.chapterTitle}',
                             maxLines: 1,
