@@ -1,0 +1,505 @@
+{
+ "canvas": [
+  512,
+  768
+ ],
+ "joints": {
+  "root": [
+   196,
+   726
+  ],
+  "hip": [
+   196,
+   498
+  ],
+  "spine": [
+   196,
+   398
+  ],
+  "neck": [
+   206,
+   268
+  ],
+  "head": [
+   200,
+   214
+  ],
+  "shoulderLeft": [
+   150,
+   286
+  ],
+  "elbowLeft": [
+   102,
+   366
+  ],
+  "wristLeft": [
+   238,
+   432
+  ],
+  "handLeft": [
+   252,
+   442
+  ],
+  "shoulderRight": [
+   262,
+   300
+  ],
+  "elbowRight": [
+   284,
+   404
+  ],
+  "wristRight": [
+   306,
+   472
+  ],
+  "handRight": [
+   314,
+   492
+  ],
+  "basket": [
+   150,
+   348
+  ],
+  "elbowRightSplit": [
+   288,
+   402
+  ],
+  "apron": [
+   196,
+   398
+  ],
+  "lockLeft": [
+   108,
+   180
+  ],
+  "lockRight": [
+   276,
+   178
+  ],
+  "bangs": [
+   200,
+   104
+  ]
+ },
+ "layers": {
+  "hair_back": {
+   "rect": [
+    60,
+    54,
+    236,
+    274
+   ],
+   "group": "hair"
+  },
+  "face_base": {
+   "rect": [
+    116,
+    96,
+    179,
+    197
+   ],
+   "group": "face"
+  },
+  "hair_front": {
+   "rect": [
+    108,
+    76,
+    184,
+    109
+   ],
+   "group": "hair"
+  },
+  "lock_left": {
+   "rect": [
+    67,
+    126,
+    87,
+    133
+   ],
+   "group": "hair"
+  },
+  "lock_right": {
+   "rect": [
+    248,
+    122,
+    47,
+    134
+   ],
+   "group": "hair"
+  },
+  "torso": {
+   "rect": [
+    50,
+    248,
+    242,
+    173
+   ],
+   "group": "body"
+  },
+  "apron_tail": {
+   "rect": [
+    66,
+    364,
+    243,
+    171
+   ],
+   "group": "body"
+  },
+  "legs": {
+   "rect": [
+    82,
+    450,
+    227,
+    285
+   ],
+   "group": "body"
+  },
+  "basket_bowl": {
+   "rect": [
+    45,
+    398,
+    142,
+    122
+   ],
+   "group": "body"
+  },
+  "basket_handle": {
+   "rect": [
+    45,
+    327,
+    123,
+    133
+   ],
+   "group": "body"
+  },
+  "arm_left": {
+   "rect": [
+    85,
+    255,
+    161,
+    185
+   ],
+   "group": "body"
+  },
+  "arm_right_up": {
+   "rect": [
+    239,
+    279,
+    41,
+    135
+   ],
+   "group": "body"
+  },
+  "arm_right_fore": {
+   "rect": [
+    260,
+    378,
+    48,
+    123
+   ],
+   "group": "body"
+  },
+  "eyes_open_left": {
+   "rect": [
+    149,
+    145,
+    69,
+    65
+   ],
+   "group": "face:eyes"
+  },
+  "eyes_open_right": {
+   "rect": [
+    213,
+    143,
+    70,
+    65
+   ],
+   "group": "face:eyes"
+  },
+  "eyes_wide_left": {
+   "rect": [
+    149,
+    145,
+    69,
+    65
+   ],
+   "group": "face:eyes"
+  },
+  "eyes_wide_right": {
+   "rect": [
+    213,
+    143,
+    70,
+    65
+   ],
+   "group": "face:eyes"
+  },
+  "eyes_soft_left": {
+   "rect": [
+    149,
+    145,
+    69,
+    65
+   ],
+   "group": "face:eyes"
+  },
+  "eyes_soft_right": {
+   "rect": [
+    213,
+    143,
+    70,
+    65
+   ],
+   "group": "face:eyes"
+  },
+  "eyes_closed_left": {
+   "rect": [
+    149,
+    145,
+    69,
+    65
+   ],
+   "group": "face:eyes"
+  },
+  "eyes_closed_right": {
+   "rect": [
+    213,
+    143,
+    70,
+    65
+   ],
+   "group": "face:eyes"
+  },
+  "brows_neutral_left": {
+   "rect": [
+    144,
+    114,
+    79,
+    43
+   ],
+   "group": "face:brows"
+  },
+  "brows_neutral_right": {
+   "rect": [
+    210,
+    112,
+    79,
+    43
+   ],
+   "group": "face:brows"
+  },
+  "brows_raised_left": {
+   "rect": [
+    144,
+    114,
+    79,
+    43
+   ],
+   "group": "face:brows"
+  },
+  "brows_raised_right": {
+   "rect": [
+    210,
+    112,
+    79,
+    43
+   ],
+   "group": "face:brows"
+  },
+  "brows_soft_left": {
+   "rect": [
+    144,
+    114,
+    79,
+    43
+   ],
+   "group": "face:brows"
+  },
+  "brows_soft_right": {
+   "rect": [
+    210,
+    112,
+    79,
+    43
+   ],
+   "group": "face:brows"
+  },
+  "brows_sad_left": {
+   "rect": [
+    144,
+    114,
+    79,
+    43
+   ],
+   "group": "face:brows"
+  },
+  "brows_sad_right": {
+   "rect": [
+    210,
+    112,
+    79,
+    43
+   ],
+   "group": "face:brows"
+  },
+  "brows_joy_left": {
+   "rect": [
+    144,
+    114,
+    79,
+    43
+   ],
+   "group": "face:brows"
+  },
+  "brows_joy_right": {
+   "rect": [
+    210,
+    112,
+    79,
+    43
+   ],
+   "group": "face:brows"
+  },
+  "mouth_smile": {
+   "rect": [
+    174,
+    198,
+    87,
+    62
+   ],
+   "group": "face:mouth"
+  },
+  "mouth_grin": {
+   "rect": [
+    174,
+    198,
+    87,
+    62
+   ],
+   "group": "face:mouth"
+  },
+  "mouth_open": {
+   "rect": [
+    174,
+    198,
+    87,
+    63
+   ],
+   "group": "face:mouth"
+  },
+  "mouth_soft": {
+   "rect": [
+    174,
+    198,
+    87,
+    62
+   ],
+   "group": "face:mouth"
+  },
+  "mouth_sad": {
+   "rect": [
+    174,
+    198,
+    87,
+    62
+   ],
+   "group": "face:mouth"
+  },
+  "mouth_laugh": {
+   "rect": [
+    174,
+    198,
+    87,
+    63
+   ],
+   "group": "face:mouth"
+  }
+ },
+ "order": [
+  "hair_back",
+  "legs",
+  "torso",
+  "apron_tail",
+  "arm_left",
+  "basket_bowl",
+  "basket_handle",
+  "arm_right_up",
+  "arm_right_fore",
+  "face_base",
+  "eyes",
+  "brows",
+  "mouth",
+  "lock_left",
+  "lock_right",
+  "hair_front"
+ ],
+ "moodFace": {
+  "idle": {
+   "eyes": "open",
+   "brows": "neutral",
+   "mouth": "smile"
+  },
+  "happy": {
+   "eyes": "open",
+   "brows": "joy",
+   "mouth": "grin"
+  },
+  "excited": {
+   "eyes": "wide",
+   "brows": "raised",
+   "mouth": "open"
+  },
+  "encourage": {
+   "eyes": "soft",
+   "brows": "soft",
+   "mouth": "soft"
+  },
+  "sad": {
+   "eyes": "soft",
+   "brows": "sad",
+   "mouth": "sad"
+  },
+  "celebrate": {
+   "eyes": "open",
+   "brows": "joy",
+   "mouth": "laugh"
+  },
+  "harvest": {
+   "eyes": "open",
+   "brows": "joy",
+   "mouth": "grin"
+  }
+ },
+ "variants": {
+  "eyes": {
+   "open": "idle",
+   "wide": "excited",
+   "soft": "encourage",
+   "closed": "blink"
+  },
+  "brows": {
+   "neutral": "idle",
+   "raised": "excited",
+   "soft": "encourage",
+   "sad": "sad",
+   "joy": "happy"
+  },
+  "mouth": {
+   "smile": "idle",
+   "grin": "happy",
+   "open": "excited",
+   "soft": "encourage",
+   "sad": "sad",
+   "laugh": "celebrate"
+  }
+ },
+ "poseLimits": {
+  "head": 9,
+  "neck": 6,
+  "spine": 4,
+  "shoulder": 24,
+  "elbow": 20,
+  "lock": 12
+ }
+}

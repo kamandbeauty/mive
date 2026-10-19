@@ -1,0 +1,1517 @@
+{
+ "blink": {
+  "full": {
+   "left": [
+    "face-eye-left-laughing-5b0269"
+   ],
+   "right": [
+    "face-eye-right-laughing-b15f81"
+   ]
+  },
+  "left": {
+   "left": [
+    "face-eye-left-winking-d50ecf"
+   ]
+  },
+  "right": {
+   "right": [
+    "face-eye-right-laughing-b15f81"
+   ]
+  }
+ },
+ "bones": {
+  "armLFore": {
+   "label": "left elbow",
+   "parent": "armLUpper",
+   "pivot": [
+    392.5,
+    591.0
+   ]
+  },
+  "armLHand": {
+   "label": "left wrist",
+   "parent": "armLFore",
+   "pivot": [
+    495.1,
+    653.8
+   ]
+  },
+  "armLUpper": {
+   "label": "left shoulder",
+   "parent": "body",
+   "pivot": [
+    441.0,
+    502.0
+   ]
+  },
+  "armRFore": {
+   "label": "right elbow",
+   "parent": "armRUpper",
+   "pivot": [
+    756.0,
+    418.0
+   ]
+  },
+  "armRHand": {
+   "label": "right wrist",
+   "parent": "armRFore",
+   "pivot": [
+    791.9,
+    355.1
+   ]
+  },
+  "armRUpper": {
+   "label": "right shoulder",
+   "parent": "body",
+   "pivot": [
+    672.0,
+    470.0
+   ]
+  },
+  "basket": {
+   "label": "basket pendulum",
+   "parent": "armLHand",
+   "pivot": [
+    474.8,
+    656.1
+   ]
+  },
+  "body": {
+   "label": "waist / torso lean",
+   "parent": "root",
+   "pivot": [
+    573.0,
+    660.0
+   ]
+  },
+  "bow": {
+   "label": "apron bow",
+   "parent": "root",
+   "pivot": [
+    573.0,
+    660.0
+   ]
+  },
+  "calfL": {
+   "label": "left knee",
+   "parent": "legL",
+   "pivot": [
+    484.8,
+    908.0
+   ]
+  },
+  "calfR": {
+   "label": "right knee",
+   "parent": "legR",
+   "pivot": [
+    612.0,
+    907.9
+   ]
+  },
+  "clip": {
+   "label": "strawberry clip",
+   "parent": "hairFrontR",
+   "pivot": [
+    566.0,
+    150.0
+   ]
+  },
+  "faceBrows": {
+   "label": "brows",
+   "parent": "neck",
+   "pivot": [
+    569.0,
+    509.0
+   ]
+  },
+  "faceDetails": {
+   "label": "blush / tears",
+   "parent": "neck",
+   "pivot": [
+    569.0,
+    509.0
+   ]
+  },
+  "faceEyes": {
+   "label": "eye plate (blink swap)",
+   "parent": "neck",
+   "pivot": [
+    569.0,
+    509.0
+   ]
+  },
+  "faceMouth": {
+   "label": "mouth",
+   "parent": "neck",
+   "pivot": [
+    569.0,
+    509.0
+   ]
+  },
+  "hairBack": {
+   "label": "back hair sway",
+   "parent": "neck",
+   "pivot": [
+    566.0,
+    150.0
+   ]
+  },
+  "hairFrontL": {
+   "label": "front curl left",
+   "parent": "neck",
+   "pivot": [
+    566.0,
+    150.0
+   ]
+  },
+  "hairFrontR": {
+   "label": "front curl right",
+   "parent": "neck",
+   "pivot": [
+    566.0,
+    150.0
+   ]
+  },
+  "legL": {
+   "label": "left thigh",
+   "parent": "root",
+   "pivot": [
+    500.0,
+    748.0
+   ]
+  },
+  "legR": {
+   "label": "right thigh",
+   "parent": "root",
+   "pivot": [
+    636.0,
+    748.0
+   ]
+  },
+  "neck": {
+   "label": "head + neck turn",
+   "parent": "body",
+   "pivot": [
+    569.0,
+    509.0
+   ]
+  },
+  "nose": {
+   "label": "nose",
+   "parent": "neck",
+   "pivot": [
+    569.0,
+    509.0
+   ]
+  },
+  "root": {
+   "label": "feet",
+   "parent": null,
+   "pivot": [
+    566.0,
+    1088.0
+   ]
+  },
+  "shoeL": {
+   "label": "left ankle",
+   "parent": "calfL",
+   "pivot": [
+    473.6,
+    995.8
+   ]
+  },
+  "shoeR": {
+   "label": "right ankle",
+   "parent": "calfR",
+   "pivot": [
+    622.3,
+    990.8
+   ]
+  },
+  "skirt": {
+   "label": "skirt follows the waist",
+   "parent": "root",
+   "pivot": [
+    573.0,
+    660.0
+   ]
+  }
+ },
+ "canvas": 1152,
+ "faces": {
+  "crying": {
+   "details": [
+    "face-details-crying-c11c09"
+   ],
+   "eye-left": [
+    "face-eye-left-sad-64a345"
+   ],
+   "eye-right": [
+    "face-eye-right-winking-d6e01d"
+   ],
+   "eyebrow-left": [
+    "face-eyebrow-left-crying-9e59d7"
+   ],
+   "eyebrow-right": [
+    "face-eyebrow-right-crying-94a7a4"
+   ],
+   "mouth": [
+    "face-mouth-crying-c8c551"
+   ]
+  },
+  "excited": {
+   "details": [
+    "face-details-excited-119efa"
+   ],
+   "eye-left": [
+    "face-eye-left-excited-288983"
+   ],
+   "eye-right": [
+    "face-eye-right-excited-267925"
+   ],
+   "eyebrow-left": [
+    "face-eyebrow-left-excited-473d49"
+   ],
+   "eyebrow-right": [
+    "face-eyebrow-right-excited-ba0275"
+   ],
+   "mouth": [
+    "face-mouth-excited-307636"
+   ]
+  },
+  "happy": {
+   "eye-left": [
+    "eye-left",
+    "lid-upper-left",
+    "lid-lower-left"
+   ],
+   "eye-right": [
+    "eye-right",
+    "lid-upper-right",
+    "lid-lower-right"
+   ],
+   "eyebrow-left": [
+    "brow-left"
+   ],
+   "eyebrow-right": [
+    "brow-right"
+   ],
+   "mouth": [
+    "mouth"
+   ]
+  },
+  "laughing": {
+   "eye-left": [
+    "face-eye-left-laughing-5b0269"
+   ],
+   "eye-right": [
+    "face-eye-right-laughing-b15f81"
+   ],
+   "eyebrow-left": [
+    "face-eyebrow-left-excited-473d49"
+   ],
+   "eyebrow-right": [
+    "face-eyebrow-right-excited-ba0275"
+   ],
+   "mouth": [
+    "face-mouth-excited-307636"
+   ]
+  },
+  "sad": {
+   "details": [
+    "face-details-sad-cc4698"
+   ],
+   "eye-left": [
+    "face-eye-left-sad-64a345"
+   ],
+   "eye-right": [
+    "face-eye-right-winking-d6e01d"
+   ],
+   "eyebrow-left": [
+    "face-eyebrow-left-sad-d4a43e"
+   ],
+   "eyebrow-right": [
+    "face-eyebrow-right-sad-3681d7"
+   ],
+   "mouth": [
+    "face-mouth-sad-d6cce8"
+   ]
+  },
+  "surprised": {
+   "eye-left": [
+    "face-eye-left-surprised-14ea6c"
+   ],
+   "eye-right": [
+    "face-eye-right-surprised-d749b4"
+   ],
+   "eyebrow-left": [
+    "face-eyebrow-left-surprised-2f2dc0"
+   ],
+   "eyebrow-right": [
+    "face-eyebrow-right-surprised-570e5e"
+   ],
+   "mouth": [
+    "face-mouth-surprised-1bfbaa"
+   ]
+  },
+  "winking": {
+   "eye-left": [
+    "face-eye-left-winking-d50ecf"
+   ],
+   "eye-right": [
+    "face-eye-right-winking-d6e01d"
+   ],
+   "eyebrow-left": [
+    "face-eyebrow-left-excited-473d49"
+   ],
+   "eyebrow-right": [
+    "face-eyebrow-right-excited-ba0275"
+   ],
+   "mouth": [
+    "face-mouth-excited-307636"
+   ]
+  }
+ },
+ "joints": {
+  "ankleL": [
+   473.6,
+   995.8
+  ],
+  "ankleR": [
+   622.3,
+   990.8
+  ],
+  "crown": [
+   566.0,
+   150.0
+  ],
+  "elbowL": [
+   392.5,
+   591.0
+  ],
+  "elbowR": [
+   756.0,
+   418.0
+  ],
+  "grip": [
+   474.8,
+   656.1
+  ],
+  "hip": [
+   566.0,
+   745.0
+  ],
+  "hipL": [
+   500.0,
+   748.0
+  ],
+  "hipR": [
+   636.0,
+   748.0
+  ],
+  "kneeL": [
+   484.8,
+   908.0
+  ],
+  "kneeR": [
+   612.0,
+   907.9
+  ],
+  "neck": [
+   569.0,
+   509.0
+  ],
+  "root": [
+   566.0,
+   1088.0
+  ],
+  "shoulderL": [
+   441.0,
+   502.0
+  ],
+  "shoulderR": [
+   672.0,
+   470.0
+  ],
+  "waist": [
+   573.0,
+   660.0
+  ],
+  "wristL": [
+   495.1,
+   653.8
+  ],
+  "wristR": [
+   791.9,
+   355.1
+  ]
+ },
+ "layers": {
+  "arm-left-fore": {
+   "bone": "armLFore",
+   "file": "layers/arm-left-fore.png",
+   "pivot": [
+    392.5,
+    591.0
+   ],
+   "rect": [
+    338,
+    563,
+    200,
+    112
+   ],
+   "source": "assets/characters/guide-rig/28_forearm-carry.png",
+   "sourceHash": "74ebbf8c32546efe",
+   "z": 40
+  },
+  "arm-left-hand": {
+   "bone": "armLHand",
+   "file": "layers/arm-left-hand.png",
+   "pivot": [
+    495.1,
+    653.8
+   ],
+   "rect": [
+    464,
+    633,
+    111,
+    74
+   ],
+   "source": "assets/characters/guide-rig/30_hand-carry.png",
+   "sourceHash": "13b707944a766c2f",
+   "z": 42
+  },
+  "arm-left-upper": {
+   "bone": "armLUpper",
+   "file": "layers/arm-left-upper.png",
+   "pivot": [
+    441.0,
+    502.0
+   ],
+   "rect": [
+    337,
+    435,
+    152,
+    185
+   ],
+   "source": "assets/characters/guide-rig/11_upper-arm-carry.png",
+   "sourceHash": "9c7c140bb67b3035",
+   "z": 24
+  },
+  "arm-right-fore": {
+   "bone": "armRFore",
+   "file": "layers/arm-right-fore.png",
+   "pivot": [
+    756.0,
+    418.0
+   ],
+   "rect": [
+    728,
+    328,
+    91,
+    130
+   ],
+   "source": "assets/characters/guide-rig/09_forearm-wave.png",
+   "sourceHash": "8ff225881f2c71b8",
+   "z": 22
+  },
+  "arm-right-hand": {
+   "bone": "armRHand",
+   "file": "layers/arm-right-hand.png",
+   "pivot": [
+    791.9,
+    355.1
+   ],
+   "rect": [
+    764,
+    245,
+    117,
+    142
+   ],
+   "source": "assets/characters/guide-rig/10_hand-wave.png",
+   "sourceHash": "83f414fb93183059",
+   "z": 23
+  },
+  "arm-right-upper": {
+   "bone": "armRUpper",
+   "file": "layers/arm-right-upper.png",
+   "pivot": [
+    672.0,
+    470.0
+   ],
+   "rect": [
+    626,
+    380,
+    166,
+    136
+   ],
+   "source": "assets/characters/guide-rig/08_upper-arm-wave.png",
+   "sourceHash": "502d98c066e9ea72",
+   "z": 21
+  },
+  "basket-bowl": {
+   "bone": "basket",
+   "file": "layers/basket-bowl.png",
+   "pivot": [
+    474.8,
+    656.1
+   ],
+   "rect": [
+    277,
+    613,
+    244,
+    220
+   ],
+   "source": "assets/characters/guide-rig/27_basket-bowl.png",
+   "sourceHash": "f552b9d66c8a1a19",
+   "z": 39
+  },
+  "basket-handle": {
+   "bone": "basket",
+   "file": "layers/basket-handle.png",
+   "pivot": [
+    474.8,
+    656.1
+   ],
+   "rect": [
+    309,
+    577,
+    181,
+    159
+   ],
+   "source": "assets/characters/guide-rig/29_basket-handle.png",
+   "sourceHash": "3e031678877ce64d",
+   "z": 41
+  },
+  "body": {
+   "bone": "body",
+   "file": "layers/body.png",
+   "pivot": [
+    573.0,
+    660.0
+   ],
+   "rect": [
+    370,
+    398,
+    364,
+    306
+   ],
+   "source": "assets/characters/guide-rig/13_body-and-overalls.png",
+   "sourceHash": "c40fc40f45a0933d",
+   "z": 28
+  },
+  "bow": {
+   "bone": "bow",
+   "file": "layers/bow.png",
+   "pivot": [
+    573.0,
+    660.0
+   ],
+   "rect": [
+    584,
+    631,
+    94,
+    123
+   ],
+   "source": "assets/characters/guide-rig/26_waist-bow.png",
+   "sourceHash": "e699c1b2f3948bee",
+   "z": 38
+  },
+  "brow-left": {
+   "bone": "faceBrows",
+   "file": "layers/brow-left.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    497,
+    223,
+    95,
+    48
+   ],
+   "source": "assets/characters/guide-rig/15_eyebrow-left.png",
+   "sourceHash": "23bf1f7e74a7edbb",
+   "z": 30.2
+  },
+  "brow-right": {
+   "bone": "faceBrows",
+   "file": "layers/brow-right.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    609,
+    221,
+    70,
+    41
+   ],
+   "source": "assets/characters/guide-rig/16_eyebrow-right.png",
+   "sourceHash": "de16ae117efb8482",
+   "z": 30.3
+  },
+  "clip": {
+   "bone": "clip",
+   "file": "layers/clip.png",
+   "pivot": [
+    566.0,
+    150.0
+   ],
+   "rect": [
+    429,
+    184,
+    59,
+    60
+   ],
+   "source": "assets/characters/guide-rig/31_strawberry-hairclip.png",
+   "sourceHash": "182ba877d4a6d883",
+   "z": 43
+  },
+  "eye-left": {
+   "bone": "faceEyes",
+   "file": "layers/eye-left.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    502,
+    266,
+    90,
+    79
+   ],
+   "source": "assets/characters/guide-rig/17_eye-left.png",
+   "sourceHash": "574536a3d521830e",
+   "z": 30.4
+  },
+  "eye-right": {
+   "bone": "faceEyes",
+   "file": "layers/eye-right.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    605,
+    256,
+    72,
+    85
+   ],
+   "source": "assets/characters/guide-rig/18_eye-right.png",
+   "sourceHash": "874fc070c5931d57",
+   "z": 30.45
+  },
+  "face-details-crying-c11c09": {
+   "bone": "faceDetails",
+   "file": "layers/face-details-crying-c11c09.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    503,
+    313,
+    179,
+    50
+   ],
+   "source": "assets/characters/expressions/crying/details.png",
+   "sourceHash": "c11c097b9b6705fb",
+   "z": 30.7
+  },
+  "face-details-excited-119efa": {
+   "bone": "faceDetails",
+   "file": "layers/face-details-excited-119efa.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    468,
+    324,
+    264,
+    31
+   ],
+   "source": "assets/characters/expressions/excited/details.png",
+   "sourceHash": "119efaa69ac8a3e9",
+   "z": 30.7
+  },
+  "face-details-sad-cc4698": {
+   "bone": "faceDetails",
+   "file": "layers/face-details-sad-cc4698.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    538,
+    326,
+    118,
+    12
+   ],
+   "source": "assets/characters/expressions/sad/details.png",
+   "sourceHash": "cc4698994346a2f9",
+   "z": 30.7
+  },
+  "face-eye-left-excited-288983": {
+   "bone": "faceEyes",
+   "file": "layers/face-eye-left-excited-288983.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    497,
+    260,
+    96,
+    87
+   ],
+   "source": "assets/characters/expressions/excited/eye-left.png",
+   "sourceHash": "288983a4aaa23669",
+   "z": 30.4
+  },
+  "face-eye-left-laughing-5b0269": {
+   "bone": "faceEyes",
+   "file": "layers/face-eye-left-laughing-5b0269.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    497,
+    290,
+    94,
+    32
+   ],
+   "source": "assets/characters/expressions/laughing/eye-left.png",
+   "sourceHash": "5b0269a2b2bbad3d",
+   "z": 30.4
+  },
+  "face-eye-left-sad-64a345": {
+   "bone": "faceEyes",
+   "file": "layers/face-eye-left-sad-64a345.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    497,
+    260,
+    96,
+    87
+   ],
+   "source": "assets/characters/expressions/sad/eye-left.png",
+   "sourceHash": "64a34522658ac705",
+   "z": 30.4
+  },
+  "face-eye-left-surprised-14ea6c": {
+   "bone": "faceEyes",
+   "file": "layers/face-eye-left-surprised-14ea6c.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    497,
+    260,
+    96,
+    87
+   ],
+   "source": "assets/characters/expressions/surprised/eye-left.png",
+   "sourceHash": "14ea6c342f647e76",
+   "z": 30.4
+  },
+  "face-eye-left-winking-d50ecf": {
+   "bone": "faceEyes",
+   "file": "layers/face-eye-left-winking-d50ecf.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    497,
+    290,
+    94,
+    32
+   ],
+   "source": "assets/characters/expressions/winking/eye-left.png",
+   "sourceHash": "d50ecf1eff639a95",
+   "z": 30.4
+  },
+  "face-eye-right-excited-267925": {
+   "bone": "faceEyes",
+   "file": "layers/face-eye-right-excited-267925.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    604,
+    253,
+    80,
+    90
+   ],
+   "source": "assets/characters/expressions/excited/eye-right.png",
+   "sourceHash": "26792571c8407440",
+   "z": 30.5
+  },
+  "face-eye-right-laughing-b15f81": {
+   "bone": "faceEyes",
+   "file": "layers/face-eye-right-laughing-b15f81.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    611,
+    288,
+    95,
+    34
+   ],
+   "source": "assets/characters/expressions/laughing/eye-right.png",
+   "sourceHash": "b15f815e70a0e6f1",
+   "z": 30.5
+  },
+  "face-eye-right-surprised-d749b4": {
+   "bone": "faceEyes",
+   "file": "layers/face-eye-right-surprised-d749b4.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    604,
+    253,
+    80,
+    90
+   ],
+   "source": "assets/characters/expressions/surprised/eye-right.png",
+   "sourceHash": "d749b48cb08e33b5",
+   "z": 30.5
+  },
+  "face-eye-right-winking-d6e01d": {
+   "bone": "faceEyes",
+   "file": "layers/face-eye-right-winking-d6e01d.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    604,
+    253,
+    80,
+    90
+   ],
+   "source": "assets/characters/expressions/winking/eye-right.png",
+   "sourceHash": "d6e01dd56d503341",
+   "z": 30.5
+  },
+  "face-eyebrow-left-crying-9e59d7": {
+   "bone": "faceBrows",
+   "file": "layers/face-eyebrow-left-crying-9e59d7.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    505,
+    216,
+    75,
+    49
+   ],
+   "source": "assets/characters/expressions/crying/eyebrow-left.png",
+   "sourceHash": "9e59d7c039f41b2e",
+   "z": 30.2
+  },
+  "face-eyebrow-left-excited-473d49": {
+   "bone": "faceBrows",
+   "file": "layers/face-eyebrow-left-excited-473d49.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    497,
+    223,
+    95,
+    48
+   ],
+   "source": "assets/characters/expressions/excited/eyebrow-left.png",
+   "sourceHash": "473d4964f6adaa78",
+   "z": 30.2
+  },
+  "face-eyebrow-left-sad-d4a43e": {
+   "bone": "faceBrows",
+   "file": "layers/face-eyebrow-left-sad-d4a43e.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    505,
+    218,
+    75,
+    49
+   ],
+   "source": "assets/characters/expressions/sad/eyebrow-left.png",
+   "sourceHash": "d4a43ed6a769118c",
+   "z": 30.2
+  },
+  "face-eyebrow-left-surprised-2f2dc0": {
+   "bone": "faceBrows",
+   "file": "layers/face-eyebrow-left-surprised-2f2dc0.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    504,
+    208,
+    76,
+    42
+   ],
+   "source": "assets/characters/expressions/surprised/eyebrow-left.png",
+   "sourceHash": "2f2dc0f8a22c4f43",
+   "z": 30.2
+  },
+  "face-eyebrow-right-crying-94a7a4": {
+   "bone": "faceBrows",
+   "file": "layers/face-eyebrow-right-crying-94a7a4.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    626,
+    215,
+    51,
+    42
+   ],
+   "source": "assets/characters/expressions/crying/eyebrow-right.png",
+   "sourceHash": "94a7a464694332c8",
+   "z": 30.3
+  },
+  "face-eyebrow-right-excited-ba0275": {
+   "bone": "faceBrows",
+   "file": "layers/face-eyebrow-right-excited-ba0275.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    609,
+    221,
+    70,
+    41
+   ],
+   "source": "assets/characters/expressions/excited/eyebrow-right.png",
+   "sourceHash": "ba02753102b4b763",
+   "z": 30.3
+  },
+  "face-eyebrow-right-sad-3681d7": {
+   "bone": "faceBrows",
+   "file": "layers/face-eyebrow-right-sad-3681d7.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    626,
+    217,
+    51,
+    42
+   ],
+   "source": "assets/characters/expressions/sad/eyebrow-right.png",
+   "sourceHash": "3681d70258c2896c",
+   "z": 30.3
+  },
+  "face-eyebrow-right-surprised-570e5e": {
+   "bone": "faceBrows",
+   "file": "layers/face-eyebrow-right-surprised-570e5e.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    626,
+    206,
+    49,
+    37
+   ],
+   "source": "assets/characters/expressions/surprised/eyebrow-right.png",
+   "sourceHash": "570e5ead32019137",
+   "z": 30.3
+  },
+  "face-mouth-crying-c8c551": {
+   "bone": "faceMouth",
+   "file": "layers/face-mouth-crying-c8c551.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    565,
+    356,
+    82,
+    65
+   ],
+   "source": "assets/characters/expressions/crying/mouth.png",
+   "sourceHash": "c8c551f900df39c3",
+   "z": 30.6
+  },
+  "face-mouth-excited-307636": {
+   "bone": "faceMouth",
+   "file": "layers/face-mouth-excited-307636.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    531,
+    346,
+    137,
+    70
+   ],
+   "source": "assets/characters/expressions/excited/mouth.png",
+   "sourceHash": "307636982dc96ee4",
+   "z": 30.6
+  },
+  "face-mouth-sad-d6cce8": {
+   "bone": "faceMouth",
+   "file": "layers/face-mouth-sad-d6cce8.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    545,
+    364,
+    115,
+    28
+   ],
+   "source": "assets/characters/expressions/sad/mouth.png",
+   "sourceHash": "d6cce82d522cd343",
+   "z": 30.6
+  },
+  "face-mouth-surprised-1bfbaa": {
+   "bone": "faceMouth",
+   "file": "layers/face-mouth-surprised-1bfbaa.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    570,
+    355,
+    66,
+    63
+   ],
+   "source": "assets/characters/expressions/surprised/mouth.png",
+   "sourceHash": "1bfbaa275828e97e",
+   "z": 30.6
+  },
+  "hair-back": {
+   "bone": "hairBack",
+   "file": "layers/hair-back.png",
+   "pivot": [
+    566.0,
+    150.0
+   ],
+   "rect": [
+    298,
+    59,
+    439,
+    385
+   ],
+   "source": "assets/characters/guide-rig/07_back-hair.png",
+   "sourceHash": "4c95b5e47c276de0",
+   "z": 20
+  },
+  "hair-front-left": {
+   "bone": "hairFrontL",
+   "file": "layers/hair-front-left.png",
+   "pivot": [
+    566.0,
+    150.0
+   ],
+   "rect": [
+    343,
+    103,
+    280,
+    290
+   ],
+   "source": "assets/characters/guide-rig/24_front-hair-left.png",
+   "sourceHash": "27b8ccc4344415ab",
+   "z": 36
+  },
+  "hair-front-right": {
+   "bone": "hairFrontR",
+   "file": "layers/hair-front-right.png",
+   "pivot": [
+    566.0,
+    150.0
+   ],
+   "rect": [
+    528,
+    63,
+    196,
+    331
+   ],
+   "source": "assets/characters/guide-rig/25_front-hair-right.png",
+   "sourceHash": "d26884a6deda414e",
+   "z": 37
+  },
+  "head": {
+   "bone": "neck",
+   "file": "layers/head.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    414,
+    143,
+    287,
+    382
+   ],
+   "source": "assets/characters/guide-rig/12_head-and-neck.png",
+   "sourceHash": "b583b38801c4b3d0",
+   "z": 26
+  },
+  "leg-left-calf": {
+   "bone": "calfL",
+   "file": "layers/leg-left-calf.png",
+   "pivot": [
+    484.8,
+    908.0
+   ],
+   "rect": [
+    430,
+    879,
+    109,
+    147
+   ],
+   "source": "assets/characters/guide-rig/03_left-calf.png",
+   "sourceHash": "d980b0f8e99d9d43",
+   "z": 12
+  },
+  "leg-left-thigh": {
+   "bone": "legL",
+   "file": "layers/leg-left-thigh.png",
+   "pivot": [
+    500.0,
+    748.0
+   ],
+   "rect": [
+    428,
+    587,
+    116,
+    353
+   ],
+   "source": "assets/characters/guide-rig/01_left-thigh.png",
+   "sourceHash": "4edb26266c88d392",
+   "z": 10
+  },
+  "leg-right-calf": {
+   "bone": "calfR",
+   "file": "layers/leg-right-calf.png",
+   "pivot": [
+    612.0,
+    907.9
+   ],
+   "rect": [
+    570,
+    878,
+    104,
+    133
+   ],
+   "source": "assets/characters/guide-rig/04_right-calf.png",
+   "sourceHash": "2ef3ccd27edce6d4",
+   "z": 13
+  },
+  "leg-right-thigh": {
+   "bone": "legR",
+   "file": "layers/leg-right-thigh.png",
+   "pivot": [
+    636.0,
+    748.0
+   ],
+   "rect": [
+    533,
+    641,
+    132,
+    299
+   ],
+   "source": "assets/characters/guide-rig/02_right-thigh.png",
+   "sourceHash": "0d09e09d5831eb52",
+   "z": 11
+  },
+  "lid-lower-left": {
+   "bone": "faceEyes",
+   "file": "layers/lid-lower-left.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    501,
+    306,
+    92,
+    41
+   ],
+   "source": "assets/characters/guide-rig/21_lower-eyelid-left.png",
+   "sourceHash": "717deaa79180c0ba",
+   "z": 30.6
+  },
+  "lid-lower-right": {
+   "bone": "faceEyes",
+   "file": "layers/lid-lower-right.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    609,
+    307,
+    60,
+    36
+   ],
+   "source": "assets/characters/guide-rig/22_lower-eyelid-right.png",
+   "sourceHash": "fb0d2ec682d5d9fa",
+   "z": 30.65
+  },
+  "lid-upper-left": {
+   "bone": "faceEyes",
+   "file": "layers/lid-upper-left.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    497,
+    260,
+    96,
+    39
+   ],
+   "source": "assets/characters/guide-rig/19_upper-eyelid-left.png",
+   "sourceHash": "3602726d78c767b5",
+   "z": 30.5
+  },
+  "lid-upper-right": {
+   "bone": "faceEyes",
+   "file": "layers/lid-upper-right.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    604,
+    253,
+    80,
+    44
+   ],
+   "source": "assets/characters/guide-rig/20_upper-eyelid-right.png",
+   "sourceHash": "2892cda4c1867e96",
+   "z": 30.55
+  },
+  "mouth": {
+   "bone": "faceMouth",
+   "file": "layers/mouth.png",
+   "pivot": [
+    569.0,
+    509.0
+   ],
+   "rect": [
+    531,
+    346,
+    137,
+    70
+   ],
+   "source": "assets/characters/guide-rig/23_mouth.png",
+   "sourceHash": "6706b76f28e6c4fc",
+   "z": 30.7
+  },
+  "shoe-left": {
+   "bone": "shoeL",
+   "file": "layers/shoe-left.png",
+   "pivot": [
+    473.6,
+    995.8
+   ],
+   "rect": [
+    424,
+    965,
+    100,
+    124
+   ],
+   "source": "assets/characters/guide-rig/05_left-shoe.png",
+   "sourceHash": "3349c15e881c8c3b",
+   "z": 14
+  },
+  "shoe-right": {
+   "bone": "shoeR",
+   "file": "layers/shoe-right.png",
+   "pivot": [
+    622.3,
+    990.8
+   ],
+   "rect": [
+    570,
+    965,
+    146,
+    103
+   ],
+   "source": "assets/characters/guide-rig/06_right-shoe.png",
+   "sourceHash": "0ec4196a35b4c008",
+   "z": 15
+  },
+  "skirt": {
+   "bone": "skirt",
+   "file": "layers/skirt.png",
+   "pivot": [
+    573.0,
+    660.0
+   ],
+   "rect": [
+    393,
+    612,
+    358,
+    273
+   ],
+   "source": "assets/characters/guide-rig/14_skirt.png",
+   "sourceHash": "c8dfec34a363366c",
+   "z": 29
+  }
+ },
+ "restReference": "assets/characters/expressions/happy/character.png",
+ "sockets": [
+  {
+   "bone": "body",
+   "file": "sockets/neck.png",
+   "id": "socket-neck",
+   "pixels": 13865,
+   "radius": 66.0,
+   "rect": [
+    503,
+    443,
+    133,
+    133
+   ],
+   "z": 27.0
+  },
+  {
+   "bone": "armRUpper",
+   "file": "sockets/elbowR.png",
+   "id": "socket-elbowR",
+   "pixels": 3612,
+   "radius": 34.64,
+   "rect": [
+    720,
+    382,
+    71,
+    71
+   ],
+   "z": 21.5
+  },
+  {
+   "bone": "armRFore",
+   "file": "sockets/wristR.png",
+   "id": "socket-wristR",
+   "pixels": 2109,
+   "radius": 27.07,
+   "rect": [
+    764,
+    327,
+    56,
+    56
+   ],
+   "z": 22.5
+  },
+  {
+   "bone": "armLUpper",
+   "file": "sockets/elbowL.png",
+   "id": "socket-elbowL",
+   "pixels": 5013,
+   "radius": 39.64,
+   "rect": [
+    352,
+    550,
+    81,
+    81
+   ],
+   "z": 39.5
+  },
+  {
+   "bone": "armLFore",
+   "file": "sockets/wristL.png",
+   "id": "socket-wristL",
+   "pixels": 2446,
+   "radius": 27.25,
+   "rect": [
+    467,
+    626,
+    56,
+    56
+   ],
+   "z": 40.5
+  },
+  {
+   "bone": "legL",
+   "file": "sockets/kneeL.png",
+   "id": "socket-kneeL",
+   "pixels": 5791,
+   "radius": 42.11,
+   "rect": [
+    442,
+    865,
+    86,
+    86
+   ],
+   "z": 10.5
+  },
+  {
+   "bone": "legR",
+   "file": "sockets/kneeR.png",
+   "id": "socket-kneeR",
+   "pixels": 5127,
+   "radius": 40.48,
+   "rect": [
+    572,
+    867,
+    80,
+    82
+   ],
+   "z": 11.5
+  },
+  {
+   "bone": "calfL",
+   "file": "sockets/ankleL.png",
+   "id": "socket-ankleL",
+   "pixels": 4420,
+   "radius": 37.81,
+   "rect": [
+    435,
+    957,
+    77,
+    77
+   ],
+   "z": 12.5
+  },
+  {
+   "bone": "calfR",
+   "file": "sockets/ankleR.png",
+   "id": "socket-ankleR",
+   "pixels": 4012,
+   "radius": 35.36,
+   "rect": [
+    586,
+    955,
+    72,
+    72
+   ],
+   "z": 13.5
+  }
+ ],
+ "source": "assets/characters/guide-rig",
+ "version": 2
+}

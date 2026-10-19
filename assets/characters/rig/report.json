@@ -1,0 +1,49 @@
+{
+ "facePlates": 24,
+ "layers": 31,
+ "moods": {
+  "crying": {
+   "meanAbs": 0.00359,
+   "pixelsOver30": 109,
+   "pixelsOver60": 38
+  },
+  "excited": {
+   "meanAbs": 0.00548,
+   "pixelsOver30": 120,
+   "pixelsOver60": 73
+  },
+  "happy": {
+   "meanAbs": 0.00193,
+   "pixelsOver30": 37,
+   "pixelsOver60": 4
+  },
+  "laughing": {
+   "meanAbs": 0.00195,
+   "pixelsOver30": 42,
+   "pixelsOver60": 5
+  },
+  "sad": {
+   "meanAbs": 0.0023,
+   "pixelsOver30": 57,
+   "pixelsOver60": 5
+  },
+  "surprised": {
+   "meanAbs": 0.00942,
+   "pixelsOver30": 352,
+   "pixelsOver60": 102
+  },
+  "winking": {
+   "meanAbs": 0.00174,
+   "pixelsOver30": 37,
+   "pixelsOver60": 4
+  }
+ },
+ "rest": {
+  "maxAbs": 255,
+  "meanAbs": 0.0009,
+  "pixelsOver30": 4,
+  "pixelsOver60": 4
+ },
+ "sockets": 9,
+ "totalBytes": 1602366
+}
