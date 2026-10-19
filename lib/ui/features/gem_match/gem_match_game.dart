@@ -902,7 +902,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   Widget _buildLayout(BoxConstraints constraints) {
     final screenHeight = MediaQuery.sizeOf(context).height;
     final wanted = screenHeight < 700
-        ? 170.0
+        ? 160.0
         : screenHeight < 820
             ? 205.0
             : 235.0;
