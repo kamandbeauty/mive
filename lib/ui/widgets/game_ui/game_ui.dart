@@ -137,22 +137,39 @@ class OrchardProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final clamped = value.isNaN ? 0.0 : value.clamp(0.0, 1.0);
-    return SizedBox(
+    final clamped = value.isNaN ? 0.0 : value.clamp(0.0, 1.0).toDouble();
+    // Drawn groove instead of the stretched track/fill sprites: an empty
+    // bar now reads as a cream inset with a wooden rim (not a brown
+    // scratch), and the green fill keeps a rounded leading cap.
+    return Container(
       height: height,
-      child: Stack(
-        fit: StackFit.expand,
-        children: <Widget>[
-          Image.asset('assets/ui/progress-track.png', fit: BoxFit.fill),
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: FractionallySizedBox(
-              widthFactor: clamped,
-              heightFactor: 1,
-              child: Image.asset('assets/ui/progress-fill.png', fit: BoxFit.fill),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF3E3BC),
+        borderRadius: BorderRadius.circular(height / 2),
+        border: Border.all(color: const Color(0xFF8A5427), width: 1.4),
+        boxShadow: const <BoxShadow>[
+          BoxShadow(color: Color(0x33000000), blurRadius: 2, offset: Offset(0, 1)),
+        ],
+      ),
+      padding: const EdgeInsets.all(2),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(height / 2),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: FractionallySizedBox(
+            widthFactor: clamped,
+            heightFactor: 1,
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: <Color>[Color(0xFF9BD65C), Color(0xFF5DA23A)],
+                ),
+              ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

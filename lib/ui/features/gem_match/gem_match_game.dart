@@ -943,13 +943,20 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
     // Title plaque left, pause/hint right (physical, pinned LTR). Stats
     // live in their own full-width panel below — not crammed in here.
     return SizedBox(
-      height: 52,
+      height: 56,
       child: Directionality(
         textDirection: TextDirection.ltr,
         child: Row(
           children: <Widget>[
-            Expanded(child: _buildTitlePlaque()),
-            const SizedBox(width: 8),
+            // The plaque art is 1000x323; stretching it across the whole
+            // header squashed the painted strawberry and left dead wood in
+            // the middle. Keep its true aspect: a compact sign on the left,
+            // buttons on the right, sky in between (as in the reference).
+            AspectRatio(
+              aspectRatio: 1000 / 323,
+              child: _buildTitlePlaque(),
+            ),
+            const Spacer(),
             _headerButton(
               icon: Icons.pause_rounded,
               tooltip: 'مکث',
@@ -1163,7 +1170,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                     const SizedBox(width: 10),
                     Expanded(
                       child: Wrap(
-                        alignment: WrapAlignment.center,
+                        alignment: WrapAlignment.start,
                         spacing: 14,
                         runSpacing: 4,
                         children: <Widget>[
