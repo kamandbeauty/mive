@@ -940,33 +940,22 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   }
 
   Widget _buildHeader() {
-    // Single top row from the reference: title plaque, then the moves/score
-    // panel, then the two round buttons (pause, hint) — all inline, left to
-    // right. The row is pinned LTR so the Persian RTL ambient direction
-    // cannot mirror it back.
-    const rowHeight = 64.0;
+    // Title plaque left, pause/hint right (physical, pinned LTR). Stats
+    // live in their own full-width panel below — not crammed in here.
     return SizedBox(
-      height: rowHeight,
+      height: 52,
       child: Directionality(
         textDirection: TextDirection.ltr,
         child: Row(
           children: <Widget>[
-            Expanded(
-              flex: 9,
-              child: SizedBox(height: rowHeight, child: _buildTitlePlaque()),
-            ),
-            const SizedBox(width: 6),
-            Expanded(
-              flex: 11,
-              child: SizedBox(height: rowHeight, child: _buildStatsPanel()),
-            ),
-            const SizedBox(width: 5),
+            Expanded(child: _buildTitlePlaque()),
+            const SizedBox(width: 8),
             _headerButton(
               icon: Icons.pause_rounded,
               tooltip: 'مکث',
               onPressed: _phase.acceptsInput ? _pause : null,
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 5),
             _headerButton(
               icon: Icons.lightbulb_rounded,
               tooltip: 'راهنمایی',
@@ -976,28 +965,6 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  /// Wooden moves/score panel, now living inline in the header row instead of
-  /// its own banner underneath.
-  Widget _buildStatsPanel() {
-    return OrchardPanel(
-      asset: 'assets/ui/hud-panel.png',
-      padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
-      child: Row(
-        children: <Widget>[
-          Expanded(
-            child: _statBlock(
-              'حرکت باقی‌مانده',
-              _fa(_moves),
-              GamePalette.sky,
-              key: const ValueKey<String>('stat-moves-value'),
-            ),
-          ),
-          Expanded(child: _buildScoreStat()),
-        ],
       ),
     );
   }
@@ -1148,49 +1115,74 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
         widget.level.obstacleGoals.values.fold<int>(0, (sum, value) => sum + value);
     final progress = target == 0 ? 0.0 : (collected / target).clamp(0.0, 1.0).toDouble();
     final goalCount = widget.level.fruitGoals.length + widget.level.obstacleGoals.length;
-    // Cream goal banner: "هدف مرحله", the plain icon + "X از Y" goal readout
-    // and the progress bar underneath, exactly as in the reference. A level
-    // with several goals gets a taller banner so the readouts can wrap.
-    return SizedBox(
-      height: goalCount > 3 ? 182 : goalCount > 1 ? 116 : 92,
-      child: OrchardPanel(
-        asset: 'assets/ui/goal-banner.png',
-        padding: const EdgeInsets.fromLTRB(26, 12, 26, 12),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Row(
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        // Full-width wooden stats panel: moves | score/target with a star.
+        SizedBox(
+          height: 56,
+          child: OrchardPanel(
+            asset: 'assets/ui/hud-panel.png',
+            padding: const EdgeInsets.fromLTRB(18, 5, 18, 5),
+            child: Row(
               children: <Widget>[
-                const Text(
-                  'هدف مرحله',
-                  style: TextStyle(
-                    color: _chocolate,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w900,
-                    height: 1.1,
-                  ),
-                ),
-                const SizedBox(width: 10),
                 Expanded(
-                  child: Wrap(
-                    alignment: WrapAlignment.center,
-                    spacing: 16,
-                    runSpacing: 4,
-                    children: <Widget>[
-                      for (final entry in widget.level.fruitGoals.entries)
-                        _goalChip(entry.key, entry.value),
-                      for (final entry in widget.level.obstacleGoals.entries)
-                        _obstacleGoalChip(entry.key, entry.value),
-                    ],
+                  child: _statBlock(
+                    'حرکت باقی‌مانده',
+                    _fa(_moves),
+                    GamePalette.sky,
+                    key: const ValueKey<String>('stat-moves-value'),
                   ),
                 ),
+                Expanded(child: _buildScoreStat()),
               ],
             ),
-            const SizedBox(height: 8),
-            OrchardProgressBar(value: progress, height: 18),
-          ],
+          ),
         ),
-      ),
+        const SizedBox(height: 6),
+        // Flat cream goal banner: title, plain "X از Y" readouts, progress.
+        SizedBox(
+          height: goalCount > 3 ? 148 : goalCount > 1 ? 102 : 78,
+          child: OrchardPanel(
+            asset: 'assets/ui/goal-banner.png',
+            padding: const EdgeInsets.fromLTRB(36, 8, 46, 8),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    const Text(
+                      'هدف مرحله',
+                      style: TextStyle(
+                        color: _chocolate,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w900,
+                        height: 1.1,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 14,
+                        runSpacing: 4,
+                        children: <Widget>[
+                          for (final entry in widget.level.fruitGoals.entries)
+                            _goalChip(entry.key, entry.value),
+                          for (final entry in widget.level.obstacleGoals.entries)
+                            _obstacleGoalChip(entry.key, entry.value),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                OrchardProgressBar(value: progress, height: 13),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -1350,7 +1342,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                   left: characterWidth + 4,
                   right: 2,
                   top: 0,
-                  height: max(38.0, height - dockHeight - 4),
+                  height: max(48.0, height - dockHeight - 4),
                   child: Align(
                     alignment: Alignment.bottomCenter,
                     child: OrchardBubble(
@@ -1922,9 +1914,13 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             ),
             tween: Tween<double>(begin: 0, end: 1),
             duration: switchDuration,
-            curve: Curves.easeOutCubic,
+            curve: _phase == GamePhase.refilling
+                ? Curves.bounceOut
+                : Curves.easeOutCubic,
             builder: (context, value, child) => FractionalTranslation(
-              translation: Offset(0, entryOffset.dy * (1 - value)),
+              // Full 2-axis travel: previously only dy was applied, so
+              // horizontal swaps teleported instead of sliding.
+              translation: entryOffset * (1 - value),
               child: child,
             ),
             child: piece == null || clearing
@@ -1933,6 +1929,37 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                     fit: StackFit.expand,
                     children: <Widget>[
                       const SizedBox.expand(),
+                      if (clearing && piece != null)
+                        Positioned.fill(
+                          child: TweenAnimationBuilder<double>(
+                            key: ValueKey<String>('burst-$index-${piece.id}'),
+                            tween: Tween<double>(begin: 0, end: 1),
+                            duration: switchDuration,
+                            curve: Curves.easeOutCubic,
+                            builder: (context, value, child) => Stack(
+                              fit: StackFit.expand,
+                              children: <Widget>[
+                                Opacity(
+                                  opacity: (1 - value).clamp(0.0, 1.0).toDouble(),
+                                  child: Transform.scale(
+                                    scale: 1.15 - 0.85 * value,
+                                    child: _buildPieceImage(piece, rejected, reduceMotion),
+                                  ),
+                                ),
+                                Opacity(
+                                  opacity: (1 - value).clamp(0.0, 1.0).toDouble(),
+                                  child: Transform.scale(
+                                    scale: 0.55 + 0.9 * value,
+                                    child: Image.asset(
+                                      'assets/effects/match-burst.png',
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       if (lock case final tileLock?)
                         Positioned(
                           bottom: 0,
