@@ -1142,7 +1142,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
         const SizedBox(height: 6),
         // Flat cream goal banner: title, plain "X از Y" readouts, progress.
         SizedBox(
-          height: goalCount > 3 ? 148 : goalCount > 1 ? 102 : 78,
+          height: goalCount > 3 ? 176 : goalCount > 1 ? 110 : 78,
           child: OrchardPanel(
             asset: 'assets/ui/goal-banner.png',
             padding: const EdgeInsets.fromLTRB(36, 8, 46, 8),
