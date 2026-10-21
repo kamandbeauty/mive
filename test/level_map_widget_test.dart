@@ -156,11 +156,11 @@ void main() {
       final board = tester.getSize(
         find.byKey(const ValueKey<String>('game-board-frame')),
       );
-      expect(board.width, lessThanOrEqualTo(size.width - 16), reason: 'viewport $size');
+      expect(board.width, lessThanOrEqualTo(size.width - 20), reason: 'viewport $size');
       if (size.height == 640) {
-        expect(board.width, lessThan(size.width - 16), reason: 'short viewport $size should fit without scrolling');
+        expect(board.width, lessThan(size.width - 20), reason: 'short viewport $size should fit without scrolling');
       } else {
-        expect(board.width, closeTo(size.width - 16, 1), reason: 'viewport $size');
+        expect(board.width, closeTo(size.width - 20, 1), reason: 'viewport $size');
       }
       expect(board.height, board.width, reason: 'viewport $size');
       expect(find.byType(SingleChildScrollView), findsNothing, reason: 'viewport $size');
