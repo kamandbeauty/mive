@@ -900,6 +900,10 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   }
 
   Widget _buildLayout(BoxConstraints constraints) {
+    // Rebuilt as one system: header (52) -> stats panel -> goal banner ->
+    // board (flex) -> message -> character/dock zone. The previous layout
+    // crammed stats into the header row; here every band has its own row
+    // and the board keeps whatever space is left.
     final screenHeight = MediaQuery.sizeOf(context).height;
     final wanted = screenHeight < 700
         ? 160.0
@@ -908,7 +912,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             : 235.0;
     final characterHeight = min(wanted, constraints.maxHeight * 0.36);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
+      padding: const EdgeInsets.fromLTRB(10, 6, 10, 8),
       child: Column(
         children: <Widget>[
           _buildHeader(),
@@ -1209,7 +1213,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               maxLines: 1,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 16,
+                fontSize: 19,
                 height: 1.05,
                 fontWeight: FontWeight.w900,
                 shadows: <Shadow>[
@@ -1232,23 +1236,23 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                 maxLines: 1,
                 style: const TextStyle(
                   color: Color(0xFFFFE3B3),
-                  fontSize: 13,
+                  fontSize: 15,
                   height: 1.05,
                   fontWeight: FontWeight.w900,
                 ),
               ),
             ),
             const SizedBox(width: 4),
-            const Icon(Icons.star_rounded, size: 14, color: GamePalette.gold),
+            const Icon(Icons.star_rounded, size: 16, color: GamePalette.gold),
           ],
           ),
         ),
         const SizedBox(height: 1),
-        const Text('امتیاز', style: TextStyle(color: Color(0xFFFFE3B3), fontSize: 8.5, fontWeight: FontWeight.w800, height: 1.1)),
+        const Text('امتیاز', style: TextStyle(color: Color(0xFFFFE3B3), fontSize: 9.5, fontWeight: FontWeight.w800, height: 1.1)),
         const SizedBox(height: 2),
         Container(
-          width: 18,
-          height: 2,
+          width: 22,
+          height: 2.5,
           decoration: BoxDecoration(
             color: GamePalette.orange,
             borderRadius: BorderRadius.circular(2),
@@ -1276,7 +1280,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               maxLines: 1,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 16,
+                fontSize: 19,
                 height: 1.05,
                 fontWeight: FontWeight.w900,
                 shadows: <Shadow>[
@@ -1288,12 +1292,12 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
           const SizedBox(height: 1),
           FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(label, style: const TextStyle(color: Color(0xFFFFE3B3), fontSize: 8.5, fontWeight: FontWeight.w800, height: 1.1)),
+            child: Text(label, style: const TextStyle(color: Color(0xFFFFE3B3), fontSize: 9.5, fontWeight: FontWeight.w800, height: 1.1)),
           ),
           const SizedBox(height: 2),
           Container(
-            width: 18,
-            height: 2,
+            width: 22,
+            height: 2.5,
             decoration: BoxDecoration(
               color: accent,
               borderRadius: BorderRadius.circular(2),
@@ -1305,8 +1309,8 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   Widget _buildCharacterZone(double height) {
     final caption = _orchardGirl.caption;
     final characterWidth = height * GuideCharacter.aspect;
-    final trayHeight = (height * 0.30).clamp(42.0, 58.0).toDouble();
-    final boosterHeight = (height * 0.26).clamp(38.0, 50.0).toDouble();
+    final trayHeight = (height * 0.32).clamp(46.0, 64.0).toDouble();
+    final boosterHeight = (height * 0.27).clamp(40.0, 54.0).toDouble();
     final dockHeight = trayHeight + boosterHeight + 17;
     return SizedBox(
       height: height,
