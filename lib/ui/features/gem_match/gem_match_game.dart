@@ -900,10 +900,6 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   }
 
   Widget _buildLayout(BoxConstraints constraints) {
-    // Rebuilt as one system: header (52) -> stats panel -> goal banner ->
-    // board (flex) -> message -> character/dock zone. The previous layout
-    // crammed stats into the header row; here every band has its own row
-    // and the board keeps whatever space is left.
     final screenHeight = MediaQuery.sizeOf(context).height;
     final wanted = screenHeight < 700
         ? 160.0
@@ -912,7 +908,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             : 235.0;
     final characterHeight = min(wanted, constraints.maxHeight * 0.36);
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 6, 10, 8),
+      padding: const EdgeInsets.fromLTRB(8, 6, 8, 8),
       child: Column(
         children: <Widget>[
           _buildHeader(),
@@ -940,22 +936,33 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   }
 
   Widget _buildHeader() {
-    // Title plaque left, pause/hint right (physical, pinned LTR). Stats
-    // live in their own full-width panel below — not crammed in here.
+    // Single top row from the reference: title plaque, then the moves/score
+    // panel, then the two round buttons (pause, hint) — all inline, left to
+    // right. The row is pinned LTR so the Persian RTL ambient direction
+    // cannot mirror it back.
+    const rowHeight = 64.0;
     return SizedBox(
-      height: 52,
+      height: rowHeight,
       child: Directionality(
         textDirection: TextDirection.ltr,
         child: Row(
           children: <Widget>[
-            Expanded(child: _buildTitlePlaque()),
-            const SizedBox(width: 8),
+            Expanded(
+              flex: 9,
+              child: SizedBox(height: rowHeight, child: _buildTitlePlaque()),
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              flex: 11,
+              child: SizedBox(height: rowHeight, child: _buildStatsPanel()),
+            ),
+            const SizedBox(width: 5),
             _headerButton(
               icon: Icons.pause_rounded,
               tooltip: 'مکث',
               onPressed: _phase.acceptsInput ? _pause : null,
             ),
-            const SizedBox(width: 5),
+            const SizedBox(width: 4),
             _headerButton(
               icon: Icons.lightbulb_rounded,
               tooltip: 'راهنمایی',
@@ -965,6 +972,28 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Wooden moves/score panel, now living inline in the header row instead of
+  /// its own banner underneath.
+  Widget _buildStatsPanel() {
+    return OrchardPanel(
+      asset: 'assets/ui/hud-panel.png',
+      padding: const EdgeInsets.fromLTRB(10, 6, 10, 6),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: _statBlock(
+              'حرکت باقی‌مانده',
+              _fa(_moves),
+              GamePalette.sky,
+              key: const ValueKey<String>('stat-moves-value'),
+            ),
+          ),
+          Expanded(child: _buildScoreStat()),
+        ],
       ),
     );
   }
@@ -1115,74 +1144,49 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
         widget.level.obstacleGoals.values.fold<int>(0, (sum, value) => sum + value);
     final progress = target == 0 ? 0.0 : (collected / target).clamp(0.0, 1.0).toDouble();
     final goalCount = widget.level.fruitGoals.length + widget.level.obstacleGoals.length;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        // Full-width wooden stats panel: moves | score/target with a star.
-        SizedBox(
-          height: 56,
-          child: OrchardPanel(
-            asset: 'assets/ui/hud-panel.png',
-            padding: const EdgeInsets.fromLTRB(18, 5, 18, 5),
-            child: Row(
+    // Cream goal banner: "هدف مرحله", the plain icon + "X از Y" goal readout
+    // and the progress bar underneath, exactly as in the reference. A level
+    // with several goals gets a taller banner so the readouts can wrap.
+    return SizedBox(
+      height: goalCount > 3 ? 182 : goalCount > 1 ? 116 : 92,
+      child: OrchardPanel(
+        asset: 'assets/ui/goal-banner.png',
+        padding: const EdgeInsets.fromLTRB(26, 12, 26, 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Row(
               children: <Widget>[
-                Expanded(
-                  child: _statBlock(
-                    'حرکت باقی‌مانده',
-                    _fa(_moves),
-                    GamePalette.sky,
-                    key: const ValueKey<String>('stat-moves-value'),
+                const Text(
+                  'هدف مرحله',
+                  style: TextStyle(
+                    color: _chocolate,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w900,
+                    height: 1.1,
                   ),
                 ),
-                Expanded(child: _buildScoreStat()),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 6),
-        // Flat cream goal banner: title, plain "X از Y" readouts, progress.
-        SizedBox(
-          height: goalCount > 3 ? 148 : goalCount > 1 ? 102 : 78,
-          child: OrchardPanel(
-            asset: 'assets/ui/goal-banner.png',
-            padding: const EdgeInsets.fromLTRB(36, 8, 46, 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    const Text(
-                      'هدف مرحله',
-                      style: TextStyle(
-                        color: _chocolate,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w900,
-                        height: 1.1,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Wrap(
-                        alignment: WrapAlignment.center,
-                        spacing: 14,
-                        runSpacing: 4,
-                        children: <Widget>[
-                          for (final entry in widget.level.fruitGoals.entries)
-                            _goalChip(entry.key, entry.value),
-                          for (final entry in widget.level.obstacleGoals.entries)
-                            _obstacleGoalChip(entry.key, entry.value),
-                        ],
-                      ),
-                    ),
-                  ],
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 16,
+                    runSpacing: 4,
+                    children: <Widget>[
+                      for (final entry in widget.level.fruitGoals.entries)
+                        _goalChip(entry.key, entry.value),
+                      for (final entry in widget.level.obstacleGoals.entries)
+                        _obstacleGoalChip(entry.key, entry.value),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 6),
-                OrchardProgressBar(value: progress, height: 13),
               ],
             ),
-          ),
+            const SizedBox(height: 8),
+            OrchardProgressBar(value: progress, height: 18),
+          ],
         ),
-      ],
+      ),
     );
   }
 
@@ -1205,7 +1209,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               maxLines: 1,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 19,
+                fontSize: 16,
                 height: 1.05,
                 fontWeight: FontWeight.w900,
                 shadows: <Shadow>[
@@ -1228,23 +1232,23 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                 maxLines: 1,
                 style: const TextStyle(
                   color: Color(0xFFFFE3B3),
-                  fontSize: 15,
+                  fontSize: 13,
                   height: 1.05,
                   fontWeight: FontWeight.w900,
                 ),
               ),
             ),
             const SizedBox(width: 4),
-            const Icon(Icons.star_rounded, size: 16, color: GamePalette.gold),
+            const Icon(Icons.star_rounded, size: 14, color: GamePalette.gold),
           ],
           ),
         ),
         const SizedBox(height: 1),
-        const Text('امتیاز', style: TextStyle(color: Color(0xFFFFE3B3), fontSize: 9.5, fontWeight: FontWeight.w800, height: 1.1)),
+        const Text('امتیاز', style: TextStyle(color: Color(0xFFFFE3B3), fontSize: 8.5, fontWeight: FontWeight.w800, height: 1.1)),
         const SizedBox(height: 2),
         Container(
-          width: 22,
-          height: 2.5,
+          width: 18,
+          height: 2,
           decoration: BoxDecoration(
             color: GamePalette.orange,
             borderRadius: BorderRadius.circular(2),
@@ -1272,7 +1276,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               maxLines: 1,
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 19,
+                fontSize: 16,
                 height: 1.05,
                 fontWeight: FontWeight.w900,
                 shadows: <Shadow>[
@@ -1284,12 +1288,12 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
           const SizedBox(height: 1),
           FittedBox(
             fit: BoxFit.scaleDown,
-            child: Text(label, style: const TextStyle(color: Color(0xFFFFE3B3), fontSize: 9.5, fontWeight: FontWeight.w800, height: 1.1)),
+            child: Text(label, style: const TextStyle(color: Color(0xFFFFE3B3), fontSize: 8.5, fontWeight: FontWeight.w800, height: 1.1)),
           ),
           const SizedBox(height: 2),
           Container(
-            width: 22,
-            height: 2.5,
+            width: 18,
+            height: 2,
             decoration: BoxDecoration(
               color: accent,
               borderRadius: BorderRadius.circular(2),
@@ -1301,8 +1305,8 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   Widget _buildCharacterZone(double height) {
     final caption = _orchardGirl.caption;
     final characterWidth = height * GuideCharacter.aspect;
-    final trayHeight = (height * 0.32).clamp(46.0, 64.0).toDouble();
-    final boosterHeight = (height * 0.27).clamp(40.0, 54.0).toDouble();
+    final trayHeight = (height * 0.30).clamp(42.0, 58.0).toDouble();
+    final boosterHeight = (height * 0.26).clamp(38.0, 50.0).toDouble();
     final dockHeight = trayHeight + boosterHeight + 17;
     return SizedBox(
       height: height,
