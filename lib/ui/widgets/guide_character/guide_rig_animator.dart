@@ -52,14 +52,26 @@ class GuideRigAnimator {
     };
     // The delivered joint pivots are approximate: at full amplitude the
     // limbs visibly detach and the figure falls apart on a real phone.
-    // 85% keeps shoulders, elbows and the neck composed while the
-    // performance actually reads from across the room.
+    // Expressive bones (arms, head, hair) keep 85%, but structural bones
+    // are damped much harder: a swinging basket tore away from the hand
+    // that holds it, and rotating thighs/calf layers — which overlap a
+    // full painted leg — ghosted a second leg behind the first.
+    const structural = <String, double>{
+      'basket': 0.30,
+      'legL': 0.35,
+      'legR': 0.35,
+      'calfL': 0.30,
+      'calfR': 0.30,
+      'shoeL': 0.30,
+      'shoeR': 0.30,
+      'skirt': 0.45,
+    };
     return RigPose(<String, BonePose>{
       for (final entry in raw.bones.entries)
         entry.key: BonePose(
-          angle: entry.value.angle * 0.85,
-          dx: entry.value.dx * 0.85,
-          dy: entry.value.dy * 0.85,
+          angle: entry.value.angle * (structural[entry.key] ?? 0.85),
+          dx: entry.value.dx * (structural[entry.key] ?? 0.85),
+          dy: entry.value.dy * (structural[entry.key] ?? 0.85),
           scale: entry.value.scale,
         ),
     });
