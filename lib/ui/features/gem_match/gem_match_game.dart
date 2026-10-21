@@ -1914,13 +1914,9 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             ),
             tween: Tween<double>(begin: 0, end: 1),
             duration: switchDuration,
-            curve: _phase == GamePhase.refilling
-                ? Curves.bounceOut
-                : Curves.easeOutCubic,
+            curve: Curves.easeOutCubic,
             builder: (context, value, child) => FractionalTranslation(
-              // Full 2-axis travel: previously only dy was applied, so
-              // horizontal swaps teleported instead of sliding.
-              translation: entryOffset * (1 - value),
+              translation: Offset(0, entryOffset.dy * (1 - value)),
               child: child,
             ),
             child: piece == null || clearing
@@ -1929,37 +1925,6 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                     fit: StackFit.expand,
                     children: <Widget>[
                       const SizedBox.expand(),
-                      if (clearing && piece != null)
-                        Positioned.fill(
-                          child: TweenAnimationBuilder<double>(
-                            key: ValueKey<String>('burst-$index-${piece.id}'),
-                            tween: Tween<double>(begin: 0, end: 1),
-                            duration: switchDuration,
-                            curve: Curves.easeOutCubic,
-                            builder: (context, value, child) => Stack(
-                              fit: StackFit.expand,
-                              children: <Widget>[
-                                Opacity(
-                                  opacity: (1 - value).clamp(0.0, 1.0).toDouble(),
-                                  child: Transform.scale(
-                                    scale: 1.15 - 0.85 * value,
-                                    child: _buildPieceImage(piece, rejected, reduceMotion),
-                                  ),
-                                ),
-                                Opacity(
-                                  opacity: (1 - value).clamp(0.0, 1.0).toDouble(),
-                                  child: Transform.scale(
-                                    scale: 0.55 + 0.9 * value,
-                                    child: Image.asset(
-                                      'assets/effects/match-burst.png',
-                                      fit: BoxFit.contain,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
                       if (lock case final tileLock?)
                         Positioned(
                           bottom: 0,

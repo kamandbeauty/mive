@@ -57,9 +57,9 @@ class GuideRigAnimator {
     return RigPose(<String, BonePose>{
       for (final entry in raw.bones.entries)
         entry.key: BonePose(
-          angle: entry.value.angle * 0.85,
-          dx: entry.value.dx * 0.85,
-          dy: entry.value.dy * 0.85,
+          angle: entry.value.angle * 0.6,
+          dx: entry.value.dx * 0.6,
+          dy: entry.value.dy * 0.6,
           scale: entry.value.scale,
         ),
     });
