@@ -57,7 +57,6 @@ class GuideRigAnimator {
     // that holds it, and rotating thighs/calf layers — which overlap a
     // full painted leg — ghosted a second leg behind the first.
     const structural = <String, double>{
-      'basket': 0.30,
       'legL': 0.35,
       'legR': 0.35,
       'calfL': 0.30,
@@ -69,7 +68,13 @@ class GuideRigAnimator {
     return RigPose(<String, BonePose>{
       for (final entry in raw.bones.entries)
         entry.key: BonePose(
-          angle: entry.value.angle * (structural[entry.key] ?? 0.85),
+          // The basket keeps its gentle idle sway (that is the idle
+          // loop's most visible motion) but is clamped to +-3.2 degrees:
+          // beyond that the bowl swings on its hand pivot and visibly
+          // tears away from the fingers holding the handle.
+          angle: entry.key == 'basket'
+              ? (entry.value.angle * 0.85).clamp(-3.2, 3.2).toDouble()
+              : entry.value.angle * (structural[entry.key] ?? 0.85),
           dx: entry.value.dx * (structural[entry.key] ?? 0.85),
           dy: entry.value.dy * (structural[entry.key] ?? 0.85),
           scale: entry.value.scale,

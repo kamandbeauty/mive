@@ -916,9 +916,9 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
       child: Column(
         children: <Widget>[
           _buildHeader(),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           _buildHud(),
-          const SizedBox(height: 8),
+          const SizedBox(height: 6),
           Expanded(
             child: LayoutBuilder(
               builder: (context, boardConstraints) {
@@ -930,9 +930,9 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               },
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 1),
           _buildMessage(),
-          const SizedBox(height: 3),
+          const SizedBox(height: 2),
           _buildCharacterZone(characterHeight),
         ],
       ),
@@ -1140,7 +1140,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
       children: <Widget>[
         // Full-width wooden stats panel: moves | score/target with a star.
         SizedBox(
-          height: 62,
+          height: 58,
           child: OrchardPanel(
             asset: 'assets/ui/hud-panel.png',
             padding: const EdgeInsets.fromLTRB(18, 7, 18, 7),
@@ -1164,7 +1164,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
         const SizedBox(height: 6),
         // Flat cream goal banner: title, plain "X از Y" readouts, progress.
         SizedBox(
-          height: goalCount > 3 ? 176 : goalCount > 1 ? 110 : 78,
+          height: goalCount > 3 ? 176 : goalCount > 1 ? 110 : 74,
           child: OrchardPanel(
             asset: 'assets/ui/goal-banner.png',
             padding: const EdgeInsets.fromLTRB(36, 8, 46, 8),
