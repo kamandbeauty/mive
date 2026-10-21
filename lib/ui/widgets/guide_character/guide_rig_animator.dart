@@ -52,14 +52,14 @@ class GuideRigAnimator {
     };
     // The delivered joint pivots are approximate: at full amplitude the
     // limbs visibly detach and the figure falls apart on a real phone.
-    // Keeping every rotation at 60% keeps the performance readable while
-    // shoulders, elbows and the neck stay composed.
+    // 85% keeps shoulders, elbows and the neck composed while the
+    // performance actually reads from across the room.
     return RigPose(<String, BonePose>{
       for (final entry in raw.bones.entries)
         entry.key: BonePose(
-          angle: entry.value.angle * 0.6,
-          dx: entry.value.dx * 0.6,
-          dy: entry.value.dy * 0.6,
+          angle: entry.value.angle * 0.85,
+          dx: entry.value.dx * 0.85,
+          dy: entry.value.dy * 0.85,
           scale: entry.value.scale,
         ),
     });
