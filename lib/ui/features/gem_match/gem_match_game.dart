@@ -1915,7 +1915,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             tween: Tween<double>(begin: 0, end: 1),
             duration: switchDuration,
             curve: _phase == GamePhase.refilling
-                ? Curves.easeOutBounce
+                ? Curves.bounceOut
                 : Curves.easeOutCubic,
             builder: (context, value, child) => FractionalTranslation(
               // Full 2-axis travel: previously only dy was applied, so
