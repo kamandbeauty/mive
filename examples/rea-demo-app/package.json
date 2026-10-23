@@ -1,0 +1,18 @@
+{
+  "name": "nimbus-notes",
+  "productName": "Nimbus Notes",
+  "version": "3.2.1",
+  "description": "A small note-taking desktop app used as a reverse-engineering demo target",
+  "main": "dist/main.js",
+  "author": "Demo Studio",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "build": "node build.mjs",
+    "package": "node build.mjs && node package.mjs"
+  },
+  "devDependencies": {
+    "@electron/asar": "^4.0.0",
+    "esbuild": "^0.25.0"
+  }
+}

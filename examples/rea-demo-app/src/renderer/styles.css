@@ -1,0 +1,17 @@
+:root { --bg: #101418; --fg: #e8edf3; --muted: #8899a8; --accent: #4fa3ff; }
+html[data-theme="light"] { --bg: #f7f9fb; --fg: #17202a; --muted: #5c6b7a; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: system-ui, sans-serif; }
+.titlebar { display: flex; gap: 12px; align-items: center; padding: 10px 16px; }
+.brand { font-weight: 700; }
+.layout { display: grid; grid-template-columns: 280px 1fr; height: calc(100vh - 90px); }
+.sidebar { border-right: 1px solid #223; padding: 12px; overflow: auto; }
+.note-item { display: flex; justify-content: space-between; padding: 8px; cursor: pointer; border-radius: 6px; }
+.note-item.active { background: #1d2833; }
+.note-item-meta { color: var(--muted); font-size: 12px; }
+.editor { display: flex; flex-direction: column; height: 100%; }
+.note-title { font-size: 24px; border: 0; background: transparent; color: inherit; }
+.note-body { flex: 1; border: 0; background: transparent; color: inherit; resize: none; }
+.badge { margin-left: auto; border: 1px solid var(--accent); padding: 2px 8px; border-radius: 999px; }
+.feature-list .disabled { opacity: 0.4; }
+#toast { position: fixed; bottom: 12px; right: 12px; opacity: 0; transition: opacity .2s; }
+#toast.visible { opacity: 1; }

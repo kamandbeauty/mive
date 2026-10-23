@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'" />
+    <title>Nimbus Notes</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="titlebar">
+      <div id="brand" class="brand">Nimbus Notes</div>
+      <input id="search" type="search" placeholder="Search notes" aria-label="Search notes" />
+      <span id="plan-badge" class="badge">FREE</span>
+    </header>
+    <main class="layout">
+      <aside class="sidebar">
+        <button id="sync-button" class="toolbar-button">Sync</button>
+        <ul id="note-list" class="note-list"></ul>
+        <section class="license">
+          <h2>License</h2>
+          <form id="license-form">
+            <input id="license-email" type="email" placeholder="you@example.com" />
+            <input id="license-key" type="text" placeholder="NIMBUS-XXXX-XXXX" />
+            <button type="submit">Activate</button>
+          </form>
+          <ul id="feature-list" class="feature-list"></ul>
+        </section>
+      </aside>
+      <section class="content">
+        <div id="empty-state" class="empty">Select a note or press Ctrl+N</div>
+        <div id="editor" class="editor" hidden>
+          <input id="note-title" class="note-title" placeholder="Note title" />
+          <textarea id="note-body" class="note-body" placeholder="Start writing…"></textarea>
+          <div class="editor-actions">
+            <button id="pdf-button">Export PDF</button>
+            <button id="theme-button">Toggle theme</button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="statusbar"><span id="status">Ready</span></footer>
+    <script src="renderer.js"></script>
+  </body>
+</html>

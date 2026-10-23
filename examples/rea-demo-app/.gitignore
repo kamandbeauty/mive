@@ -1,0 +1,7 @@
+node_modules/
+dist/
+app/
+release/
+recovered/
+*.json
+!package.json
