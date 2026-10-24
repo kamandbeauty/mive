@@ -924,11 +924,14 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               builder: (context, boardConstraints) {
                 // Reference proportion: the framed board takes ~84% of
                 // the screen width, centered, never exceeding its space.
+                // Derived from the incoming constraints, not MediaQuery:
+                // some hosts (tests, embeds) mount the game under a
+                // zero-size MediaQuery, which must not zero the board.
                 final side = min(
                   min(boardConstraints.maxWidth, 520.0),
                   min(
                     boardConstraints.maxHeight,
-                    MediaQuery.sizeOf(context).width * 0.84,
+                    boardConstraints.maxWidth * 0.88,
                   ),
                 );
                 return Center(child: _buildBoard(side));
@@ -1160,11 +1163,12 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
     final compact = goalCount > 3;
     // The reference banner is a wide cream panel floating over the
     // garden, inset from both edges rather than glued to them.
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: MediaQuery.sizeOf(context).width * 0.055,
-      ),
-      child: SizedBox(
+    return LayoutBuilder(
+      builder: (context, constraints) => Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: constraints.maxWidth * 0.05,
+        ),
+        child: SizedBox(
         height: goalCount > 3 ? 192 : goalCount > 1 ? 110 : 74,
         child: OrchardPanel(
           asset: 'assets/ui/goal-banner.png',
@@ -1203,6 +1207,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               OrchardProgressBar(value: progress, height: 13),
             ],
           ),
+        ),
         ),
       ),
     );
