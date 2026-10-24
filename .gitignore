@@ -8,3 +8,8 @@ local.properties
 *.iml
 .idea/
 captures/
+
+# CI scratch files
+build.log
+sign.log
+ci-build-errors.log
