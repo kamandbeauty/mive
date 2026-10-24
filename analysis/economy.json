@@ -1,0 +1,809 @@
+{
+ "artifact": {
+  "path": "/home/user/targets/jewels-classic-5.3.6.apk",
+  "bytes": 61134581,
+  "sha256": "659aabcbe6bec0dc2274221409410cc0cb8cd80de4fea33391da62bb2f9f3ded",
+  "dex_files": 6,
+  "dex_bytes": 45048264,
+  "native_bytes": 37124624,
+  "classes": 56456
+ },
+ "manifest": {
+  "package": "com.dysugar.jewels.prince",
+  "app_name": "@7F1200A1",
+  "version_name": "5.3.6",
+  "version_code": "537",
+  "min_sdk": "21",
+  "target_sdk": "33",
+  "meta": {
+   "android.app.lib_name": "MyGame",
+   "com.google.android.gms.version": "@7F0B0006",
+   "com.google.android.gms.games.APP_ID": "",
+   "com.google.android.gms.ads.APPLICATION_ID": "ca-app-pub-3400181948465805~7823297437",
+   "com.facebook.sdk.ApplicationId": "1662725234017570",
+   "com.facebook.sdk.ClientToken": "e3edf00fb0adef2b96257e6cb6c370e1",
+   "din": "true",
+   "ivy.debug": "false",
+   "parfka.appToken": "ap1221",
+   "applovin.sdk.key": "E8pVhU9mykQd3y0TD0Ksoq4vpf_Muat6ifcP9m96UakTWk5klQaWEeQ2IPOA-GHgxu54eEA8pvgKcn2MBdtQGH",
+   "parfka.baseUrl": "http://gateway-2.papermobi.com:8080",
+   "com.google.android.gms.ads.AD_MANAGER_APP": "true",
+   "aps.id": "1f17cb36-29c4-4404-91cf-867aeb98bdbf",
+   "smaato.appId": "",
+   "com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION": "true",
+   "com.google.android.gms.ads.flag.OPTIMIZE_AD_LOADING": "true",
+   "com.google.android.play.billingclient.version": "6.0.1",
+   "com.android.dynamic.apk.fused.modules": "base",
+   "com.android.stamp.source": "https://play.google.com/store",
+   "com.android.stamp.type": "STAMP_TYPE_STANDALONE_APK",
+   "com.android.vending.splits": "",
+   "com.android.vending.derived.apk.id": "2"
+  },
+  "permissions": [
+   "android.permission.ACCESS_ADSERVICES_AD_ID",
+   "android.permission.ACCESS_ADSERVICES_ATTRIBUTION",
+   "android.permission.ACCESS_NETWORK_STATE",
+   "android.permission.ACCESS_WIFI_STATE",
+   "android.permission.FOREGROUND_SERVICE",
+   "android.permission.INTERNET",
+   "android.permission.POST_NOTIFICATIONS",
+   "android.permission.READ_APP_BADGE",
+   "android.permission.VIBRATE",
+   "android.permission.WAKE_LOCK",
+   "com.anddoes.launcher.permission.UPDATE_COUNT",
+   "com.android.vending.BILLING",
+   "com.applovin.array.apphub.permission.BIND_APPHUB_SERVICE",
+   "com.dysugar.jewels.prince.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+   "com.google.android.c2dm.permission.RECEIVE",
+   "com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE",
+   "com.google.android.gms.permission.AD_ID",
+   "com.google.android.providers.gsf.permission.READ_GSERVICES",
+   "com.htc.launcher.permission.READ_SETTINGS",
+   "com.htc.launcher.permission.UPDATE_SHORTCUT",
+   "com.huawei.android.launcher.permission.CHANGE_BADGE",
+   "com.huawei.android.launcher.permission.READ_SETTINGS",
+   "com.huawei.android.launcher.permission.WRITE_SETTINGS",
+   "com.majeur.launcher.permission.UPDATE_BADGE",
+   "com.oppo.launcher.permission.READ_SETTINGS",
+   "com.oppo.launcher.permission.WRITE_SETTINGS",
+   "com.sec.android.provider.badge.permission.READ",
+   "com.sec.android.provider.badge.permission.WRITE",
+   "com.sonyericsson.home.permission.BROADCAST_BADGE",
+   "com.sonymobile.home.permission.PROVIDER_INSERT_BADGE",
+   "me.everything.badger.permission.BADGE_COUNT_READ",
+   "me.everything.badger.permission.BADGE_COUNT_WRITE"
+  ]
+ },
+ "manifest_monetization": {
+  "com.google.android.gms.ads.APPLICATION_ID": "ca-app-pub-3400181948465805~7823297437",
+  "com.facebook.sdk.ApplicationId": "1662725234017570",
+  "com.facebook.sdk.ClientToken": "e3edf00fb0adef2b96257e6cb6c370e1",
+  "applovin.sdk.key": "E8pVhU9mykQd3y0TD0Ksoq4vpf_Muat6ifcP9m96UakTWk5klQaWEeQ2IPOA-GHgxu54eEA8pvgKcn2MBdtQGH",
+  "com.google.android.gms.ads.AD_MANAGER_APP": "true",
+  "aps.id": "1f17cb36-29c4-4404-91cf-867aeb98bdbf",
+  "smaato.appId": "",
+  "com.google.android.gms.ads.flag.OPTIMIZE_INITIALIZATION": "true",
+  "com.google.android.gms.ads.flag.OPTIMIZE_AD_LOADING": "true",
+  "com.google.android.play.billingclient.version": "6.0.1",
+  "com.android.stamp.source": "https://play.google.com/store",
+  "com.android.stamp.type": "STAMP_TYPE_STANDALONE_APK"
+ },
+ "sdk_classes": [
+  [
+   "Yandex Ads (divkit)",
+   6306
+  ],
+  [
+   "Yandex Mobile Ads",
+   4161
+  ],
+  [
+   "Mintegral",
+   2924
+  ],
+  [
+   "Firebase (analytics)",
+   2602
+  ],
+  [
+   "AppLovin MAX",
+   2563
+  ],
+  [
+   "Pangle / ByteDance",
+   2110
+  ],
+  [
+   "AppMetrica (analytics)",
+   1800
+  ],
+  [
+   "Fyber / Digital Turbine",
+   1569
+  ],
+  [
+   "AiHelp (support desk)",
+   1481
+  ],
+  [
+   "Smaato",
+   1200
+  ],
+  [
+   "AdMob / GMA",
+   984
+  ],
+  [
+   "Unity Ads",
+   709
+  ],
+  [
+   "IAB OM SDK (viewability)",
+   690
+  ],
+  [
+   "ironSource / LevelPlay",
+   661
+  ],
+  [
+   "Vungle",
+   621
+  ],
+  [
+   "Pangle (ByteDance)",
+   488
+  ],
+  [
+   "AppsFlyer (attribution)",
+   310
+  ],
+  [
+   "Chartboost",
+   269
+  ],
+  [
+   "Meta Audience Network",
+   173
+  ],
+  [
+   "PubMatic",
+   124
+  ]
+ ],
+ "economy_configs": [
+  {
+   "file": "assets/data/beginner_task.json",
+   "knobs": {
+    "show": false
+   },
+   "keys": [],
+   "raw_size": 20
+  },
+  {
+   "file": "assets/data/custom_mall.json",
+   "knobs": {
+    "show": false
+   },
+   "keys": [],
+   "raw_size": 57
+  },
+  {
+   "file": "assets/data/deletion.json",
+   "knobs": {
+    "show": true
+   },
+   "keys": [],
+   "raw_size": 17
+  },
+  {
+   "file": "assets/data/diamond_tv_extravideo.json",
+   "knobs": {
+    "show": true
+   },
+   "keys": [],
+   "raw_size": 18
+  },
+  {
+   "file": "assets/data/diamond_tv_video.json",
+   "knobs": {
+    "times": 5,
+    "cd": 5
+   },
+   "keys": [],
+   "raw_size": 25
+  },
+  {
+   "file": "assets/data/endless.json",
+   "knobs": {
+    "show": false,
+    "unlock_level": 50
+   },
+   "keys": [
+    "video"
+   ],
+   "raw_size": 162
+  },
+  {
+   "file": "assets/data/pre_level_video.json",
+   "knobs": {
+    "show": true,
+    "times": 1,
+    "level": 9
+   },
+   "keys": [],
+   "raw_size": 46
+  },
+  {
+   "file": "assets/data/race.json",
+   "knobs": {
+    "show": false
+   },
+   "keys": [],
+   "raw_size": 222
+  },
+  {
+   "file": "assets/data/retry_level_video.json",
+   "knobs": {
+    "show": true,
+    "times": 1,
+    "level": 9
+   },
+   "keys": [],
+   "raw_size": 46
+  },
+  {
+   "file": "assets/data/revival_gift.json",
+   "knobs": {
+    "show": true
+   },
+   "keys": [
+    "revivalgift"
+   ],
+   "raw_size": 129
+  },
+  {
+   "file": "assets/data/show_exitinter.json",
+   "knobs": {
+    "show": false,
+    "times": 5
+   },
+   "keys": [],
+   "raw_size": 37
+  },
+  {
+   "file": "assets/data/show_homecustom.json",
+   "knobs": {
+    "show": false,
+    "times": 60
+   },
+   "keys": [],
+   "raw_size": 35
+  },
+  {
+   "file": "assets/data/show_inter_fail.json",
+   "knobs": {
+    "show": true,
+    "times": 1,
+    "level": 7
+   },
+   "keys": [],
+   "raw_size": 47
+  },
+  {
+   "file": "assets/data/show_inter_victory.json",
+   "knobs": {
+    "show": true,
+    "times": 1,
+    "level": 7
+   },
+   "keys": [],
+   "raw_size": 43
+  },
+  {
+   "file": "assets/data/show_openinter.json",
+   "knobs": {
+    "show": false,
+    "times": 5
+   },
+   "keys": [],
+   "raw_size": 50
+  },
+  {
+   "file": "assets/data/sign_video.json",
+   "knobs": {
+    "show": true
+   },
+   "keys": [],
+   "raw_size": 18
+  },
+  {
+   "file": "assets/data/soft_network.json",
+   "knobs": {
+    "show": true,
+    "unlock_level": 10
+   },
+   "keys": [],
+   "raw_size": 41
+  },
+  {
+   "file": "assets/data/streak.json",
+   "knobs": {
+    "show": true,
+    "level": 45
+   },
+   "keys": [
+    "streak_stage"
+   ],
+   "raw_size": 73
+  },
+  {
+   "file": "assets/data/super_light_ball.json",
+   "knobs": {
+    "show": false,
+    "unlock_level": 50
+   },
+   "keys": [],
+   "raw_size": 105
+  },
+  {
+   "file": "assets/data/user_mapspin.json",
+   "knobs": {
+    "times": 5,
+    "cd": 1
+   },
+   "keys": [
+    "gift_items"
+   ],
+   "raw_size": 741
+  },
+  {
+   "file": "assets/data/user_specialoffer.json",
+   "knobs": {
+    "show": false,
+    "price": 0.99,
+    "payId": 500
+   },
+   "keys": [
+    "gift_items",
+    "payId",
+    "price"
+   ],
+   "raw_size": 536
+  },
+  {
+   "file": "assets/data/user_videoshop.json",
+   "knobs": {
+    "show": false
+   },
+   "keys": [
+    "videoshop"
+   ],
+   "raw_size": 384
+  },
+  {
+   "file": "assets/data/user_winspin.json",
+   "knobs": {},
+   "keys": [
+    "diamond_spin",
+    "gift_items"
+   ],
+   "raw_size": 585
+  },
+  {
+   "file": "assets/data/value_off.json",
+   "knobs": {
+    "show": false
+   },
+   "keys": [
+    "gift",
+    "gift_items",
+    "payId",
+    "price"
+   ],
+   "raw_size": 484
+  },
+  {
+   "file": "assets/data/victory_double_video.json",
+   "knobs": {
+    "show": true,
+    "times": 1
+   },
+   "keys": [],
+   "raw_size": 50
+  }
+ ],
+ "level_economy": {
+  "assets/levels/dailyevent_level.tsv": {
+   "levels": 35,
+   "moves": {
+    "min": 18,
+    "median": 24,
+    "max": 28
+   },
+   "three_star_score": {
+    "min": 3500,
+    "median": 4000,
+    "max": 30000
+   },
+   "target_kinds": [
+    [
+     40,
+     8
+    ],
+    [
+     20,
+     8
+    ],
+    [
+     30,
+     7
+    ],
+    [
+     410,
+     6
+    ],
+    [
+     130,
+     5
+    ],
+    [
+     100,
+     5
+    ],
+    [
+     151,
+     4
+    ]
+   ],
+   "bands": {
+    "1-500": {
+     "n": 35,
+     "median_moves": 24
+    }
+   }
+  },
+  "assets/levels/levelinfo.tsv": {
+   "levels": 4210,
+   "moves": {
+    "min": 11,
+    "median": 30.0,
+    "max": 64
+   },
+   "three_star_score": {
+    "min": 0,
+    "median": 18750.0,
+    "max": 160000
+   },
+   "target_kinds": [
+    [
+     20,
+     1354
+    ],
+    [
+     100,
+     806
+    ],
+    [
+     30,
+     618
+    ],
+    [
+     130,
+     605
+    ],
+    [
+     410,
+     587
+    ],
+    [
+     40,
+     323
+    ],
+    [
+     151,
+     237
+    ],
+    [
+     6,
+     132
+    ],
+    [
+     90,
+     131
+    ],
+    [
+     5,
+     89
+    ]
+   ],
+   "bands": {
+    "1-500": {
+     "n": 500,
+     "median_moves": 36.0
+    },
+    "501-1000": {
+     "n": 500,
+     "median_moves": 36.0
+    },
+    "1001-1500": {
+     "n": 500,
+     "median_moves": 32.0
+    },
+    "1501-2000": {
+     "n": 500,
+     "median_moves": 32.0
+    },
+    "2001-2500": {
+     "n": 500,
+     "median_moves": 27.0
+    },
+    "2501-3000": {
+     "n": 500,
+     "median_moves": 30.0
+    },
+    "3001-3500": {
+     "n": 500,
+     "median_moves": 30.0
+    },
+    "3501-4000": {
+     "n": 500,
+     "median_moves": 28.0
+    },
+    "4001-4500": {
+     "n": 210,
+     "median_moves": 28.0
+    }
+   }
+  },
+  "assets/levels/weekevent_level.tsv": {
+   "levels": 75,
+   "moves": {
+    "min": 20,
+    "median": 27,
+    "max": 34
+   },
+   "three_star_score": {
+    "min": 9000,
+    "median": 20000,
+    "max": 40000
+   },
+   "target_kinds": [
+    [
+     20,
+     15
+    ],
+    [
+     5,
+     11
+    ],
+    [
+     151,
+     11
+    ],
+    [
+     1,
+     9
+    ],
+    [
+     130,
+     9
+    ],
+    [
+     30,
+     8
+    ],
+    [
+     410,
+     7
+    ],
+    [
+     100,
+     7
+    ],
+    [
+     2,
+     6
+    ],
+    [
+     40,
+     5
+    ]
+   ],
+   "bands": {
+    "1-500": {
+     "n": 75,
+     "median_moves": 27
+    }
+   }
+  }
+ },
+ "price_ladder": {
+  "prices": [
+   "$0.99",
+   "$1.99",
+   "$2.99",
+   "$4.99",
+   "$6.99",
+   "$15.99",
+   "$49.99"
+  ],
+  "discounts": [
+   [
+    "70%",
+    10
+   ]
+  ],
+  "samples": [
+   "OFF",
+   "OFF",
+   "Remove ADs Forever",
+   "Double the prize!",
+   "OFF",
+   "Add 5 Lives",
+   "Unlimited Lives for 2 hours",
+   "OFF",
+   "OFF",
+   "OFF",
+   "Add 5 Lives",
+   "Unlimited Lives for 2 hours",
+   "OFF"
+  ]
+ },
+ "native": {
+  "libs_scanned": [
+   "lib/arm64-v8a/libMyGame.so",
+   "lib/armeabi-v7a/libMyGame.so"
+  ],
+  "placements": [
+   "RewardAD_ADRevival",
+   "RewardAD_DailyGift",
+   "RewardAD_DailyGift_failure",
+   "RewardAD_DoubleAD",
+   "RewardAD_EndLess_Video",
+   "RewardAD_EventADEnter",
+   "RewardAD_FreeTowerEnergy",
+   "RewardAD_Lose_Video",
+   "RewardAD_RunTurntable",
+   "RewardAD_SingInDouble",
+   "RewardAD_WatchAD",
+   "RewardAD_WatchAD_Form",
+   "RewardAD_WatchAD_MainMenu",
+   "RewardAD_WatchAD_Shop",
+   "RewardAD_WatchAD_StandBy",
+   "RewardAD_WatchAD_VideoShop1",
+   "RewardAD_WatchAD_VideoShop2",
+   "RewardAD_WatchAD_VideoShop3",
+   "RewardAD_WinCoin",
+   "RewardAD_WinCoin_Tips",
+   "RewardAD_WinCoin_Turntable",
+   "RewardAD_WinCoin_Turntable_failure",
+   "closeDeliciousBannerAd",
+   "closeDeliciousIconAd",
+   "hasDeliciousBannerAd",
+   "hasDeliciousIconAd",
+   "hasRewardAd",
+   "showAds",
+   "showDeliciousBannerAd",
+   "showDeliciousIconAd",
+   "showFullAd",
+   "showRewardAd",
+   "show_AD_Revival",
+   "show_AD_Revival_InTower",
+   "show_Double_AD",
+   "show_ad_free"
+  ],
+  "economy_keys": [
+   "AD_Revival",
+   "AD_Revival_InTower",
+   "COIN_LOTTERY_PROGRESS",
+   "COIN_LOTTERY_TIMES",
+   "Coin_Revival",
+   "Coin_Revival_InTower",
+   "PAYINFOSAVE",
+   "PassLevel_300",
+   "PassLvTimes",
+   "PayIDEnableRefreshDays",
+   "PayId_",
+   "Payment_AdvancedGift",
+   "Payment_Coins0",
+   "Payment_Coins1",
+   "Payment_Coins2",
+   "Payment_Coins3",
+   "Payment_Coins4",
+   "Payment_Coins_Discount70",
+   "Payment_CustomMall",
+   "Payment_DazzlingGift",
+   "Payment_EndLess",
+   "Payment_EndLess_Free",
+   "Payment_FirstSuperGift",
+   "Payment_FirstValueGift",
+   "Payment_Gift_Discount80",
+   "Payment_LuxuriousGift",
+   "Payment_RemoveAD_Gift",
+   "Payment_Remove_AD",
+   "Payment_Revival_Gift",
+   "Payment_Revival_Gift2",
+   "Payment_Super_Gift",
+   "Payment_Super_Revival_Gift",
+   "Payment_Super_Revival_Gift2",
+   "Payment_TimeLimit_Gift",
+   "Payment_Value_Gift",
+   "Rank_Score",
+   "RevivalGiftBuyDays",
+   "ShopDisountGettedTime",
+   "ShopDisountStartTime",
+   "StreakMovesChangeData",
+   "StreakNeedReduceMoves",
+   "StreakPopedDays",
+   "TaskOpenGuide",
+   "TowerAdAwardTime",
+   "TowerCompleteLv",
+   "TowerLevelScore",
+   "TowerLevelStars",
+   "TowerLevelThirdStarByAD",
+   "TowerPower",
+   "TowerStarAwardGet",
+   "TowerTeachRecord",
+   "TowerUnlockLv",
+   "Tower_Energy_AD",
+   "Tower_Reward_AD",
+   "TurntableAdAwardGet",
+   "TurntableAdTimes",
+   "TurntableGuide",
+   "TurntableNumTimes",
+   "TurntableTicket",
+   "VideoADS_Impressions",
+   "ad_double",
+   "ad_free",
+   "ad_item",
+   "ad_tips",
+   "battlepass",
+   "battlepass_tier",
+   "coins_get",
+   "coins_num",
+   "coins_use",
+   "diamond_01",
+   "diamond_spin",
+   "diamond_tv_extravideo",
+   "diamond_tv_video",
+   "diamonds",
+   "energy",
+   "gift",
+   "gift1",
+   "gift2",
+   "gift_1",
+   "gift_10"
+  ],
+  "prices": [],
+  "backend_hosts": [
+   [
+    "match3games1.iibingo.com",
+    4
+   ],
+   [
+    "www.ivymobileinternational.com",
+    4
+   ],
+   [
+    "levelstatistics.iibingo.com",
+    2
+   ],
+   [
+    "sanxiao.iibingo.com",
+    2
+   ],
+   [
+    "puzzle.papermobi.com:8080",
+    2
+   ],
+   [
+    "api.aseogames.com",
+    2
+   ],
+   [
+    "ip-api.com",
+    2
+   ]
+  ]
+ }
+}

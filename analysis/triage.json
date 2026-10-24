@@ -1,0 +1,793 @@
+{
+  "artifact": {
+    "path": "/home/user/targets/jewels-classic-5.3.6.apk",
+    "bytes": 61134581,
+    "sha256": "659aabcbe6bec0dc2274221409410cc0cb8cd80de4fea33391da62bb2f9f3ded",
+    "entries": 3587,
+    "uncompressed_bytes": 123867794,
+    "top_level": {
+      "res": 2226,
+      "assets": 1096,
+      "META-INF": 150,
+      "google": 26,
+      "lib": 20,
+      "kotlin": 7,
+      "com": 4,
+      "firebase": 3,
+      "okhttp3": 2,
+      "AndroidManifest.xml": 1,
+      "DebugProbesKt.bin": 1,
+      "androidsupportmultidexversion.txt": 1,
+      "billing.properties": 1,
+      "classes.dex": 1,
+      "classes2.dex": 1,
+      "classes3.dex": 1,
+      "classes4.dex": 1,
+      "classes5.dex": 1,
+      "classes6.dex": 1,
+      "client_analytics.proto": 1
+    },
+    "largest_entries": [
+      {
+        "name": "lib/arm64-v8a/libMyGame.so",
+        "bytes": 18763480
+      },
+      {
+        "name": "lib/armeabi-v7a/libMyGame.so",
+        "bytes": 13385924
+      },
+      {
+        "name": "classes2.dex",
+        "bytes": 9119444
+      },
+      {
+        "name": "classes.dex",
+        "bytes": 8639336
+      },
+      {
+        "name": "classes4.dex",
+        "bytes": 8474000
+      },
+      {
+        "name": "classes5.dex",
+        "bytes": 8089400
+      },
+      {
+        "name": "classes3.dex",
+        "bytes": 7446548
+      },
+      {
+        "name": "assets/levels/levelinfo.tsv",
+        "bytes": 3891651
+      },
+      {
+        "name": "assets/audience_network.dex",
+        "bytes": 3288116
+      },
+      {
+        "name": "classes6.dex",
+        "bytes": 3279536
+      },
+      {
+        "name": "resources.arsc",
+        "bytes": 1595124
+      },
+      {
+        "name": "lib/arm64-v8a/libPglmetasec_ov.so",
+        "bytes": 1040200
+      },
+      {
+        "name": "assets/EFFECT/super_effects.png",
+        "bytes": 1030150
+      },
+      {
+        "name": "lib/arm64-v8a/libc++_shared.so",
+        "bytes": 936368
+      },
+      {
+        "name": "lib/armeabi-v7a/libPglmetasec_ov.so",
+        "bytes": 684808
+      },
+      {
+        "name": "assets/bubbles.png",
+        "bytes": 653983
+      },
+      {
+        "name": "assets/ParticleEx/particle.bin",
+        "bytes": 630737
+      },
+      {
+        "name": "lib/armeabi-v7a/libc++_shared.so",
+        "bytes": 558988
+      },
+      {
+        "name": "assets/vfs/ding_bg4.bin",
+        "bytes": 533330
+      },
+      {
+        "name": "lib/arm64-v8a/libmmkv.so",
+        "bytes": 487216
+      },
+      {
+        "name": "assets/ParticleEx/PackedTexture_1.png",
+        "bytes": 480504
+      },
+      {
+        "name": "assets/music/MUSIC.mp3",
+        "bytes": 477612
+      },
+      {
+        "name": "META-INF/BNDLTOOL.SF",
+        "bytes": 419911
+      },
+      {
+        "name": "META-INF/MANIFEST.MF",
+        "bytes": 419784
+      },
+      {
+        "name": "assets/vfs/ui_zhenghe_gift0.bin",
+        "bytes": 369430
+      },
+      {
+        "name": "assets/music/MUSIC_TOWER.mp3",
+        "bytes": 365868
+      },
+      {
+        "name": "assets/vfs/battleui_board.bin",
+        "bytes": 360108
+      },
+      {
+        "name": "assets/vfs/event_bg_zhenghe.bin",
+        "bytes": 359196
+      },
+      {
+        "name": "assets/music/MUSIC_LOBBY.mp3",
+        "bytes": 298872
+      },
+      {
+        "name": "assets/background/map_background_11.jpg",
+        "bytes": 298595
+      }
+    ]
+  },
+  "manifest": {
+    "package": "com.dysugar.jewels.prince",
+    "app_name": "Jewels Classic",
+    "version_name": "5.3.6",
+    "version_code": "537",
+    "min_sdk": "21",
+    "target_sdk": "33",
+    "max_sdk": null,
+    "effective_target_sdk": 33,
+    "flags": {
+      "allow_backup": "true",
+      "cleartext_traffic": "true",
+      "network_security_config": "@7F150005"
+    },
+    "components": {
+      "activities": 68,
+      "services": 18,
+      "receivers": 13,
+      "providers": 13,
+      "libraries": 2
+    },
+    "exported": {
+      "activities": [
+        {
+          "name": "org.cocos2dx.cpp.AppActivity",
+          "permission": null,
+          "intent_filters": [
+            {
+              "actions": [
+                "android.intent.action.MAIN"
+              ],
+              "categories": [
+                "android.intent.category.LAUNCHER"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "com.google.firebase.auth.internal.GenericIdpActivity",
+          "permission": null,
+          "intent_filters": [
+            {
+              "actions": [
+                "android.intent.action.VIEW"
+              ],
+              "categories": [
+                "android.intent.category.DEFAULT",
+                "android.intent.category.BROWSABLE"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "com.google.firebase.auth.internal.RecaptchaActivity",
+          "permission": null,
+          "intent_filters": [
+            {
+              "actions": [
+                "android.intent.action.VIEW"
+              ],
+              "categories": [
+                "android.intent.category.DEFAULT",
+                "android.intent.category.BROWSABLE"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "com.facebook.CustomTabActivity",
+          "permission": null,
+          "intent_filters": [
+            {
+              "actions": [
+                "android.intent.action.VIEW"
+              ],
+              "categories": [
+                "android.intent.category.DEFAULT",
+                "android.intent.category.BROWSABLE"
+              ]
+            }
+          ]
+        }
+      ],
+      "services": [
+        {
+          "name": "androidx.work.impl.background.systemjob.SystemJobService",
+          "permission": "android.permission.BIND_JOB_SERVICE",
+          "intent_filters": []
+        },
+        {
+          "name": "com.google.android.gms.auth.api.signin.RevocationBoundService",
+          "permission": "com.google.android.gms.auth.api.signin.permission.REVOCATION_NOTIFICATION",
+          "intent_filters": []
+        }
+      ],
+      "receivers": [
+        {
+          "name": "com.google.firebase.iid.FirebaseInstanceIdReceiver",
+          "permission": "com.google.android.c2dm.permission.SEND",
+          "intent_filters": [
+            {
+              "actions": [
+                "com.google.android.c2dm.intent.RECEIVE"
+              ],
+              "categories": []
+            }
+          ]
+        },
+        {
+          "name": "androidx.work.impl.diagnostics.DiagnosticsReceiver",
+          "permission": "android.permission.DUMP",
+          "intent_filters": [
+            {
+              "actions": [
+                "androidx.work.diagnostics.REQUEST_DIAGNOSTICS"
+              ],
+              "categories": []
+            }
+          ]
+        }
+      ],
+      "providers": [
+        {
+          "name": "com.facebook.FacebookContentProvider",
+          "permission": null,
+          "intent_filters": []
+        },
+        {
+          "name": "io.appmetrica.analytics.internal.PreloadInfoContentProvider",
+          "permission": null,
+          "intent_filters": []
+        }
+      ]
+    }
+  },
+  "signing": {
+    "v1": true,
+    "v2": true,
+    "v3": true,
+    "debug_certificate": false,
+    "certificates": [
+      {
+        "subject": {
+          "country_name": "(CN)",
+          "state_or_province_name": "(BJ)",
+          "locality_name": "(BJ)",
+          "organization_name": "(SS)",
+          "organizational_unit_name": "(SS)",
+          "common_name": "(SS)"
+        },
+        "issuer": {
+          "country_name": "(CN)",
+          "state_or_province_name": "(BJ)",
+          "locality_name": "(BJ)",
+          "organization_name": "(SS)",
+          "organizational_unit_name": "(SS)",
+          "common_name": "(SS)"
+        },
+        "sha256": "62c38b492f76ba8f0deb20e007c2d7f30f059ac49876be971d0567c938366a21",
+        "not_before": "2016-10-14 01:40:14+00:00",
+        "not_after": "2116-09-20 01:40:14+00:00",
+        "serial": "793365145",
+        "signature_algorithm": "sha256_rsa"
+      }
+    ]
+  },
+  "native": {
+    "abis": [
+      "arm64-v8a",
+      "armeabi-v7a"
+    ],
+    "libraries": [
+      "libEncryptorP.so",
+      "libEncryptorP.so",
+      "libMyGame.so",
+      "libMyGame.so",
+      "libPglmetasec_ov.so",
+      "libPglmetasec_ov.so",
+      "libapminsighta.so",
+      "libapminsighta.so",
+      "libapminsightb.so",
+      "libapminsightb.so",
+      "libbuffer_pg.so",
+      "libbuffer_pg.so",
+      "libc++_shared.so",
+      "libc++_shared.so",
+      "libc+.so",
+      "libc+.so",
+      "libfile_lock_pg.so",
+      "libfile_lock_pg.so",
+      "libmmkv.so",
+      "libmmkv.so"
+    ],
+    "libraries_by_abi": {
+      "arm64-v8a": [
+        "libEncryptorP.so",
+        "libMyGame.so",
+        "libPglmetasec_ov.so",
+        "libapminsighta.so",
+        "libapminsightb.so",
+        "libbuffer_pg.so",
+        "libc++_shared.so",
+        "libc+.so",
+        "libfile_lock_pg.so",
+        "libmmkv.so"
+      ],
+      "armeabi-v7a": [
+        "libEncryptorP.so",
+        "libMyGame.so",
+        "libPglmetasec_ov.so",
+        "libapminsighta.so",
+        "libapminsightb.so",
+        "libbuffer_pg.so",
+        "libc++_shared.so",
+        "libc+.so",
+        "libfile_lock_pg.so",
+        "libmmkv.so"
+      ]
+    },
+    "bytes": 37124624
+  },
+  "engines": {},
+  "assets": {
+    "count": 1096,
+    "bytes": 34316292,
+    "extensions": {
+      ".png": 292,
+      ".bin": 171,
+      ".json": 153,
+      ".mp3": 119,
+      ".sp": 109,
+      ".atlas": 109,
+      ".actor": 45,
+      ".plist": 36,
+      ".jpg": 15,
+      ".tmx": 11,
+      ".js": 7,
+      ".fnt": 7
+    },
+    "notable": [
+      "assets/EFFECT/4xiao.json",
+      "assets/EFFECT/5streak.json",
+      "assets/EFFECT/anniu_superbonus.json",
+      "assets/EFFECT/baoxiang.json",
+      "assets/EFFECT/baoxiang2.json",
+      "assets/EFFECT/block_1_die.json",
+      "assets/EFFECT/block_2_die.json",
+      "assets/EFFECT/block_3_die.json",
+      "assets/EFFECT/block_4_die.json",
+      "assets/EFFECT/block_5_die.json",
+      "assets/EFFECT/block_6_die.json",
+      "assets/EFFECT/blue_dead_effect.json",
+      "assets/EFFECT/chain_die.json",
+      "assets/EFFECT/chengbaomeng.json",
+      "assets/EFFECT/chest_1_die.json",
+      "assets/EFFECT/chest_2_die.json",
+      "assets/EFFECT/chest_3_die.json",
+      "assets/EFFECT/chest_4_die.json",
+      "assets/EFFECT/combo.json",
+      "assets/EFFECT/counting_bomb.json",
+      "assets/EFFECT/d_event_box.json",
+      "assets/EFFECT/dbs_qp_ranseban.json",
+      "assets/EFFECT/desklamp.json",
+      "assets/EFFECT/dice_show.json",
+      "assets/EFFECT/e_clock.json",
+      "assets/EFFECT/egg_die.json",
+      "assets/EFFECT/episode_race.json",
+      "assets/EFFECT/exit_loading.json",
+      "assets/EFFECT/flip.json",
+      "assets/EFFECT/flychess_brand.json"
+    ]
+  },
+  "dex": {
+    "dex_files": 6,
+    "dex_bytes": [
+      8639336,
+      9119444,
+      7446548,
+      8474000,
+      8089400,
+      3279536
+    ],
+    "classes": 54829,
+    "strings": 209333,
+    "top_packages": {
+      "com/google/android/": 11542,
+      "com/yandex/mobile/": 4161,
+      "com/yandex/div2/": 4000,
+      "com/mbridge/msdk/": 2920,
+      "com/google/firebase/": 2602,
+      "com/yandex/div/": 2306,
+      "com/bytedance/sdk/": 2108,
+      "com/google/common/": 2020,
+      "io/appmetrica/analytics/": 1800,
+      "com/fyber/inneractive/": 1563,
+      "com/applovin/exoplayer2/": 1368,
+      "com/smaato/sdk/": 1200,
+      "com/applovin/impl/": 962,
+      "net/aihelp/core/": 944,
+      "com/iab/omid/": 690,
+      "com/unity3d/services/": 679,
+      "com/vungle/warren/": 589,
+      "com/bykv/vk/": 488,
+      "com/google/protobuf/": 466,
+      "f/a/a/": 399,
+      "com/google/ads/": 397,
+      "h/a/w1/": 386,
+      "com/monetization/ads/": 361,
+      "e/j/a/": 343,
+      "com/google/firestore/": 342,
+      "com/ironsource/mediationsdk/": 337,
+      "net/aihelp/ui/": 289,
+      "com/google/api/": 278,
+      "com/chartboost/sdk/": 269,
+      "com/google/zxing/": 268
+    },
+    "trackers": {
+      "Google Play Services": 13248,
+      "Mintegral": 2920,
+      "AppLovin": 2563,
+      "Google Ads / AdMob": 981,
+      "Facebook SDK": 859,
+      "Unity Engine": 709,
+      "IronSource": 661,
+      "Vungle": 619,
+      "AppsFlyer": 305,
+      "Unity Ads": 30
+    }
+  },
+  "strings": {
+    "urls": 223,
+    "urls_sample": [
+      "http://chartboo.st/publishing",
+      "http://developer.android.com/google/play-services/setup.html.",
+      "http://gateway.adsfall.com:8091",
+      "http://localhost",
+      "http://localhost/",
+      "http://market.android.com/",
+      "http://ow.pubmatic.com/openrtb/2.5",
+      "http://schemas.applovin.com/android/1.0",
+      "http://whatwg.org/C#alphanumeric-ascii-characters",
+      "http://whatwg.org/html/common-microsyntaxes.html#space-character",
+      "http://whatwg.org/html/webappapis.html#dom-windowbase64-atob",
+      "http://whatwg.org/html/webappapis.html#dom-windowbase64-btoa",
+      "http://www.example.com",
+      "http://www.fyber.com",
+      "http://www.google.com",
+      "https://%1$s-%2$s.cloudfunctions.net/%3$s",
+      "https://%s/%s",
+      "https://%s/%s/%s",
+      "https://%sadrevenue.%s/api/v2/generic/v6.12.1/android?app_id=",
+      "https://%sadrevenue.%s/api/v2/log/AdImpression/v6.12.1/android?app_id=",
+      "https://%sapp.%s",
+      "https://%sars.%s/api/v2/android/validate_subscription?app_id=",
+      "https://%sattr.%s/api/v",
+      "https://%scdn-%ssettings.%s/android/v1/%s/settings",
+      "https://%scdn-%stestsettings.%s/android/v1/%s/settings",
+      "https://%sconfig_android.json",
+      "https://%sconversions.%s/api/v",
+      "https://%sdlsdk.%s/v1.0/android/",
+      "https://%sfeatures_config.json",
+      "https://%sgcdsdk.%s/install_data/v5.0/"
+    ],
+    "cleartext_urls": [
+      "http://chartboo.st/publishing",
+      "http://developer.android.com/google/play-services/setup.html.",
+      "http://gateway.adsfall.com:8091",
+      "http://localhost",
+      "http://localhost/",
+      "http://market.android.com/",
+      "http://ow.pubmatic.com/openrtb/2.5",
+      "http://schemas.applovin.com/android/1.0",
+      "http://whatwg.org/C#alphanumeric-ascii-characters",
+      "http://whatwg.org/html/common-microsyntaxes.html#space-character",
+      "http://whatwg.org/html/webappapis.html#dom-windowbase64-atob",
+      "http://whatwg.org/html/webappapis.html#dom-windowbase64-btoa",
+      "http://www.example.com",
+      "http://www.fyber.com",
+      "http://www.google.com"
+    ],
+    "domains": {
+      "s.info": 20,
+      "type.googleapis.com": 19,
+      "r.consts.events.info": 15,
+      "android.app": 14,
+      "www.googleapis.com": 14,
+      "googleads.g.doubleclick.net": 10,
+      "android.net": 10,
+      "www.google.com": 8,
+      "developers.facebook.com": 8,
+      "play.google.com": 8,
+      "developer.android.com": 7,
+      "javax.net": 6,
+      "firebase.google.com": 6,
+      "googlemobileadssdk.page.link": 6,
+      "ads.pubmatic.com": 5,
+      "libcore.io": 5,
+      "facebook.com": 5,
+      "yandex.ru": 5,
+      "www.facebook.com": 5,
+      "com.android.org": 4,
+      "androidx.core.app": 4,
+      "github.com": 4,
+      "doubleclick.net": 4,
+      "dash.applovin.com": 4,
+      "whatwg.org": 4,
+      "ms.applovin.com": 3,
+      "com.google.android.gms.org": 3,
+      "advertisingidclient.info": 3,
+      "twitter.com": 3,
+      "androidx.fragment.app": 3
+    },
+    "ips": [
+      "1.0.0.0",
+      "11.9.0.0",
+      "16.4.41.0",
+      "3.6.0.0",
+      "4.6.1.1",
+      "5.2.0.3",
+      "6.12.1.1",
+      "6.16.0.0",
+      "7.1.10.0",
+      "8.1.9.0",
+      "8.2.3.0",
+      "8.3.0.0",
+      "8.8.8.8"
+    ],
+    "emails": [
+      "android@android.com"
+    ],
+    "secret_like": [
+      "Query[%s,%s,PageToken=%s,Spaces=%s]",
+      "gads:cached_token:ttl_millis",
+      "otpauth://totp/%s:%s?secret=%s&issuer=%s&algorithm=%s&digits=%d"
+    ],
+    "long_base64": [
+      {
+        "length": 15168,
+        "value": "BCkKMhWlYrKHCKfuCJCTB+5PLfq0KD84QfGhn8J0UbG7OB+l140FnxT7v9aUcXSjWZ+5FKSbJkVUlDx2…"
+      },
+      {
+        "length": 9476,
+        "value": "iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAEJGlDQ1BJQ0MgUHJvZmlsZQAAOBGFVd9v…"
+      },
+      {
+        "length": 9232,
+        "value": "iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAEJGlDQ1BJQ0MgUHJvZmlsZQAAOBGFVd9v…"
+      },
+      {
+        "length": 9120,
+        "value": "iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAEJGlDQ1BJQ0MgUHJvZmlsZQAAOBGFVd9v…"
+      },
+      {
+        "length": 8584,
+        "value": "iVBORw0KGgoAAAANSUhEUgAAADwAAAA8CAYAAAA6/NlyAAAEJGlDQ1BJQ0MgUHJvZmlsZQAAOBGFVd9v…"
+      },
+      {
+        "length": 4044,
+        "value": "iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAABHNCSVQICAgIfAhkiAAAC45JREFUeJzt…"
+      },
+      {
+        "length": 2392,
+        "value": "308204a830820390a003020102020900d585b86c7dd34ef5300d06092a864886f70d010104050030…"
+      },
+      {
+        "length": 2190,
+        "value": "308204433082032ba003020102020900c2e08746644a308d300d06092a864886f70d010104050030…"
+      },
+      {
+        "length": 1596,
+        "value": "MIIEqDCCA5CgAwIBAgIJANWFuGx90071MA0GCSqGSIb3DQEBBAUAMIGUMQswCQYDVQQGEwJVUzETMBEG…"
+      },
+      {
+        "length": 1460,
+        "value": "MIIEQzCCAyugAwIBAgIJAMLgh0ZkSjCNMA0GCSqGSIb3DQEBBAUAMHQxCzAJBgNVBAYTAlVTMRMwEQYD…"
+      },
+      {
+        "length": 240,
+        "value": "6QsgjKNXt0ThHEOR/wpJGqVuDr4bHw6oKiicVF73p9+zvKfmlFZpi9d4zgrMWd9vbyPsZIdIHuN5cgNZ…"
+      },
+      {
+        "length": 216,
+        "value": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDaUZaiASqhU4+s3JiQaIzVYtC+rZiPX2K+ZRg4C21k…"
+      },
+      {
+        "length": 216,
+        "value": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDhmH/m2qrRjxDHP794CeaZpENQNYydf8pqyXJilo6X…"
+      },
+      {
+        "length": 157,
+        "value": "68647976601306097149819007990813932172694353001433054093944634591855431833976553…"
+      },
+      {
+        "length": 157,
+        "value": "68647976601306097149819007990813932172694353001433054093944634591855431833976560…"
+      },
+      {
+        "length": 136,
+        "value": "LdxThdi1WBKAiB22hB2bH+fTWnR/Dk2t4rK/D+JAWrfXYZKXY+f3LB2rLkeQhBKUYF2MY7QtYrfQWkuA…"
+      },
+      {
+        "length": 131,
+        "value": "11839296a789a3bc0045c8a5fb42c7d1bd998f54449579b446817afbd17273e662c97ee72995ef42…"
+      },
+      {
+        "length": 131,
+        "value": "051953eb9618e1c9a1f929a21a0b68540eea2da725b99b315f3b8b489918ef109e156193951ec7e9…"
+      },
+      {
+        "length": 130,
+        "value": "c6858e06b70404e9cd9e3ecb662395b4429c648139053fb521f828af606b4d3dbaa14b5e77efe759…"
+      },
+      {
+        "length": 120,
+        "value": "ChNjb20uYW5kcm9pZC52ZW5kaW5nCiBjb20uZ29vZ2xlLmFuZHJvaWQuYXBwcy5tZWV0aW5ncwohY29t…"
+      },
+      {
+        "length": 116,
+        "value": "LdxThdi1WBKUH79wDkx/WktTJdSAWr2THFJsYFztYdi/DFKwWFf3Y02tH79XJURXh7KBJ7csWAjPWAv9…"
+      },
+      {
+        "length": 116,
+        "value": "39402006196394479212279040100143613805079739270465446667946905279627659399113263…"
+      },
+      {
+        "length": 116,
+        "value": "39402006196394479212279040100143613805079739270465446667948293404245721771496870…"
+      },
+      {
+        "length": 112,
+        "value": "LdxThdi1WBKUH79wDkx/WktTJdSAWgzt4ku2Y+v/DFKwWFf3Y02tH79XJURXh7KBJ7csWAjPWAv9WARM…"
+      },
+      {
+        "length": 96,
+        "value": "3617de4a96262c6f5d9e98bf9292dc29f8f41dbd289a147ce9da3113b5f0b8c00a60b1ce1d7e819d…"
+      },
+      {
+        "length": 96,
+        "value": "b3312fa7e23ee7e4988e056be3f82d19181d9c6efe8141120314088f5013875ac656398d8a2ed19d…"
+      },
+      {
+        "length": 96,
+        "value": "aa87ca22be8b05378eb1c71ef320ad746e1d3b628ba79b9859f741e082542a385502f25dbf55296c…"
+      },
+      {
+        "length": 89,
+        "value": "MonetizationAdsInternalExtendedContainer_monetization_internal_bottom_right_corn…"
+      },
+      {
+        "length": 88,
+        "value": "MonetizationAdsInternalExtendedContainer_monetization_internal_bottom_left_corne…"
+      },
+      {
+        "length": 88,
+        "value": "monetization_ads_internal_app_install_call_to_action_horizontal_margin_first_deg…"
+      }
+    ]
+  },
+  "signals": {
+    "dynamic-code-loading": [
+      "Ldalvik/system/DexClassLoader;",
+      "Ldalvik/system/PathClassLoader;",
+      "Ldalvik/system/InMemoryDexClassLoader;"
+    ],
+    "root-check": [
+      "/system/app/Superuser.apk",
+      "/system/xbin/su"
+    ],
+    "emulator-check": [
+      "goldfish",
+      "ranchu",
+      "ro.kernel.qemu"
+    ],
+    "media-codec": [
+      "Landroid/media/MediaCodec"
+    ],
+    "packer/unpack": [
+      "Ljava/util/zip/ZipInputStream;"
+    ]
+  },
+  "permissions": {
+    "count": 32,
+    "all": [
+      "android.permission.ACCESS_ADSERVICES_AD_ID",
+      "android.permission.ACCESS_ADSERVICES_ATTRIBUTION",
+      "android.permission.ACCESS_NETWORK_STATE",
+      "android.permission.ACCESS_WIFI_STATE",
+      "android.permission.FOREGROUND_SERVICE",
+      "android.permission.INTERNET",
+      "android.permission.POST_NOTIFICATIONS",
+      "android.permission.READ_APP_BADGE",
+      "android.permission.VIBRATE",
+      "android.permission.WAKE_LOCK",
+      "com.anddoes.launcher.permission.UPDATE_COUNT",
+      "com.android.vending.BILLING",
+      "com.applovin.array.apphub.permission.BIND_APPHUB_SERVICE",
+      "com.dysugar.jewels.prince.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+      "com.google.android.c2dm.permission.RECEIVE",
+      "com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE",
+      "com.google.android.gms.permission.AD_ID",
+      "com.google.android.providers.gsf.permission.READ_GSERVICES",
+      "com.htc.launcher.permission.READ_SETTINGS",
+      "com.htc.launcher.permission.UPDATE_SHORTCUT",
+      "com.huawei.android.launcher.permission.CHANGE_BADGE",
+      "com.huawei.android.launcher.permission.READ_SETTINGS",
+      "com.huawei.android.launcher.permission.WRITE_SETTINGS",
+      "com.majeur.launcher.permission.UPDATE_BADGE",
+      "com.oppo.launcher.permission.READ_SETTINGS",
+      "com.oppo.launcher.permission.WRITE_SETTINGS",
+      "com.sec.android.provider.badge.permission.READ",
+      "com.sec.android.provider.badge.permission.WRITE",
+      "com.sonyericsson.home.permission.BROADCAST_BADGE",
+      "com.sonymobile.home.permission.PROVIDER_INSERT_BADGE",
+      "me.everything.badger.permission.BADGE_COUNT_READ",
+      "me.everything.badger.permission.BADGE_COUNT_WRITE"
+    ],
+    "risky": [
+      {
+        "permission": "android.permission.POST_NOTIFICATIONS",
+        "why": "notifications"
+      },
+      {
+        "permission": "com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE",
+        "why": "Play install referrer"
+      }
+    ]
+  },
+  "rea": {
+    "flutter": {
+      "target": {
+        "path": "/home/user/targets/jewels-classic-5.3.6.apk",
+        "bytes": 61134581,
+        "sha256": "659aabcbe6bec0dc2274221409410cc0cb8cd80de4fea33391da62bb2f9f3ded"
+      },
+      "flutter_detected": false,
+      "abis": [],
+      "coverage": "complete"
+    },
+    "apkid": null
+  }
+}

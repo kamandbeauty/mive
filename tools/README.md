@@ -45,6 +45,23 @@ run, then writes `triage.md`, `triage.json`, `apkid.json` and, when REA is
 installed and the APK is Flutter, `rea-flutter.json` / `rea-dart-aot.json`.
 A cold run takes ~30 s; an already-bootstrapped run is a few seconds.
 
+## `apk-economy.py`
+
+Economy / monetization extraction for a game APK: ad-and-monetization SDK
+class footprint, billing and ad keys from the manifest, bundled economy JSON
+(rewarded/interstitial gates, offers, payIds), hard-coded price points from
+i18n blobs, level-economy statistics from `levels/*.tsv`, rewarded-ad
+placement names and the game's own backend hosts from the native library.
+
+```bash
+python3 tools/apk-economy.py TARGET.apk --md economy.md --json economy.json
+```
+
+Static only: it never runs the app and never talks to a server, so anything
+server-configurable (prices, caps, probabilities) is the *bundled default*, not
+the live value. Output marks nothing as inference — that distinction belongs in
+the report you write on top of it.
+
 ## Getting a target into a restricted environment
 
 This sandbox only reaches `github.com`, `codeload.github.com`,
