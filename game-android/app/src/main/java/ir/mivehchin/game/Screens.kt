@@ -172,8 +172,9 @@ internal fun GameView.drawGame(c: Canvas) {
     val plate = RectF(boardRect.left - cellSize * 0.12f, boardRect.top - cellSize * 0.12f, boardRect.right + cellSize * 0.12f, boardRect.bottom + cellSize * 0.12f)
     Art.panel(c, plate, cellSize * 0.3f, 0x33000000)
 
-    for (r in 0 until 8) {
-        for (col in 0 until 8) {
+    for (r in 0 until g.rows) {
+        for (col in 0 until g.cols) {
+            if (!g.playable(r, col)) continue
             val x = boardRect.left + col * cellSize
             val y = boardRect.top + r * cellSize
             Art.panel(c, RectF(x + 2f, y + 2f, x + cellSize - 2f, y + cellSize - 2f), cellSize * 0.22f, 0x1FFFFFFF)

@@ -29,50 +29,176 @@ LEVEL_NAMES = [
 FRUITS = ["توت‌فرنگی", "پرتقال", "لیمو", "سیب سبز", "انگور", "بادمجان", "گل‌کلم"]
 
 
-def level_json(rng, lid, moves, target, collect, ice):
-    obj = {"moves": moves, "target": target}
-    if collect:
-        obj["collect"] = collect
-    if ice:
-        obj["ice"] = ice
-    return json.dumps(obj, ensure_ascii=False, separators=(",", ":"))
+ROWS = 9
+COLS = 8
+
+# Board shapes, exactly like the analysed game: one 8-bit column mask per row.
+SHAPES = {
+    "diamond":   [0, 56, 124, 254, 254, 254, 124, 56, 0],
+    "full":      [255, 255, 255, 255, 255, 255, 255, 255, 255],
+    "rounded":   [126, 255, 255, 255, 255, 255, 255, 255, 126],
+    "pyramid":   [16, 56, 124, 254, 254, 254, 254, 254, 254],
+    "hourglass": [255, 126, 60, 24, 24, 60, 126, 255, 255],
+    "cross":     [24, 24, 126, 126, 126, 126, 24, 24, 24],
+}
 
 
-def ice_cells(rng, count):
-    # a cluster + a few stragglers, always inside the board
-    r0 = rng.randint(1, 5)
-    c0 = rng.randint(1, 5)
+def shape_for(lid):
+    if lid <= 3:
+        return "diamond"
+    if lid <= 8:
+        return "full"
+    if lid <= 12:
+        return "rounded"
+    if lid <= 18:
+        return "pyramid"
+    if lid <= 24:
+        return "hourglass"
+    if lid <= 30:
+        return "cross"
+    cycle = ["diamond", "rounded", "pyramid", "hourglass", "cross", "full"]
+    return cycle[((lid - 31) // 5) % len(cycle)]
+
+
+def mask_from_rows(vals):
+    return [[bool((vals[r] >> c) & 1) for c in range(COLS)] for r in range(ROWS)]
+
+
+def find_runs(grid, mask):
+    runs = []
+    for r in range(ROWS):
+        c = 0
+        while c < COLS:
+            if not mask[r][c] or grid[r][c] is None:
+                c += 1
+                continue
+            t = grid[r][c]
+            e = c + 1
+            while e < COLS and mask[r][e] and grid[r][e] == t:
+                e += 1
+            if e - c >= 3:
+                runs.append([(r, x) for x in range(c, e)])
+            c = e
+    for c in range(COLS):
+        r = 0
+        while r < ROWS:
+            if not mask[r][c] or grid[r][c] is None:
+                r += 1
+                continue
+            t = grid[r][c]
+            e = r + 1
+            while e < ROWS and mask[e][c] and grid[e][c] == t:
+                e += 1
+            if e - r >= 3:
+                runs.append([(y, c) for y in range(r, e)])
+            r = e
+    return runs
+
+
+def has_move(grid, mask):
+    for r in range(ROWS):
+        for c in range(COLS):
+            if not mask[r][c] or grid[r][c] is None:
+                continue
+            for dr, dc in ((0, 1), (1, 0)):
+                rr, cc = r + dr, c + dc
+                if rr >= ROWS or cc >= COLS or not mask[rr][cc]:
+                    continue
+                grid[r][c], grid[rr][cc] = grid[rr][cc], grid[r][c]
+                ok = len(find_runs(grid, mask)) > 0
+                grid[r][c], grid[rr][cc] = grid[rr][cc], grid[r][c]
+                if ok:
+                    return True
+    return False
+
+
+def gen_candy(rng, mask, types):
+    grid = [[None] * COLS for _ in range(ROWS)]
+    for r in range(ROWS):
+        for c in range(COLS):
+            if not mask[r][c]:
+                continue
+            banned = set()
+            if c >= 2 and grid[r][c - 1] is not None and grid[r][c - 1] == grid[r][c - 2]:
+                banned.add(grid[r][c - 1])
+            if r >= 2 and grid[r - 1][c] is not None and grid[r - 1][c] == grid[r - 2][c]:
+                banned.add(grid[r - 1][c])
+            options = [t for t in types if t not in banned]
+            grid[r][c] = rng.choice(options or types)
+    return grid
+
+
+def build_candy(rng, mask, types):
+    for _ in range(300):
+        grid = gen_candy(rng, mask, types)
+        if not find_runs(grid, mask) and has_move(grid, mask):
+            return grid
+    return gen_candy(rng, mask, types)
+
+
+def ice_cells(rng, mask, count):
     cells = []
-    for dr in range(3):
-        for dc in range(3):
-            if len(cells) < count and rng.random() < 0.85:
-                cells.append([r0 + dr, c0 + dc])
-    while len(cells) < count:
-        r, c = rng.randint(0, 7), rng.randint(0, 7)
-        if [r, c] not in cells:
-            cells.append([r, c])
-    return cells[:count]
+    inner = [(r, c) for r in range(1, ROWS - 1) for c in range(1, COLS - 1) if mask[r][c]]
+    rng.shuffle(inner)
+    for cell in inner:
+        if len(cells) >= count:
+            break
+        cells.append([cell[0], cell[1]])
+    return cells
 
 
 def build_levels():
     rng = random.Random(20261024)
     rows = []
     for lid in range(1, 61):
-        moves = max(18, 26 - (lid - 1) // 8)
-        target = int(round((1200 + (lid - 1) * 95) / 50.0)) * 50
-        collect = []
+        name = LEVEL_NAMES[(lid - 1) % len(LEVEL_NAMES)]
+        mask_vals = SHAPES[shape_for(lid)]
+        mask = mask_from_rows(mask_vals)
+
+        n_types = 5 if lid <= 6 else (6 if lid <= 20 else 7)
+        types = list(range(1, n_types + 1))
+
+        moves = max(16, 22 - (lid - 1) // 10)
+        base = 1200 + (lid - 1) * 95
+        rank = [int(base), int(base * 1.3), int(base * 1.65)]
+
+        targets = []
         if lid >= 4 and lid % 2 == 0:
-            t = (lid * 3) % 7
-            collect.append({"type": t, "count": min(18, 8 + lid // 6)})
+            targets.append([types[(lid * 3) % len(types)], min(18, 8 + lid // 6)])
         if lid % 6 == 0:
-            t2 = (lid * 5 + 1) % 7
-            if not any(g["type"] == t2 for g in collect):
-                collect.append({"type": t2, "count": min(14, 6 + lid // 8)})
+            t2 = types[(lid * 5 + 1) % len(types)]
+            if not any(g[0] == t2 for g in targets):
+                targets.append([t2, min(14, 6 + lid // 8)])
+
         ice = []
         if lid >= 8 and (lid % 3 == 0 or lid % 10 == 0):
-            ice = ice_cells(rng, min(18, 6 + lid // 5))
-        rows.append((lid, LEVEL_NAMES[(lid - 1) % len(LEVEL_NAMES)],
-                     level_json(rng, lid, moves, target, collect, ice)))
+            ice = ice_cells(rng, mask, min(16, 6 + lid // 5))
+
+        candy = build_candy(rng, mask, types)
+        candy_rows = []
+        for r in range(ROWS):
+            vals = [candy[r][c] if mask[r][c] and candy[r][c] is not None else 0 for c in range(COLS)]
+            while vals and vals[-1] == 0:
+                vals.pop()
+            candy_rows.append(vals)
+
+        obj = {
+            "version": 1,
+            "Area_Total": [{
+                "Order": 0,
+                "NewBoard": mask_vals,
+                "Candy": candy_rows,
+                "Area_Block_Create_Total": ice,
+            }],
+            "Block_Kind_Count": n_types,
+            "Move_Count": moves,
+            "levelId": lid,
+            "Rank_Score": rank,
+            "Target": targets,
+            "mTypeColor": types,
+            "mColor": [25, 25, 25, 25, 25, 25],
+        }
+        rows.append((lid, name, json.dumps(obj, ensure_ascii=False, separators=(",", ":"))))
     return rows
 
 

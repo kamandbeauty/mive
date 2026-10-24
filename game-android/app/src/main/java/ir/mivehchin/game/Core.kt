@@ -3,6 +3,7 @@ package ir.mivehchin.game
 import android.content.Context
 import org.json.JSONArray
 import org.json.JSONObject
+import kotlin.math.min
 import kotlin.random.Random
 
 /* ------------------------------------------------------------------ model */
@@ -10,14 +11,28 @@ import kotlin.random.Random
 data class Cell(val r: Int, val c: Int)
 data class CollectGoal(val type: Int, val count: Int)
 
+/**
+ * Level layout mirrors the analysed game's `levelinfo.tsv`:
+ *   Area_Total[0].NewBoard  -> one 8-bit column mask per row (board shape)
+ *   Area_Total[0].Candy     -> per-row starting board, 0 = empty, 1..7 = fruit id
+ *   Area_Total[0].Area_Block_Create_Total -> ice cells, [row, col]
+ *   Target / Rank_Score / Move_Count / mTypeColor
+ */
 data class Level(
     val id: Int,
     val name: String,
+    val rows: Int,
+    val cols: Int,
+    val mask: Array<BooleanArray>,
+    val initial: Array<IntArray>,
+    val allowed: List<Int>,
     val moves: Int,
-    val target: Int,
+    val starScores: IntArray,
     val collect: List<CollectGoal>,
     val ice: List<Cell>
-)
+) {
+    val target: Int get() = starScores[0]
+}
 
 private var tileSeq = 1
 
@@ -52,8 +67,6 @@ enum class Status { PLAYING, WON, LOST }
 class Game(val level: Level, seed: Long = Random.nextLong()) {
 
     companion object {
-        const val ROWS = 8
-        const val COLS = 8
         const val TYPES = 7
     }
 
@@ -68,8 +81,13 @@ class Game(val level: Level, seed: Long = Random.nextLong()) {
     private class Run(val dir: Char, val type: Int, val cells: List<Cell>)
 
     private val rnd = Random(seed)
-    val grid: Array<Array<Tile?>> = Array(ROWS) { arrayOfNulls<Tile?>(COLS) }
-    val ice: Array<IntArray> = Array(ROWS) { IntArray(COLS) }
+    private val allowed: List<Int> =
+        if (level.allowed.isEmpty()) (0 until TYPES).toList() else level.allowed
+
+    val rows = level.rows
+    val cols = level.cols
+    val grid: Array<Array<Tile?>> = Array(rows) { arrayOfNulls<Tile?>(cols) }
+    val ice: Array<IntArray> = Array(rows) { IntArray(cols) }
     val collected = IntArray(TYPES)
 
     var iceLeft = 0
@@ -85,7 +103,7 @@ class Game(val level: Level, seed: Long = Random.nextLong()) {
 
     init {
         for (cell in level.ice) {
-            if (inBounds(cell.r, cell.c)) {
+            if (playable(cell.r, cell.c)) {
                 ice[cell.r][cell.c] = 1
                 iceLeft++
             }
@@ -93,44 +111,63 @@ class Game(val level: Level, seed: Long = Random.nextLong()) {
         fillBoard()
     }
 
-    fun inBounds(r: Int, c: Int): Boolean = r in 0 until ROWS && c in 0 until COLS
+    fun inBounds(r: Int, c: Int): Boolean = r in 0 until rows && c in 0 until cols
 
-    fun tileAt(r: Int, c: Int): Tile? = if (inBounds(r, c)) grid[r][c] else null
+    fun playable(r: Int, c: Int): Boolean =
+        r in 0 until rows && c in 0 until cols && level.mask[r][c]
 
-    private fun randomType(): Int = rnd.nextInt(TYPES)
+    fun tileAt(r: Int, c: Int): Tile? = if (playable(r, c)) grid[r][c] else null
+
+    private fun randomType(): Int = allowed[rnd.nextInt(allowed.size)]
 
     private fun placeInitial() {
-        for (r in 0 until ROWS) {
-            for (c in 0 until COLS) {
+        for (r in 0 until rows) {
+            for (c in 0 until cols) {
+                if (!playable(r, c)) {
+                    grid[r][c] = null
+                    continue
+                }
                 val banned = HashSet<Int>()
-                if (c >= 2) {
+                if (c >= 2 && playable(r, c - 1) && playable(r, c - 2)) {
                     val a = grid[r][c - 1]
                     val b = grid[r][c - 2]
                     if (a != null && b != null && a.type == b.type) banned.add(a.type)
                 }
-                if (r >= 2) {
+                if (r >= 2 && playable(r - 1, c) && playable(r - 2, c)) {
                     val a = grid[r - 1][c]
                     val b = grid[r - 2][c]
                     if (a != null && b != null && a.type == b.type) banned.add(a.type)
                 }
                 var t = randomType()
                 var guard = 0
-                while (banned.contains(t) && guard++ < 30) t = randomType()
+                while (banned.contains(t) && guard++ < 40) t = randomType()
                 grid[r][c] = Tile(t)
             }
         }
     }
 
     private fun fillBoard() {
-        placeInitial()
+        var usedInitial = false
+        for (r in 0 until rows) {
+            for (c in 0 until cols) {
+                if (!playable(r, c)) continue
+                val t = level.initial[r][c]
+                if (t >= 0) {
+                    grid[r][c] = Tile(t)
+                    usedInitial = true
+                }
+            }
+        }
+        if (!usedInitial) placeInitial()
         var guard = 0
-        while (findMatches().isNotEmpty() && guard++ < 20) placeInitial()
+        while (findMatches().isNotEmpty() && guard++ < 30) placeInitial()
     }
 
     fun snapshot(): List<TilePos> {
         val out = ArrayList<TilePos>()
-        for (r in 0 until ROWS) {
-            for (c in 0 until COLS) {
+        for (r in 0 until rows) {
+            for (c in 0 until cols) {
+                if (!playable(r, c)) continue
                 val t = grid[r][c]
                 if (t != null) out.add(TilePos(t, r, c))
             }
@@ -152,16 +189,16 @@ class Game(val level: Level, seed: Long = Random.nextLong()) {
     fun findMatches(): List<Group> {
         val runs = ArrayList<Run>()
 
-        for (r in 0 until ROWS) {
+        for (r in 0 until rows) {
             var c = 0
-            while (c < COLS) {
+            while (c < cols) {
                 val t = grid[r][c]
                 if (t == null || t.type < 0) {
                     c++
                     continue
                 }
                 var e = c + 1
-                while (e < COLS && grid[r][e]?.type == t.type) e++
+                while (e < cols && grid[r][e]?.type == t.type) e++
                 if (e - c >= 3) {
                     val cells = ArrayList<Cell>()
                     for (x in c until e) cells.add(Cell(r, x))
@@ -171,16 +208,16 @@ class Game(val level: Level, seed: Long = Random.nextLong()) {
             }
         }
 
-        for (c in 0 until COLS) {
+        for (c in 0 until cols) {
             var r = 0
-            while (r < ROWS) {
+            while (r < rows) {
                 val t = grid[r][c]
                 if (t == null || t.type < 0) {
                     r++
                     continue
                 }
                 var e = r + 1
-                while (e < ROWS && grid[e][c]?.type == t.type) e++
+                while (e < rows && grid[e][c]?.type == t.type) e++
                 if (e - r >= 3) {
                     val cells = ArrayList<Cell>()
                     for (y in r until e) cells.add(Cell(y, c))
@@ -232,20 +269,20 @@ class Game(val level: Level, seed: Long = Random.nextLong()) {
     fun specialArea(tile: Tile, r: Int, c: Int): List<Cell> {
         val out = ArrayList<Cell>()
         when (tile.special) {
-            "stripeH" -> for (x in 0 until COLS) out.add(Cell(r, x))
-            "stripeV" -> for (y in 0 until ROWS) out.add(Cell(y, c))
+            "stripeH" -> for (x in 0 until cols) if (playable(r, x)) out.add(Cell(r, x))
+            "stripeV" -> for (y in 0 until rows) if (playable(y, c)) out.add(Cell(y, c))
             "bomb" -> for (dr in -1..1) for (dc in -1..1) {
-                if (inBounds(r + dr, c + dc)) out.add(Cell(r + dr, c + dc))
+                if (playable(r + dr, c + dc)) out.add(Cell(r + dr, c + dc))
             }
             "rainbow" -> {
                 val counts = IntArray(TYPES)
-                for (y in 0 until ROWS) for (x in 0 until COLS) {
+                for (y in 0 until rows) for (x in 0 until cols) {
                     val t = grid[y][x]
                     if (t != null && t.type >= 0) counts[t.type]++
                 }
-                var best = 0
-                for (i in 1 until TYPES) if (counts[i] > counts[best]) best = i
-                for (y in 0 until ROWS) for (x in 0 until COLS) {
+                var best = allowed[0]
+                for (t in allowed) if (counts[t] > counts[best]) best = t
+                for (y in 0 until rows) for (x in 0 until cols) {
                     val t = grid[y][x]
                     if (t != null && t.type == best) out.add(Cell(y, x))
                 }
@@ -258,7 +295,7 @@ class Game(val level: Level, seed: Long = Random.nextLong()) {
 
     fun trySwap(a: Cell, b: Cell): SwapResult {
         if (status != Status.PLAYING) return SwapResult(false, emptyList())
-        if (!inBounds(a.r, a.c) || !inBounds(b.r, b.c)) return SwapResult(false, emptyList())
+        if (!playable(a.r, a.c) || !playable(b.r, b.c)) return SwapResult(false, emptyList())
         if (!isAdjacent(a, b)) return SwapResult(false, emptyList())
         val ta = grid[a.r][a.c] ?: return SwapResult(false, emptyList())
         val tb = grid[b.r][b.c] ?: return SwapResult(false, emptyList())
@@ -286,11 +323,11 @@ class Game(val level: Level, seed: Long = Random.nextLong()) {
         val cells = HashSet<Cell>()
 
         if (type == -2) {
-            for (r in 0 until ROWS) for (c in 0 until COLS) {
+            for (r in 0 until rows) for (c in 0 until cols) {
                 if (grid[r][c] != null) cells.add(Cell(r, c))
             }
         } else {
-            for (r in 0 until ROWS) for (c in 0 until COLS) {
+            for (r in 0 until rows) for (c in 0 until cols) {
                 val t = grid[r][c] ?: continue
                 if (t.type == type || t.special == "rainbow") cells.add(Cell(r, c))
             }
@@ -408,23 +445,34 @@ class Game(val level: Level, seed: Long = Random.nextLong()) {
         val falls = ArrayList<Fall>()
         val spawns = ArrayList<Spawn>()
 
-        for (c in 0 until COLS) {
-            var write = ROWS - 1
-            for (r in ROWS - 1 downTo 0) {
-                val tile = grid[r][c] ?: continue
-                if (r != write) {
-                    grid[write][c] = tile
-                    grid[r][c] = null
-                    falls.add(Fall(tile.id, r, c, write, c))
+        for (c in 0 until cols) {
+            var r = 0
+            while (r < rows) {
+                if (!playable(r, c)) {
+                    r++
+                    continue
                 }
-                write--
-            }
-            var above = 1
-            for (r in write downTo 0) {
-                val tile = Tile(randomType())
-                grid[r][c] = tile
-                spawns.add(Spawn(tile, r, c, -above))
-                above++
+                var end = r
+                while (end < rows && playable(end, c)) end++
+
+                var write = end - 1
+                for (y in end - 1 downTo r) {
+                    val tile = grid[y][c] ?: continue
+                    if (y != write) {
+                        grid[write][c] = tile
+                        grid[y][c] = null
+                        falls.add(Fall(tile.id, y, c, write, c))
+                    }
+                    write--
+                }
+                var above = 1
+                for (y in write downTo r) {
+                    val tile = Tile(randomType())
+                    grid[y][c] = tile
+                    spawns.add(Spawn(tile, y, c, -above))
+                    above++
+                }
+                r = end
             }
         }
         return Step.Settle(falls, spawns)
@@ -434,7 +482,7 @@ class Game(val level: Level, seed: Long = Random.nextLong()) {
 
     fun useHammer(cell: Cell): List<Step>? {
         if (status != Status.PLAYING) return null
-        if (!inBounds(cell.r, cell.c) || grid[cell.r][cell.c] == null) return null
+        if (!playable(cell.r, cell.c) || grid[cell.r][cell.c] == null) return null
         combo = 1
         val steps = ArrayList<Step>()
         steps.add(executeClear(Plan(HashSet<Cell>().apply { add(cell) }, ArrayList()), 1f))
@@ -453,7 +501,7 @@ class Game(val level: Level, seed: Long = Random.nextLong()) {
     /* ------------------------------------------------------- end of turn */
 
     fun objectivesMet(): Boolean {
-        if (score < level.target) return false
+        if (score < level.starScores[0]) return false
         if (iceLeft > 0) return false
         for (goal in level.collect) {
             if (collected[goal.type] < goal.count) return false
@@ -464,8 +512,8 @@ class Game(val level: Level, seed: Long = Random.nextLong()) {
     fun stars(): Int {
         if (status != Status.WON) return 0
         return when {
-            score >= (level.target * 1.75f).toInt() -> 3
-            score >= (level.target * 1.35f).toInt() -> 2
+            score >= level.starScores[2] -> 3
+            score >= level.starScores[1] -> 2
             else -> 1
         }
     }
@@ -478,17 +526,18 @@ class Game(val level: Level, seed: Long = Random.nextLong()) {
     }
 
     fun hasMove(): Boolean {
-        for (r in 0 until ROWS) {
-            for (c in 0 until COLS) {
+        for (r in 0 until rows) {
+            for (c in 0 until cols) {
+                if (!playable(r, c)) continue
                 val t = grid[r][c]
                 if (t != null && t.special == "rainbow") return true
-                if (c + 1 < COLS) {
+                if (playable(r, c + 1)) {
                     swapCells(Cell(r, c), Cell(r, c + 1))
                     val ok = findMatches().isNotEmpty()
                     swapCells(Cell(r, c), Cell(r, c + 1))
                     if (ok) return true
                 }
-                if (r + 1 < ROWS) {
+                if (playable(r + 1, c)) {
                     swapCells(Cell(r, c), Cell(r + 1, c))
                     val ok = findMatches().isNotEmpty()
                     swapCells(Cell(r, c), Cell(r + 1, c))
@@ -500,16 +549,20 @@ class Game(val level: Level, seed: Long = Random.nextLong()) {
     }
 
     fun shuffleStep(force: Boolean = false): Step.Rebuild {
+        val slots = ArrayList<Cell>()
         val tiles = ArrayList<Tile>()
-        for (r in 0 until ROWS) for (c in 0 until COLS) grid[r][c]?.let { tiles.add(it) }
+        for (r in 0 until rows) for (c in 0 until cols) {
+            if (!playable(r, c)) continue
+            slots.add(Cell(r, c))
+            grid[r][c]?.let { tiles.add(it) }
+        }
 
         var attempt = 0
         while (attempt++ < 200) {
             tiles.shuffle(rnd)
             var i = 0
-            for (r in 0 until ROWS) for (c in 0 until COLS) {
-                grid[r][c] = tiles[i]
-                i++
+            for (slot in slots) {
+                grid[slot.r][slot.c] = if (i < tiles.size) tiles[i++] else null
             }
             if (findMatches().isEmpty() && hasMove()) break
         }
@@ -540,28 +593,79 @@ object Levels {
                 } catch (e: Exception) {
                     continue
                 }
+
+                val area = obj.optJSONArray("Area_Total")?.optJSONObject(0) ?: continue
+                val board = area.optJSONArray("NewBoard") ?: continue
+                val rows = board.length()
+                val cols = 8
+                if (rows < 3) continue
+
+                val mask = Array(rows) { r ->
+                    val v = board.optInt(r, 0)
+                    BooleanArray(cols) { c -> ((v shr c) and 1) == 1 }
+                }
+
+                val initial = Array(rows) { IntArray(cols) { -1 } }
+                val candy = area.optJSONArray("Candy")
+                if (candy != null) {
+                    for (r in 0 until min(rows, candy.length())) {
+                        val rowArr = candy.optJSONArray(r) ?: continue
+                        for (c in 0 until min(cols, rowArr.length())) {
+                            val v = rowArr.optInt(c, 0)
+                            if (v > 0) initial[r][c] = v - 1
+                        }
+                    }
+                }
+
+                val allowed = ArrayList<Int>()
+                val types = obj.optJSONArray("mTypeColor")
+                if (types != null) {
+                    for (i in 0 until types.length()) allowed.add(types.getInt(i) - 1)
+                }
+                if (allowed.isEmpty()) for (i in 0 until 7) allowed.add(i)
+
+                val starScores = IntArray(3)
+                val rank = obj.optJSONArray("Rank_Score")
+                if (rank != null) {
+                    for (i in 0 until min(3, rank.length())) starScores[i] = rank.optInt(i, 0)
+                }
+                if (starScores[0] <= 0) starScores[0] = 1200
+                if (starScores[1] <= starScores[0]) starScores[1] = (starScores[0] * 1.3f).toInt()
+                if (starScores[2] <= starScores[1]) starScores[2] = (starScores[0] * 1.65f).toInt()
+
                 val collect = ArrayList<CollectGoal>()
-                val collectArr = obj.optJSONArray("collect")
-                if (collectArr != null) {
-                    for (i in 0 until collectArr.length()) {
-                        val o = collectArr.getJSONObject(i)
-                        collect.add(CollectGoal(o.optInt("type", 0), o.optInt("count", 10)))
+                val targets = obj.optJSONArray("Target")
+                if (targets != null) {
+                    for (i in 0 until targets.length()) {
+                        val a = targets.optJSONArray(i) ?: continue
+                        collect.add(CollectGoal(a.optInt(0, 1) - 1, a.optInt(1, 10)))
                     }
                 }
+
                 val ice = ArrayList<Cell>()
-                val iceArr = obj.optJSONArray("ice")
-                if (iceArr != null) {
-                    for (i in 0 until iceArr.length()) {
-                        val a = iceArr.getJSONArray(i)
-                        ice.add(Cell(a.getInt(0), a.getInt(1)))
+                val blocks = area.optJSONArray("Area_Block_Create_Total")
+                if (blocks != null) {
+                    for (i in 0 until blocks.length()) {
+                        val a = blocks.optJSONArray(i) ?: continue
+                        val rr = a.optInt(0, -1)
+                        val cc = a.optInt(1, -1)
+                        if (rr in 0 until rows && cc in 0 until cols && mask[rr][cc]) {
+                            ice.add(Cell(rr, cc))
+                        }
                     }
                 }
+
                 out.add(
                     Level(
                         id = id,
                         name = name,
-                        moves = obj.optInt("moves", 20),
-                        target = obj.optInt("target", 1500),
+                        rows = rows,
+                        cols = cols,
+                        mask = mask,
+                        initial = initial,
+                        allowed = allowed,
+                        moves = obj.optInt("Move_Count", 20),
+                        starScores = starScores,
                         collect = collect,
                         ice = ice
                     )

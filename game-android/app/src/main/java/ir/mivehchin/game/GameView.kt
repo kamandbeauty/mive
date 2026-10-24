@@ -225,13 +225,20 @@ class GameView(context: Context) : View(context) {
 
     internal fun ensureBoardLayout() {
         if (widthPx <= 0f || heightPx <= 0f) return
-        val pad = widthPx * 0.045f
-        val top = heightPx * 0.19f
-        val bottom = heightPx * 0.21f
-        val size = min(widthPx - 2 * pad, heightPx - top - bottom)
-        val left = (widthPx - size) / 2f
-        val newCell = size / 8f
-        boardRect.set(left, top, left + size, top + size)
+        val rowsN = game?.rows ?: 9
+        val colsN = game?.cols ?: 8
+        val pad = widthPx * 0.035f
+        val top = heightPx * 0.185f
+        val bottom = heightPx * 0.205f
+        val availH = heightPx - top - bottom
+        val cellW = (widthPx - 2 * pad) / colsN
+        val cellH = availH / rowsN
+        val newCell = min(cellW, cellH)
+        val bw = newCell * colsN
+        val bh = newCell * rowsN
+        val left = (widthPx - bw) / 2f
+        val boardTop = top + (availH - bh) / 2f
+        boardRect.set(left, boardTop, left + bw, boardTop + bh)
         if (abs(newCell - cellSize) > 0.5f) {
             cellSize = newCell
             snapSprites()
@@ -249,10 +256,12 @@ class GameView(context: Context) : View(context) {
     }
 
     internal fun cellAt(x: Float, y: Float): Cell? {
+        val g = game ?: return null
         if (!boardRect.contains(x, y)) return null
         val c = ((x - boardRect.left) / cellSize).toInt()
         val r = ((y - boardRect.top) / cellSize).toInt()
-        if (r !in 0..7 || c !in 0..7) return null
+        if (r !in 0 until g.rows || c !in 0 until g.cols) return null
+        if (!g.playable(r, c)) return null
         return Cell(r, c)
     }
 
@@ -819,7 +828,8 @@ class GameView(context: Context) : View(context) {
                             } else {
                                 Cell(from.r + if (dy > 0) 1 else -1, from.c)
                             }
-                            if (to.r in 0..7 && to.c in 0..7) performSwap(from, to)
+                            val gg = game
+                            if (gg != null && gg.playable(to.r, to.c)) performSwap(from, to)
                         }
                     }
                 } else if (screen == Screen.MAP) {
