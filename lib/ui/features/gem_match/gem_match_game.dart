@@ -1691,7 +1691,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
     final frame = size * 0.102;
     final inner = size - frame * 2;
     const gap = 0.0;
-    return Container(
+    return SizedBox(
       key: const ValueKey<String>('game-board-frame'),
       width: size,
       height: size,
