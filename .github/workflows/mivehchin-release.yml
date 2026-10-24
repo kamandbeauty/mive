@@ -48,7 +48,24 @@ jobs:
 
       - name: Compile
         working-directory: game-android
-        run: gradle --no-daemon assembleRelease --stacktrace
+        run: |
+          set -o pipefail
+          gradle --no-daemon assembleRelease --stacktrace 2>&1 | tee ../ci-build.log
+
+      - name: Publish the build log back to the branch when compilation fails
+        if: failure()
+        run: |
+          set +e
+          LOG=ci-build.log
+          [ -f "$LOG" ] || echo "no log captured" > "$LOG"
+          # keep only material an outside reader can act on
+          grep -E "^(e: |w: |FAILURE|\* What went wrong|Caused by|[0-9]+ actionable|Execution failed|> )" "$LOG" | head -400 > ci-build-errors.log
+          [ -s ci-build-errors.log ] || tail -c 20000 "$LOG" > ci-build-errors.log
+          git config user.name "mivehchin-ci"
+          git config user.email "ci@users.noreply.github.com"
+          git add -f ci-build-errors.log
+          git commit -m "ci: capture compiler output [skip ci]" || exit 0
+          git push origin "HEAD:${{ github.ref_name }}" || exit 0
 
       - name: Sign the APK
         id: sign
