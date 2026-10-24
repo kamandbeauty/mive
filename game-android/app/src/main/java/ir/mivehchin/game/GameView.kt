@@ -963,4 +963,33 @@ class GameView(context: Context) : View(context) {
         hotspots.add(Hotspot(RectF(rect), action))
     }
 
- 
+    internal fun pill(c: Canvas, rect: RectF, icon: (Canvas, Float, Float, Float) -> Unit, label: String) {
+        Art.panel(c, rect, rect.height() / 2f, 0x66000000, 1f, 0x22FFFFFF)
+        val r = rect.height() * 0.3f
+        icon(c, rect.left + rect.height() * 0.55f, rect.centerY(), r)
+        Art.text(
+            c, label, rect.left + rect.height() * 1.05f, rect.centerY() + rect.height() * 0.16f,
+            rect.height() * 0.4f, Palette.CREAM, Paint.Align.LEFT, Art.bold
+        )
+    }
+
+    internal fun drawToast(c: Canvas, now: Long) {
+        val text = toastText ?: return
+        if (now > toastUntil) {
+            toastText = null
+            return
+        }
+        val w = min(widthPx * 0.86f, Art.measure(text, widthPx * 0.042f, Art.bold) + widthPx * 0.12f)
+        val rect = RectF(
+            (widthPx - w) / 2f,
+            heightPx * 0.78f,
+            (widthPx + w) / 2f,
+            heightPx * 0.78f + heightPx * 0.07f
+        )
+        Art.panel(c, rect, rect.height() / 2f, 0xEE10331F.toInt(), 1.4f, 0x33C6F36B)
+        Art.text(
+            c, text, rect.centerX(), rect.centerY() + rect.height() * 0.16f,
+            widthPx * 0.042f, Palette.CREAM, Paint.Align.CENTER, Art.bold
+        )
+    }
+}
