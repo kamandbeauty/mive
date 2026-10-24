@@ -165,10 +165,10 @@ object Art {
         c.drawRoundRect(rect, radius, radius, shapePaint)
         shapePaint.shader = null
         // glassy upper edge
-        shapePaint.color = 0x2EFFFFFF
+        shapePaint.color = 0x1CFFFFFF
         val sheen = RectF(
-            rect.left + radius * 0.3f, rect.top + radius * 0.18f,
-            rect.right - radius * 0.3f, rect.top + rect.height() * 0.44f
+            rect.left + radius * 0.34f, rect.top + radius * 0.16f,
+            rect.right - radius * 0.34f, rect.top + rect.height() * 0.34f
         )
         c.drawRoundRect(sheen, radius * 0.7f, radius * 0.7f, shapePaint)
         shapePaint.color = 0x26000000
@@ -311,11 +311,105 @@ object Art {
         )
     }
 
+    /**
+     * Wooden slab shaped like the level: the union of all playable cells,
+     * grown by [pad]. Matches how the reference game's board hugs its shape.
+     */
+    fun woodShape(c: Canvas, shape: Path, bounds: RectF, radius: Float) {
+        c.save()
+        c.translate(bounds.width() * 0.006f, radius * 0.34f)
+        shapePaint.reset()
+        shapePaint.isAntiAlias = true
+        shapePaint.color = 0x5C000000
+        c.drawPath(shape, shapePaint)
+        c.restore()
+
+        shapePaint.reset()
+        shapePaint.isAntiAlias = true
+        shapePaint.shader = LinearGradient(
+            bounds.left, bounds.top, bounds.left, bounds.bottom,
+            0xFFBE8148.toInt(), 0xFF6E4220.toInt(), Shader.TileMode.CLAMP
+        )
+        c.drawPath(shape, shapePaint)
+        shapePaint.shader = null
+
+        c.save()
+        c.clipPath(shape)
+        // planks
+        val step = bounds.height() / 5.6f
+        var y = bounds.top + step
+        while (y < bounds.bottom) {
+            shapePaint.color = 0x25000000
+            c.drawRect(bounds.left, y, bounds.right, y + bounds.height() * 0.004f, shapePaint)
+            shapePaint.color = 0x18FFE9C8
+            c.drawRect(bounds.left, y + bounds.height() * 0.004f, bounds.right, y + bounds.height() * 0.008f, shapePaint)
+            y += step
+        }
+        // grain
+        shapePaint.color = 0x12000000
+        var i = 0
+        while (i < 16) {
+            val gy = bounds.top + bounds.height() * ((i * 37) % 100) / 100f
+            val gx = bounds.left + bounds.width() * ((i * 53) % 80) / 100f
+            c.drawOval(
+                RectF(gx, gy, gx + bounds.width() * 0.2f, gy + bounds.height() * 0.011f),
+                shapePaint
+            )
+            i++
+        }
+        // bevel: light from above, shade below
+        shapePaint.shader = LinearGradient(
+            bounds.left, bounds.top, bounds.left, bounds.top + bounds.height() * 0.13f,
+            0x40FFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP
+        )
+        c.drawRect(bounds, shapePaint)
+        shapePaint.shader = LinearGradient(
+            bounds.left, bounds.bottom - bounds.height() * 0.16f, bounds.left, bounds.bottom,
+            0x00000000, 0x4D000000, Shader.TileMode.CLAMP
+        )
+        c.drawRect(bounds, shapePaint)
+        shapePaint.shader = null
+        c.restore()
+
+        strokePaint.reset()
+        strokePaint.isAntiAlias = true
+        strokePaint.style = Paint.Style.STROKE
+        strokePaint.strokeWidth = Math.max(2.5f, radius * 0.10f)
+        strokePaint.color = 0x99260F02.toInt()
+        c.drawPath(shape, strokePaint)
+        strokePaint.strokeWidth = Math.max(1.6f, radius * 0.05f)
+        strokePaint.color = 0x77FFE0B8.toInt()
+        c.drawPath(shape, strokePaint)
+        shapePaint.reset()
+    }
+
+    /** Union path of every playable cell grown by [pad]; build once per level. */
+    fun boardShape(g: Game, ox: Float, oy: Float, cell: Float, pad: Float): Path {
+        val out = Path()
+        val tmp = Path()
+        for (r in 0 until g.rows) {
+            for (col in 0 until g.cols) {
+                if (!g.playable(r, col)) continue
+                val x = ox + col * cell
+                val y = oy + r * cell
+                tmp.reset()
+                tmp.addRoundRect(
+                    RectF(x - pad, y - pad, x + cell + pad, y + cell + pad),
+                    pad + cell * 0.16f, pad + cell * 0.16f, Path.Direction.CW
+                )
+                out.op(tmp, Path.Op.UNION)
+            }
+        }
+        return out
+    }
+
     /** Dark socket a gem sits in. */
     fun well(c: Canvas, rect: RectF, radius: Float) {
         shapePaint.reset()
         shapePaint.isAntiAlias = true
-        shapePaint.color = 0x55200F04
+        shapePaint.color = 0x4A2A1408
+        c.drawRoundRect(rect, radius, radius, shapePaint)
+        shapePaint.color = 0x14FFD9A0
         c.drawRoundRect(rect, radius, radius, shapePaint)
         shapePaint.shader = LinearGradient(
             rect.left, rect.top, rect.left, rect.top + rect.height() * 0.55f,

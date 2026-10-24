@@ -119,6 +119,9 @@ class GameView(context: Context) : View(context) {
     internal var heightPx = 0f
     internal var boardRect = RectF()
     internal var cellSize = 1f
+    internal var framePath: android.graphics.Path? = null
+    private var frameLevel = -1
+    private var frameCell = 0f
 
     internal val hotspots = ArrayList<Hotspot>()
     internal var toastText: String? = null
@@ -248,6 +251,13 @@ class GameView(context: Context) : View(context) {
         if (abs(newCell - cellSize) > 0.5f) {
             cellSize = newCell
             snapSprites()
+            framePath = null
+        }
+        val g = game
+        if (g != null && (framePath == null || frameLevel != g.level.id || abs(frameCell - cellSize) > 0.5f)) {
+            framePath = Art.boardShape(g, boardRect.left, boardRect.top, cellSize, cellSize * 0.17f)
+            frameLevel = g.level.id
+            frameCell = cellSize
         }
     }
 
@@ -278,6 +288,10 @@ class GameView(context: Context) : View(context) {
 
     /* --------------------------------------------------------- level flow */
 
+    internal fun invalidateFrame() {
+        framePath = null
+    }
+
     internal fun startLevel(index: Int) {
         val lvl = levels.getOrNull(index) ?: return
         if (save.lives <= 0) {
@@ -300,6 +314,7 @@ class GameView(context: Context) : View(context) {
         particles.clear()
         floats.clear()
         screen = Screen.GAME
+        framePath = null
         ensureBoardLayout()
         rebuildSprites(game!!.snapshot())
         introAt = System.currentTimeMillis()
