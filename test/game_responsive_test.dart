@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:puzzle/game/models/fruit_kind.dart';
 import 'package:puzzle/game/models/level_definition.dart';
+import 'package:puzzle/game/models/special_power.dart';
 import 'package:puzzle/ui/features/gem_match/gem_match_game.dart';
 import 'package:puzzle/ui/widgets/game_ui/game_ui.dart';
 import 'package:puzzle/ui/widgets/guide_character/guide_character.dart';
@@ -48,6 +49,7 @@ Future<void> _pumpFrames(WidgetTester tester, int frames) async {
 }
 
 void main() {
+  _manyGoalFixtureSweep();
   for (final device in _devices) {
     testWidgets('redesigned game screen fits ${device.name} with safe areas',
         (tester) async {
@@ -146,4 +148,47 @@ void main() {
       await tester.pump(const Duration(milliseconds: 400));
     });
   }
+}
+
+void _manyGoalFixtureSweep() {
+  testWidgets('many-goal fixture (emulator shape) mounts with a live board',
+      (tester) async {
+    final level = LevelDefinition(
+      id: 4,
+      chapter: 'tutorial',
+      moveLimit: 30,
+      targetScore: 1000000,
+      fruitGoals: <FruitKind, int>{
+        for (final kind in FruitKind.values) kind: 64,
+      },
+      starThresholds: const <int>[1000000, 1000100, 1000200],
+      difficulty: LevelDifficulty.tutorial,
+      specialPieces: const <int, SpecialPower>{0: SpecialPower.areaBomb},
+    );
+    for (final size in <Size>[
+      const Size(360, 640),
+      const Size(360, 800),
+      const Size(412, 915),
+    ]) {
+      tester.view.physicalSize = size;
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(
+        MaterialApp(home: GemMatchGame(level: level, randomSeed: 314159)),
+      );
+      await _pumpFrames(tester, 6);
+      expect(
+        find.byKey(const ValueKey<String>('fruit-cell-0')),
+        findsOneWidget,
+        reason: 'cell 0 at $size',
+      );
+      expect(
+        find.byKey(const ValueKey<String>('fruit-cell-63')),
+        findsOneWidget,
+        reason: 'cell 63 at $size',
+      );
+      expect(tester.takeException(), isNull, reason: 'size $size');
+    }
+  });
 }
