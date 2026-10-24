@@ -1154,6 +1154,10 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
         widget.level.obstacleGoals.values.fold<int>(0, (sum, value) => sum + value);
     final progress = target == 0 ? 0.0 : (collected / target).clamp(0.0, 1.0).toDouble();
     final goalCount = widget.level.fruitGoals.length + widget.level.obstacleGoals.length;
+    // With many simultaneous goals the readouts go compact, or the wrap
+    // needs more rows than the banner has (this overflowed by 41px with
+    // the 7-goal integration fixture at 360 wide).
+    final compact = goalCount > 3;
     // The reference banner is a wide cream panel floating over the
     // garden, inset from both edges rather than glued to them.
     return Padding(
@@ -1161,7 +1165,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
         horizontal: MediaQuery.sizeOf(context).width * 0.055,
       ),
       child: SizedBox(
-        height: goalCount > 3 ? 176 : goalCount > 1 ? 110 : 74,
+        height: goalCount > 3 ? 192 : goalCount > 1 ? 110 : 74,
         child: OrchardPanel(
           asset: 'assets/ui/goal-banner.png',
           padding: const EdgeInsets.fromLTRB(36, 8, 46, 8),
@@ -1187,9 +1191,9 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                       runSpacing: 4,
                       children: <Widget>[
                         for (final entry in widget.level.fruitGoals.entries)
-                          _goalChip(entry.key, entry.value),
+                          _goalChip(entry.key, entry.value, compact: compact),
                         for (final entry in widget.level.obstacleGoals.entries)
-                          _obstacleGoalChip(entry.key, entry.value),
+                          _obstacleGoalChip(entry.key, entry.value, compact: compact),
                       ],
                     ),
                   ),
@@ -1626,7 +1630,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
 
   /// Plain icon + "current از goal" readout, no chip box — matches the
   /// reference banner, which prints the goal straight on the parchment.
-  Widget _obstacleGoalChip(BoardObstacleType type, int goal) {
+  Widget _obstacleGoalChip(BoardObstacleType type, int goal, {bool compact = false}) {
     final current = _obstaclesCollected[type] ?? 0;
     final complete = current >= goal;
     final icon = switch (type) {
@@ -1638,13 +1642,13 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Icon(icon, size: 22, color: _leaf),
-        const SizedBox(width: 6),
+        Icon(icon, size: compact ? 17 : 22, color: _leaf),
+        SizedBox(width: compact ? 4 : 6),
         Text(
           '${type.persianName} ${_fa(current)} از ${_fa(goal)}',
           style: TextStyle(
             color: complete ? _leaf : _chocolate,
-            fontSize: 13,
+            fontSize: compact ? 11 : 13,
             fontWeight: FontWeight.w900,
           ),
         ),
@@ -1654,7 +1658,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
 
   /// Plain icon + "current از goal" readout, no chip box — matches the
   /// reference banner (single orange icon with "۹ از ۹" beside it).
-  Widget _goalChip(FruitKind kind, int goal) {
+  Widget _goalChip(FruitKind kind, int goal, {bool compact = false}) {
     final current = _collected[kind] ?? 0;
     final complete = current >= goal;
     return Row(
@@ -1664,9 +1668,9 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
           scale: complete ? 1.15 : 1,
           duration: _motion(const Duration(milliseconds: 260)),
           curve: Curves.easeOutBack,
-          child: Image.asset(kind.assetPath, width: 27, height: 27, fit: BoxFit.contain),
+          child: Image.asset(kind.assetPath, width: compact ? 20 : 27, height: compact ? 20 : 27, fit: BoxFit.contain),
         ),
-        const SizedBox(width: 7),
+        SizedBox(width: compact ? 4 : 7),
         Flexible(
           child: AnimatedSwitcher(
           duration: _motion(const Duration(milliseconds: 180)),
@@ -1680,7 +1684,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
             maxLines: 1,
             style: TextStyle(
               color: complete ? _leaf : _chocolate,
-              fontSize: 13.5,
+              fontSize: compact ? 11.5 : 13.5,
               fontWeight: FontWeight.w900,
             ),
           ),
