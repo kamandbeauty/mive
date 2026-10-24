@@ -175,7 +175,13 @@ internal fun GameView.drawGame(c: Canvas) {
 
     // moves + score
     val movesRect = rrect(w * 0.045f, h * 0.108f, w * 0.26f, h * 0.052f)
-    Art.panel(c, movesRect, movesRect.height() / 2f, 0x33000000)
+    if (g.moves in 1..5 && g.status == Status.PLAYING) {
+        val pulse = 0.5f + 0.5f * sin(now / 170f).toFloat()
+        Art.glow(c, movesRect.centerX(), movesRect.centerY(), movesRect.height() * (1.1f + 0.3f * pulse), Palette.CORAL, 0.22f + 0.18f * pulse)
+        Art.panel(c, movesRect, movesRect.height() / 2f, 0x33000000, 1.5f + pulse, Art.withAlpha(Palette.CORAL, 0.5f + 0.5f * pulse))
+    } else {
+        Art.panel(c, movesRect, movesRect.height() / 2f, 0x33000000)
+    }
     Art.text(c, "حرکت", movesRect.left + w * 0.045f, movesRect.centerY() + w * 0.014f, w * 0.036f, Palette.MUTED)
     Art.text(c, "${g.moves}", movesRect.right - w * 0.05f, movesRect.centerY() + w * 0.02f, w * 0.052f, if (g.moves <= 3) Palette.CORAL else Palette.CREAM, Paint.Align.RIGHT, Art.black)
 
@@ -272,6 +278,50 @@ internal fun GameView.drawGame(c: Canvas) {
     drawEffects(c, now)
     c.restore()
     drawBoosters(c, g)
+    drawIntro(c, now, lvl)
+}
+
+private fun GameView.drawIntro(c: Canvas, now: Long, lvl: Level) {
+    val age = now - introAt
+    if (age < 0L || age > 2100L) return
+    val w = widthPx
+    val h = heightPx
+    val k = (age / 2100f).coerceIn(0f, 1f)
+    val slide = if (k < 0.16f) (1f - k / 0.16f) * -h * 0.09f else 0f
+    val fade = when {
+        k > 0.78f -> 1f - (k - 0.78f) / 0.22f
+        k < 0.12f -> k / 0.12f
+        else -> 1f
+    }.coerceIn(0f, 1f)
+
+    val cx = w / 2f
+    val cy = h * 0.40f + slide
+    val bw = w * 0.62f
+    val bh = h * 0.085f
+    val rect = RectF(cx - bw / 2f, cy - bh / 2f, cx + bw / 2f, cy + bh / 2f)
+    val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    paint.color = Art.withAlpha(0xFF07130F.toInt(), 0.72f * fade)
+    c.drawRoundRect(RectF(rect.left + 4f, rect.top + 8f, rect.right + 4f, rect.bottom + 8f), bh * 0.3f, bh * 0.3f, paint)
+    Art.gradientPanel(
+        c,
+        rect,
+        bh * 0.3f,
+        Art.withAlpha(0xFF1F5A45.toInt(), fade),
+        Art.withAlpha(0xFF0C2A1E.toInt(), fade)
+    )
+    paint.style = Paint.Style.STROKE
+    paint.strokeWidth = 2f
+    paint.color = Art.withAlpha(Palette.LIME, 0.8f * fade)
+    c.drawRoundRect(rect, bh * 0.3f, bh * 0.3f, paint)
+    paint.style = Paint.Style.FILL
+
+    Art.text(c, "سطح ${lvl.id}", cx, cy - bh * 0.02f, bh * 0.42f, Art.withAlpha(Palette.CREAM, fade), Paint.Align.CENTER, Art.black, true)
+    Art.text(c, lvl.name, cx, cy + bh * 0.34f, bh * 0.28f, Art.withAlpha(Palette.MUTED, fade))
+    val g = game
+    if (g != null) {
+        Art.sparkle(c, rect.left + bw * 0.07f, cy, bh * 0.16f, Palette.GOLD, fade * 0.9f, age / 6f)
+        Art.sparkle(c, rect.right - bw * 0.07f, cy, bh * 0.16f, Palette.GOLD, fade * 0.9f, -age / 6f)
+    }
 }
 
 private fun GameView.drawIce(c: Canvas, rect: RectF) {

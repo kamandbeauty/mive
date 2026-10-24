@@ -141,6 +141,7 @@ class GameView(context: Context) : View(context) {
     internal val particles = ArrayList<Particle>()
     internal val floats = ArrayList<FloatText>()
 
+    internal var introAt = 0L
     internal var shakeUntil = 0L
     internal var shakeMag = 0f
     internal var boardGlow = 0f
@@ -301,6 +302,7 @@ class GameView(context: Context) : View(context) {
         screen = Screen.GAME
         ensureBoardLayout()
         rebuildSprites(game!!.snapshot())
+        introAt = System.currentTimeMillis()
         busy = false
         sound(R.raw.sfx_click)
     }
@@ -316,12 +318,12 @@ class GameView(context: Context) : View(context) {
     }
 
     private fun rebuildSprites(list: List<TilePos>) {
+        val now = System.currentTimeMillis()
         sprites.clear()
         for (pos in list) {
-            sprites[pos.tile.id] = Sprite(
-                pos.tile, pos.r, pos.c,
-                pos.c * cellSize, pos.r * cellSize
-            )
+            val sp = Sprite(pos.tile, pos.r, pos.c, pos.c * cellSize, pos.r * cellSize)
+            sp.spawnAt = now + (pos.r * 34L + pos.c * 11L)
+            sprites[pos.tile.id] = sp
         }
     }
 
@@ -619,6 +621,7 @@ class GameView(context: Context) : View(context) {
         save.persist()
         result = Result(true, stars, g.score, coins, g.level.id)
         resultAt = System.currentTimeMillis()
+        confetti()
         sound(R.raw.sfx_win)
     }
 
@@ -849,6 +852,32 @@ class GameView(context: Context) : View(context) {
 
     internal fun flash(x: Float, y: Float, color: Int, radius: Float, life: Long) {
         particles.add(Particle(x, y, 0f, 0f, color, System.currentTimeMillis(), life, radius, FLASH, 0f, 0f, 0f))
+    }
+
+    internal fun confetti() {
+        val now = System.currentTimeMillis()
+        val tints = intArrayOf(
+            0xFFFF5C7A.toInt(), 0xFFFFC94D.toInt(), 0xFFC6F36B.toInt(),
+            0xFF34C759.toInt(), 0xFF7DD3FC.toInt(), 0xFFA78BFA.toInt()
+        )
+        for (i in 0 until 38) {
+            particles.add(
+                Particle(
+                    widthPx * Random.nextFloat(),
+                    -heightPx * 0.05f - Random.nextFloat() * heightPx * 0.25f,
+                    (Random.nextFloat() - 0.5f) * widthPx * 0.25f,
+                    heightPx * (0.18f + Random.nextFloat() * 0.28f),
+                    tints[i % tints.size],
+                    now + (Random.nextFloat() * 700f).toLong(),
+                    1800L + (Random.nextFloat() * 1100f).toLong(),
+                    widthPx * (0.008f + Random.nextFloat() * 0.008f),
+                    SHARD,
+                    Random.nextFloat() * 360f,
+                    (Random.nextFloat() - 0.5f) * 620f,
+                    120f
+                )
+            )
+        }
     }
 
     internal fun shake(mag: Float, duration: Long) {
