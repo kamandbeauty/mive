@@ -160,7 +160,7 @@ void main() {
       if (size.height == 640) {
         expect(board.width, lessThan(size.width - 20), reason: 'short viewport $size should fit without scrolling');
       } else {
-        expect(board.width, closeTo(size.width - 20, 1), reason: 'viewport $size');
+        expect(board.width, closeTo(size.width * 0.84, 1), reason: 'viewport $size');
       }
       expect(board.height, board.width, reason: 'viewport $size');
       expect(find.byType(SingleChildScrollView), findsNothing, reason: 'viewport $size');

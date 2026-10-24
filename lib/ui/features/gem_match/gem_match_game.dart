@@ -922,9 +922,14 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
           Expanded(
             child: LayoutBuilder(
               builder: (context, boardConstraints) {
+                // Reference proportion: the framed board takes ~84% of
+                // the screen width, centered, never exceeding its space.
                 final side = min(
                   min(boardConstraints.maxWidth, 520.0),
-                  boardConstraints.maxHeight,
+                  min(
+                    boardConstraints.maxHeight,
+                    MediaQuery.sizeOf(context).width * 0.84,
+                  ),
                 );
                 return Center(child: _buildBoard(side));
               },
@@ -940,16 +945,52 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   }
 
   Widget _buildHeader() {
-    // Title plaque on the top-right (RTL start), a little thicker than
-    // before, with the pause button sitting where the painted strawberry
-    // was — directly in front of the «میوه‌چین» title. The hint button
-    // stays alone on the left. Stats live in their own panel below.
+    // One top bar, exactly as the reference composes it: wooden title
+    // plaque on the left, the moves/score panel in the middle, and the
+    // round pause + hint buttons on the right (physical LTR row).
     return SizedBox(
-      height: 64,
+      height: 68,
       child: Directionality(
         textDirection: TextDirection.ltr,
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
+            AspectRatio(
+              aspectRatio: 1000 / 323,
+              child: _buildTitlePlaque(),
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: SizedBox(
+                height: 56,
+                child: OrchardPanel(
+                  asset: 'assets/ui/hud-panel.png',
+                  padding: const EdgeInsets.fromLTRB(14, 6, 14, 6),
+                  child: Center(
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: _statBlock(
+                            'حرکت باقی‌مانده',
+                            _fa(_moves),
+                            GamePalette.sky,
+                            key: const ValueKey<String>('stat-moves-value'),
+                          ),
+                        ),
+                        Expanded(child: _buildScoreStat()),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 6),
+            _headerButton(
+              icon: Icons.pause_rounded,
+              tooltip: 'مکث',
+              onPressed: _phase.acceptsInput ? _pause : null,
+            ),
+            const SizedBox(width: 4),
             _headerButton(
               icon: Icons.lightbulb_rounded,
               tooltip: 'راهنمایی',
@@ -957,65 +998,36 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               iconColor: GamePalette.chocolate,
               onPressed: _phase.acceptsInput ? _showHint : null,
             ),
-            const Spacer(),
-            AspectRatio(
-              aspectRatio: 1000 / 323,
-              child: _buildTitlePlaque(
-                onPause: _phase.acceptsInput ? _pause : null,
-              ),
-            ),
           ],
         ),
       ),
     );
   }
 
-  /// Wooden title plaque from the reference layout. The finished plaque
-  /// artwork already carries the strawberry medallion on its left side, so
-  /// the title and level line are overlaid on the empty wooden field.
-  Widget _buildTitlePlaque({required VoidCallback? onPause}) {
+  Widget _buildTitlePlaque() {
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
         return Stack(
           fit: StackFit.expand,
           children: <Widget>[
-            // Flipped so the painted strawberry (and its corner flowers)
-            // sits at the RTL front of the sign, on the right.
-            Transform.flip(
-              flipX: true,
-              child: Image.asset(
-                'assets/ui/title-plaque.png',
-                fit: BoxFit.fill,
-                filterQuality: FilterQuality.medium,
-              ),
-            ),
-            // Real pause button exactly where the strawberry was painted:
-            // in front of the title when reading right-to-left.
-            Positioned(
-              right: 3,
-              top: 0,
-              bottom: 0,
-              child: Center(
-                child: _headerButton(
-                  icon: Icons.pause_rounded,
-                  tooltip: 'مکث',
-                  onPressed: onPause,
-                ),
-              ),
+            Image.asset(
+              'assets/ui/title-plaque.png',
+              fit: BoxFit.fill,
+              filterQuality: FilterQuality.medium,
             ),
             Positioned(
-              right: width * 0.24,
-              left: 14,
+              left: width * 0.24,
+              right: 16,
               top: 0,
               bottom: 0,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   const FittedBox(
                     fit: BoxFit.scaleDown,
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.centerRight,
                     child: Text(
                       'میوه‌چین',
                       textDirection: TextDirection.rtl,
@@ -1035,7 +1047,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                     textDirection: TextDirection.rtl,
                     child: FittedBox(
                       fit: BoxFit.scaleDown,
-                      alignment: Alignment.centerLeft,
+                      alignment: Alignment.centerRight,
                       child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
@@ -1135,76 +1147,53 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
         widget.level.obstacleGoals.values.fold<int>(0, (sum, value) => sum + value);
     final progress = target == 0 ? 0.0 : (collected / target).clamp(0.0, 1.0).toDouble();
     final goalCount = widget.level.fruitGoals.length + widget.level.obstacleGoals.length;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        // Full-width wooden stats panel: moves | score/target with a star.
-        SizedBox(
-          height: 58,
-          child: OrchardPanel(
-            asset: 'assets/ui/hud-panel.png',
-            padding: const EdgeInsets.fromLTRB(18, 7, 18, 7),
-            child: Center(
-              child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: _statBlock(
-                    'حرکت باقی‌مانده',
-                    _fa(_moves),
-                    GamePalette.sky,
-                    key: const ValueKey<String>('stat-moves-value'),
+    // The reference banner is a wide cream panel floating over the
+    // garden, inset from both edges rather than glued to them.
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: MediaQuery.sizeOf(context).width * 0.055,
+      ),
+      child: SizedBox(
+        height: goalCount > 3 ? 176 : goalCount > 1 ? 110 : 74,
+        child: OrchardPanel(
+          asset: 'assets/ui/goal-banner.png',
+          padding: const EdgeInsets.fromLTRB(36, 8, 46, 8),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Row(
+                children: <Widget>[
+                  const Text(
+                    'هدف مرحله',
+                    style: TextStyle(
+                      color: _chocolate,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w900,
+                      height: 1.1,
+                    ),
                   ),
-                ),
-                Expanded(child: _buildScoreStat()),
-              ],
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Wrap(
+                      alignment: WrapAlignment.start,
+                      spacing: 14,
+                      runSpacing: 4,
+                      children: <Widget>[
+                        for (final entry in widget.level.fruitGoals.entries)
+                          _goalChip(entry.key, entry.value),
+                        for (final entry in widget.level.obstacleGoals.entries)
+                          _obstacleGoalChip(entry.key, entry.value),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ),
+              const SizedBox(height: 6),
+              OrchardProgressBar(value: progress, height: 13),
+            ],
           ),
         ),
-        const SizedBox(height: 6),
-        // Flat cream goal banner: title, plain "X از Y" readouts, progress.
-        SizedBox(
-          height: goalCount > 3 ? 176 : goalCount > 1 ? 110 : 74,
-          child: OrchardPanel(
-            asset: 'assets/ui/goal-banner.png',
-            padding: const EdgeInsets.fromLTRB(36, 8, 46, 8),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    const Text(
-                      'هدف مرحله',
-                      style: TextStyle(
-                        color: _chocolate,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w900,
-                        height: 1.1,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Wrap(
-                        alignment: WrapAlignment.start,
-                        spacing: 14,
-                        runSpacing: 4,
-                        children: <Widget>[
-                          for (final entry in widget.level.fruitGoals.entries)
-                            _goalChip(entry.key, entry.value),
-                          for (final entry in widget.level.obstacleGoals.entries)
-                            _obstacleGoalChip(entry.key, entry.value),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                OrchardProgressBar(value: progress, height: 13),
-              ],
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
@@ -1695,32 +1684,28 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
   }
 
   Widget _buildBoard(double size) {
-    // Slim wooden frame instead of the chunky board-frame art: the old frame
-    // ate ~21% of the board on every side and shrank the fruit. A thin wood
-    // rim with a gold edge keeps the orchard look while the 8x8 grid takes
-    // ~94% of the (already full-width) board, so fruit render ~20% larger.
-    final frame = size * 0.030;
+    // The delivered board-frame art (square; thick wooden rim with the
+    // cream interior starting at ~11% inset) shown at its true aspect,
+    // as in the reference; the 8x8 grid lives inside the cream opening
+    // and every cell stays square and edge-to-edge with its neighbours.
+    final frame = size * 0.102;
     final inner = size - frame * 2;
-    final gap = 0.0; // cells tile edge-to-edge, no empty seams
+    const gap = 0.0;
     return Container(
       key: const ValueKey<String>('game-board-frame'),
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: <Color>[Color(0xFF9A6330), Color(0xFF6E3E17)],
-        ),
-        borderRadius: BorderRadius.circular(size * 0.045),
-        border: Border.all(color: GamePalette.gold, width: 2),
-        boxShadow: GamePalette.panelShadow,
-      ),
-      padding: EdgeInsets.all(frame),
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
-          SizedBox(
+          Image.asset(
+            'assets/ui/board-frame.png',
+            fit: BoxFit.fill,
+            filterQuality: FilterQuality.medium,
+          ),
+          Padding(
+            padding: EdgeInsets.all(frame),
+            child: SizedBox(
               width: inner,
               height: inner,
               child: ClipRRect(
@@ -1735,7 +1720,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                         itemCount: GemMatchEngine.cellCount,
                         physics: const NeverScrollableScrollPhysics(),
                         padding: EdgeInsets.all(gap),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: GemMatchEngine.columns,
                           crossAxisSpacing: gap,
                           mainAxisSpacing: gap,
@@ -1793,6 +1778,7 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
                 ),
               ),
             ),
+          ),
         ],
       ),
     );
