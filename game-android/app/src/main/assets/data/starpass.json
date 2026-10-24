@@ -1,0 +1,214 @@
+{
+  "tiers": [
+    {
+      "index": 1,
+      "stars": 2,
+      "label": "40 سکه",
+      "kind": "coins",
+      "amount": 40
+    },
+    {
+      "index": 2,
+      "stars": 4,
+      "label": "چکش",
+      "kind": "hammer",
+      "amount": 1
+    },
+    {
+      "index": 3,
+      "stars": 6,
+      "label": "60 سکه",
+      "kind": "coins",
+      "amount": 60
+    },
+    {
+      "index": 4,
+      "stars": 8,
+      "label": "برهم‌زن",
+      "kind": "shuffle",
+      "amount": 1
+    },
+    {
+      "index": 5,
+      "stars": 10,
+      "label": "80 سکه",
+      "kind": "coins",
+      "amount": 80
+    },
+    {
+      "index": 6,
+      "stars": 12,
+      "label": "بستهٔ حرکت",
+      "kind": "moves",
+      "amount": 1
+    },
+    {
+      "index": 7,
+      "stars": 14,
+      "label": "100 سکه",
+      "kind": "coins",
+      "amount": 100
+    },
+    {
+      "index": 8,
+      "stars": 16,
+      "label": "2 چکش",
+      "kind": "hammer",
+      "amount": 2
+    },
+    {
+      "index": 9,
+      "stars": 18,
+      "label": "40 سکه",
+      "kind": "coins",
+      "amount": 40
+    },
+    {
+      "index": 10,
+      "stars": 20,
+      "label": "چکش",
+      "kind": "hammer",
+      "amount": 1
+    },
+    {
+      "index": 11,
+      "stars": 22,
+      "label": "60 سکه",
+      "kind": "coins",
+      "amount": 60
+    },
+    {
+      "index": 12,
+      "stars": 24,
+      "label": "برهم‌زن",
+      "kind": "shuffle",
+      "amount": 1
+    },
+    {
+      "index": 13,
+      "stars": 26,
+      "label": "80 سکه",
+      "kind": "coins",
+      "amount": 80
+    },
+    {
+      "index": 14,
+      "stars": 28,
+      "label": "بستهٔ حرکت",
+      "kind": "moves",
+      "amount": 1
+    },
+    {
+      "index": 15,
+      "stars": 30,
+      "label": "100 سکه",
+      "kind": "coins",
+      "amount": 100
+    },
+    {
+      "index": 16,
+      "stars": 32,
+      "label": "2 چکش",
+      "kind": "hammer",
+      "amount": 2
+    },
+    {
+      "index": 17,
+      "stars": 34,
+      "label": "40 سکه",
+      "kind": "coins",
+      "amount": 40
+    },
+    {
+      "index": 18,
+      "stars": 36,
+      "label": "چکش",
+      "kind": "hammer",
+      "amount": 1
+    },
+    {
+      "index": 19,
+      "stars": 38,
+      "label": "60 سکه",
+      "kind": "coins",
+      "amount": 60
+    },
+    {
+      "index": 20,
+      "stars": 40,
+      "label": "برهم‌زن",
+      "kind": "shuffle",
+      "amount": 1
+    },
+    {
+      "index": 21,
+      "stars": 42,
+      "label": "80 سکه",
+      "kind": "coins",
+      "amount": 80
+    },
+    {
+      "index": 22,
+      "stars": 44,
+      "label": "بستهٔ حرکت",
+      "kind": "moves",
+      "amount": 1
+    },
+    {
+      "index": 23,
+      "stars": 46,
+      "label": "100 سکه",
+      "kind": "coins",
+      "amount": 100
+    },
+    {
+      "index": 24,
+      "stars": 48,
+      "label": "2 چکش",
+      "kind": "hammer",
+      "amount": 2
+    },
+    {
+      "index": 25,
+      "stars": 50,
+      "label": "40 سکه",
+      "kind": "coins",
+      "amount": 40
+    },
+    {
+      "index": 26,
+      "stars": 52,
+      "label": "چکش",
+      "kind": "hammer",
+      "amount": 1
+    },
+    {
+      "index": 27,
+      "stars": 54,
+      "label": "60 سکه",
+      "kind": "coins",
+      "amount": 60
+    },
+    {
+      "index": 28,
+      "stars": 56,
+      "label": "برهم‌زن",
+      "kind": "shuffle",
+      "amount": 1
+    },
+    {
+      "index": 29,
+      "stars": 58,
+      "label": "80 سکه",
+      "kind": "coins",
+      "amount": 80
+    },
+    {
+      "index": 30,
+      "stars": 60,
+      "label": "بستهٔ حرکت",
+      "kind": "moves",
+      "amount": 1
+    }
+  ]
+}

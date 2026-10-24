@@ -1,0 +1,16 @@
+{
+  "maxLives": 5,
+  "lifeRegenSec": 120,
+  "startCoins": 150,
+  "lifePrice": 70,
+  "boosterPrices": {
+    "hammer": 80,
+    "shuffle": 60,
+    "moves": 100
+  },
+  "winBase": 20,
+  "winPerStar": 15,
+  "winPerMove": 3,
+  "wheelCooldownSec": 14400,
+  "wheelCost": 120
+}

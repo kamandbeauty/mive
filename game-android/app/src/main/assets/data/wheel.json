@@ -1,0 +1,52 @@
+{
+  "slices": [
+    {
+      "label": "۵۰ سکه",
+      "kind": "coins",
+      "amount": 50,
+      "weight": 26
+    },
+    {
+      "label": "۱۰۰ سکه",
+      "kind": "coins",
+      "amount": 100,
+      "weight": 18
+    },
+    {
+      "label": "چکش",
+      "kind": "hammer",
+      "amount": 1,
+      "weight": 14
+    },
+    {
+      "label": "برهم‌زن",
+      "kind": "shuffle",
+      "amount": 1,
+      "weight": 14
+    },
+    {
+      "label": "بستهٔ حرکت",
+      "kind": "moves",
+      "amount": 1,
+      "weight": 12
+    },
+    {
+      "label": "یک جان",
+      "kind": "life",
+      "amount": 1,
+      "weight": 10
+    },
+    {
+      "label": "۲۰۰ سکه",
+      "kind": "coins",
+      "amount": 200,
+      "weight": 5
+    },
+    {
+      "label": "۳۰۰ سکه",
+      "kind": "coins",
+      "amount": 300,
+      "weight": 1
+    }
+  ]
+}
