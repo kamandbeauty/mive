@@ -50,52 +50,44 @@ jobs:
         working-directory: game-android
         run: |
           set -o pipefail
-          gradle --no-daemon assembleRelease --stacktrace 2>&1 | tee ../ci-build.log
+          gradle --no-daemon assembleRelease --stacktrace 2>&1 | tee build.log
 
-      - name: Publish the build log back to the branch when compilation fails
+      - name: Sign the APK
+        id: sign
+        run: |
+          set -o pipefail
+          VERSION="${{ github.event.inputs.version }}"
+          if [ -z "$VERSION" ]; then
+            VERSION="${GITHUB_REF_NAME#miveh-v}"
+            if [ "${GITHUB_REF_TYPE:-}" != "tag" ]; then
+              VERSION="0.0.0-${GITHUB_SHA:0:7}"
+            fi
+          fi
+          VERSION="$(printf '%s' "$VERSION" | tr '/ ' '--')"
+          echo "version=$VERSION"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          ( cd game-android && bash tools/sign-apk.sh "$VERSION" ) 2>&1 | tee sign.log
+
+      - name: Publish the failure log back to the branch
         if: failure()
         run: |
           set +e
-          LOG=ci-build.log
-          [ -f "$LOG" ] || echo "no log captured" > "$LOG"
-          # keep only material an outside reader can act on
-          grep -E "^(e: |w: |FAILURE|\* What went wrong|Caused by|[0-9]+ actionable|Execution failed|> )" "$LOG" | head -400 > ci-build-errors.log
-          [ -s ci-build-errors.log ] || tail -c 20000 "$LOG" > ci-build-errors.log
+          : > ci-build-errors.log
+          for f in build.log sign.log; do
+            if [ -f "$f" ]; then
+              echo "=== $f ===" >> ci-build-errors.log
+              grep -E "^(e: |FAILURE|\* What went wrong|Caused by|Execution failed|> |== |!! )" "$f" | head -300 >> ci-build-errors.log
+              tail -c 6000 "$f" >> ci-build-errors.log
+            fi
+          done
+          echo "=== apk outputs ===" >> ci-build-errors.log
+          find game-android/app/build/outputs -name '*.apk' -printf '%p %s\n' 2>/dev/null >> ci-build-errors.log
+          [ -s ci-build-errors.log ] || echo "no log captured" > ci-build-errors.log
           git config user.name "mivehchin-ci"
           git config user.email "ci@users.noreply.github.com"
           git add -f ci-build-errors.log
           git commit -m "ci: capture compiler output [skip ci]" || exit 0
           git push origin "HEAD:${{ github.ref_name }}" || exit 0
-
-      - name: Sign the APK
-        id: sign
-        run: |
-          set -e
-          SDK="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
-          BT="$(ls -d "$SDK"/build-tools/* | sort -V | tail -1)"
-          echo "build-tools: $BT"
-          VERSION="${{ github.event.inputs.version }}"
-          if [ -z "$VERSION" ]; then
-            VERSION="${GITHUB_REF_NAME#miveh-v}"
-          fi
-          echo "version: $VERSION"
-          UNSIGNED="game-android/app/build/outputs/apk/release/app-release-unsigned.apk"
-          if [ ! -f "$UNSIGNED" ]; then
-            echo "unsigned apk not found, listing outputs:"
-            find game-android/app/build/outputs -name "*.apk" -print
-            exit 1
-          fi
-          keytool -genkeypair -v -keystore miveh.jks -alias miveh \
-            -keyalg RSA -keysize 2048 -validity 10000 \
-            -storepass mivehchin -keypass mivehchin \
-            -dname "CN=Mivehchin, O=Mivehchin, C=IR"
-          "$BT/zipalign" -p -f 4 "$UNSIGNED" "Mivehchin-$VERSION.apk"
-          "$BT/apksigner" sign --ks miveh.jks --ks-pass pass:mivehchin \
-            --key-pass pass:mivehchin --out "Mivehchin-$VERSION.apk.tmp" "Mivehchin-$VERSION.apk"
-          mv "Mivehchin-$VERSION.apk.tmp" "Mivehchin-$VERSION.apk"
-          "$BT/apksigner" verify --print-certs "Mivehchin-$VERSION.apk"
-          ls -l Mivehchin-*.apk
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
