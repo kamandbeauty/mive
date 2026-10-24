@@ -763,8 +763,8 @@ object Art {
             dx /= len
             dy /= len
             val dot = dx * LX + dy * LY
-            var k = 0.60f + 0.52f * (0.5f + 0.5f * dot)
-            if (my > 62f) k *= 0.93f
+            var k = 0.46f + 0.92f * (0.5f + 0.5f * dot)
+            if (my > 62f) k *= 0.90f
             val f = Path()
             f.moveTo(cxp, cyp)
             f.lineTo(x1, y1)
@@ -782,7 +782,7 @@ object Art {
             if (i == 0) table.moveTo(qx, qy) else table.lineTo(qx, qy)
         }
         table.close()
-        fillPaint.color = shade(p.base, 1.16f)
+        fillPaint.color = shade(p.base, 1.34f)
         cv.drawPath(table, fillPaint)
         fillPaint.color = 0x1FFFFFFF
         cv.drawPath(table, fillPaint)

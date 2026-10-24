@@ -228,6 +228,8 @@ internal fun GameView.drawGame(c: Canvas) {
     }
 
     val seconds = (now % 1000000L) / 1000f
+    c.save()
+    c.clipRect(boardRect)
     for (sp in sprites.values) {
         val cx = boardRect.left + sp.x + cellSize / 2f
         val cy = boardRect.top + sp.y + cellSize / 2f
@@ -267,8 +269,8 @@ internal fun GameView.drawGame(c: Canvas) {
         c.restore()
     }
     c.restore()
-
     drawEffects(c, now)
+    c.restore()
     drawBoosters(c, g)
 }
 
