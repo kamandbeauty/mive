@@ -103,6 +103,44 @@ internal fun GameView.drawMap(c: Canvas) {
     c.save()
     c.clipRect(0f, top, w, bottom)
 
+    // winding trail behind the nodes, like the reference level map
+    if (levels.size > 1) {
+        val pts = ArrayList<Float>()
+        for (i in levels.indices) {
+            val row = i / cols
+            val col = i % cols
+            val x = w - gap - (col + 1) * size - col * gap
+            val y = top + gap + row * (size + gap) - mapScroll
+            pts.add(x + size / 2f)
+            pts.add(y + size / 2f)
+        }
+        val path = android.graphics.Path()
+        path.moveTo(pts[0], pts[1])
+        var i = 2
+        while (i + 3 < pts.size) {
+            val x1 = pts[i]
+            val y1 = pts[i + 1]
+            val x2 = pts[i + 2]
+            val y2 = pts[i + 3]
+            val mx = (x1 + x2) / 2f
+            path.quadTo(mx, y1, mx, (y1 + y2) / 2f)
+            path.quadTo(mx, y2, x2, y2)
+            i += 2
+        }
+        val lp = Paint(Paint.ANTI_ALIAS_FLAG)
+        lp.style = Paint.Style.STROKE
+        lp.strokeCap = Paint.Cap.ROUND
+        lp.strokeJoin = Paint.Join.ROUND
+        lp.strokeWidth = size * 0.22f
+        lp.color = 0x4010311F
+        c.drawPath(path, lp)
+        lp.strokeWidth = size * 0.12f
+        lp.color = 0x30FFF6E5
+        lp.pathEffect = android.graphics.DashPathEffect(floatArrayOf(size * 0.14f, size * 0.16f), 0f)
+        c.drawPath(path, lp)
+        lp.pathEffect = null
+    }
+
     for (i in levels.indices) {
         val row = i / cols
         val col = i % cols
