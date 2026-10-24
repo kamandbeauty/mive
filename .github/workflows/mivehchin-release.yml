@@ -1,0 +1,100 @@
+name: Mivehchin APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version name for the release (e.g. 1.0.0)"
+        required: false
+        default: "1.0.0"
+  push:
+    branches:
+      - "arena/**"
+    paths:
+      - "game-android/**"
+      - ".github/workflows/mivehchin-release.yml"
+    tags:
+      - "miveh-v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: "8.9"
+
+      - name: Make sure SDK platform 34 is present
+        run: |
+          set -e
+          SDK="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}}"
+          echo "SDK=$SDK"
+          if [ ! -d "$SDK/platforms/android-34" ]; then
+            yes | "$SDK/cmdline-tools/latest/bin/sdkmanager" "platform-tools" "platforms;android-34" "build-tools;34.0.0" > /dev/null || true
+          fi
+          echo "ANDROID_HOME=$SDK" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$SDK" >> "$GITHUB_ENV"
+
+      - name: Compile
+        working-directory: game-android
+        run: gradle --no-daemon assembleRelease --stacktrace
+
+      - name: Sign the APK
+        id: sign
+        run: |
+          set -e
+          SDK="${ANDROID_HOME:-/usr/local/lib/android/sdk}"
+          BT="$(ls -d "$SDK"/build-tools/* | sort -V | tail -1)"
+          echo "build-tools: $BT"
+          VERSION="${{ github.event.inputs.version }}"
+          if [ -z "$VERSION" ]; then
+            VERSION="${GITHUB_REF_NAME#miveh-v}"
+          fi
+          echo "version: $VERSION"
+          UNSIGNED="game-android/app/build/outputs/apk/release/app-release-unsigned.apk"
+          if [ ! -f "$UNSIGNED" ]; then
+            echo "unsigned apk not found, listing outputs:"
+            find game-android/app/build/outputs -name "*.apk" -print
+            exit 1
+          fi
+          keytool -genkeypair -v -keystore miveh.jks -alias miveh \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -storepass mivehchin -keypass mivehchin \
+            -dname "CN=Mivehchin, O=Mivehchin, C=IR"
+          "$BT/zipalign" -p -f 4 "$UNSIGNED" "Mivehchin-$VERSION.apk"
+          "$BT/apksigner" sign --ks miveh.jks --ks-pass pass:mivehchin \
+            --key-pass pass:mivehchin --out "Mivehchin-$VERSION.apk.tmp" "Mivehchin-$VERSION.apk"
+          mv "Mivehchin-$VERSION.apk.tmp" "Mivehchin-$VERSION.apk"
+          "$BT/apksigner" verify --print-certs "Mivehchin-$VERSION.apk"
+          ls -l Mivehchin-*.apk
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mivehchin-apk
+          path: Mivehchin-*.apk
+          retention-days: 14
+
+      - name: Publish GitHub release
+        if: startsWith(github.ref, 'refs/tags/miveh-v') || github.event_name == 'workflow_dispatch'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: miveh-v${{ steps.sign.outputs.version }}
+          name: میوه‌چین ${{ steps.sign.outputs.version }}
+          body_path: game-android/RELEASE_NOTES.md
+          files: Mivehchin-${{ steps.sign.outputs.version }}.apk
+          draft: false
+          prerelease: false
+          make_latest: true
