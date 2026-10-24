@@ -8,12 +8,21 @@ import android.media.SoundPool
 import android.view.MotionEvent
 import android.view.View
 import kotlin.math.abs
+import kotlin.math.cos
 import kotlin.math.min
+import kotlin.math.sin
 import kotlin.random.Random
 
 enum class Screen { HOME, MAP, GAME, SHOP, WHEEL, PASS, SETTINGS }
 
 class GameView(context: Context) : View(context) {
+
+    companion object {
+        const val SPARK = 0
+        const val SHARD = 1
+        const val RING = 2
+        const val FLASH = 3
+    }
 
     enum class Style { PRIMARY, SECONDARY, GHOST, DANGER }
 
@@ -38,6 +47,9 @@ class GameView(context: Context) : View(context) {
         var dur = 0L
         var easeIn = false
         var popStart = 0L
+        var landAt = 0L
+        var spawnAt = 0L
+        val phase = Random.nextFloat() * 6.28f
 
         fun move(tx: Float, ty: Float, now: Long, duration: Long, easeInFlag: Boolean) {
             fromX = x
@@ -70,7 +82,11 @@ class GameView(context: Context) : View(context) {
         val color: Int,
         val start: Long,
         val life: Long,
-        val radius: Float
+        val radius: Float,
+        val kind: Int = GameView.SPARK,
+        val rot: Float = 0f,
+        val spin: Float = 0f,
+        val gravity: Float = 900f
     )
 
     class FloatText(
@@ -95,6 +111,7 @@ class GameView(context: Context) : View(context) {
     internal var selected: Cell? = null
     internal var boosterMode: String? = null
     internal var result: Result? = null
+    internal var resultAt = 0L
     internal var paused = false
     internal var busy = false
 
@@ -123,6 +140,10 @@ class GameView(context: Context) : View(context) {
     internal val sprites = HashMap<Int, Sprite>()
     internal val particles = ArrayList<Particle>()
     internal val floats = ArrayList<FloatText>()
+
+    internal var shakeUntil = 0L
+    internal var shakeMag = 0f
+    internal var boardGlow = 0f
 
     private val pending = ArrayDeque<Step>()
     private var activeStep: Step? = null
@@ -197,28 +218,12 @@ class GameView(context: Context) : View(context) {
         drawOverlays(canvas)
         drawToast(canvas, now)
 
-        if (needsFrame(now)) postInvalidateOnAnimation() else postInvalidateDelayed(500)
+        postInvalidateOnAnimation()
     }
 
-    private fun needsFrame(now: Long): Boolean =
-        busy || particles.isNotEmpty() || floats.isNotEmpty() ||
-                (wheelSpinDur > 0L && now - wheelSpinStart < wheelSpinDur) ||
-                toastText != null
-
     private fun drawBackdrop(c: Canvas) {
-        val paint = Paint()
-        paint.shader = android.graphics.LinearGradient(
-            0f, 0f, 0f, heightPx,
-            Palette.BG_TOP, Palette.BG_BOTTOM,
-            android.graphics.Shader.TileMode.CLAMP
-        )
-        c.drawRect(0f, 0f, widthPx, heightPx, paint)
-        paint.reset()
-        paint.isAntiAlias = true
-        paint.color = 0x14C6F36B
-        c.drawCircle(widthPx * 0.12f, heightPx * 0.1f, widthPx * 0.4f, paint)
-        paint.color = 0x10A78BFA
-        c.drawCircle(widthPx * 0.92f, heightPx * 0.85f, widthPx * 0.45f, paint)
+        val t = System.currentTimeMillis() / 1000f
+        Art.bgGarden(c, widthPx, heightPx, t)
     }
 
     /* -------------------------------------------------------------- layout */
@@ -484,36 +489,45 @@ class GameView(context: Context) : View(context) {
 
     private fun applyStep(step: Step, now: Long): Long = when (step) {
         is Step.Clear -> {
+            var biggest = 0f
             for (cell in step.cells) {
                 val sp = spriteAt(cell.r, cell.c) ?: continue
                 sp.popStart = now
-                burst(
-                    boardRect.left + sp.x + cellSize / 2f,
-                    boardRect.top + sp.y + cellSize / 2f,
-                    fruitColor(sp.tile.type),
-                    7
-                )
+                val x = boardRect.left + sp.x + cellSize / 2f
+                val y = boardRect.top + sp.y + cellSize / 2f
+                val color = Art.produceColor(sp.tile.type)
+                sparkBurst(x, y, color, 8)
+                shardBurst(x, y, color, 4)
+                ring(x, y, 0xFFFFFFFF.toInt(), cellSize * 0.75f, 300L)
+                flash(x, y, color, cellSize * 0.85f, 260L)
+                biggest = kotlin.math.max(biggest, cellSize)
             }
             for (tr in step.transforms) {
                 val sp = spriteAt(tr.r, tr.c) ?: continue
                 sp.tile.special = tr.special
                 if (tr.special == "rainbow") sp.tile.type = -1
-                burst(
-                    boardRect.left + sp.x + cellSize / 2f,
-                    boardRect.top + sp.y + cellSize / 2f,
-                    Palette.GOLD,
-                    4
-                )
+                val x = boardRect.left + sp.x + cellSize / 2f
+                val y = boardRect.top + sp.y + cellSize / 2f
+                sparkBurst(x, y, Palette.GOLD, 6)
+                ring(x, y, Palette.GOLD, cellSize * 1.1f, 420L)
+                flash(x, y, 0xFFFFE9A8.toInt(), cellSize * 1.0f, 320L)
+                if (tr.special == "bomb" || tr.special == "rainbow") shake(cellSize * 0.16f, 220L)
+            }
+            for (cell in step.ice) {
+                val x = boardRect.left + cell.c * cellSize + cellSize / 2f
+                val y = boardRect.top + cell.r * cellSize + cellSize / 2f
+                shardBurst(x, y, 0xFFB9E7F7.toInt(), 6)
+                ring(x, y, 0xFFE3F6FF.toInt(), cellSize * 0.9f, 360L)
             }
             if (step.gained > 0) {
                 floats.add(
                     FloatText(
                         "+${step.gained}",
-                        boardRect.centerX() + Random.nextFloat() * cellSize,
+                        boardRect.centerX() + Random.nextFloat() * cellSize * 1.2f - cellSize * 0.6f,
                         boardRect.top + cellSize * (1.2f + Random.nextFloat()),
                         now,
-                        Palette.LIME,
-                        cellSize * 0.46f
+                        if (step.combo >= 3) Palette.GOLD else Palette.LIME,
+                        cellSize * 0.5f
                     )
                 )
             }
@@ -525,30 +539,39 @@ class GameView(context: Context) : View(context) {
                         boardRect.centerY(),
                         now,
                         Palette.CORAL,
-                        cellSize * 0.62f
+                        cellSize * 0.72f
                     )
                 )
+                shake(cellSize * 0.05f * step.combo.coerceAtMost(4), 160L)
             }
             popCells = step.cells
             val specialSound = step.combo >= 2 || step.transforms.isNotEmpty() || step.ice.isNotEmpty()
             sound(if (specialSound) R.raw.sfx_special else R.raw.sfx_pop)
-            190L
+            200L
         }
         is Step.Settle -> {
+            var longest = 0L
             for (f in step.falls) {
                 val sp = sprites[f.id] ?: continue
                 sp.r = f.toR
                 sp.c = f.toC
                 val dist = (f.toR - f.fromR).coerceAtLeast(1)
-                sp.move(f.toC * cellSize, f.toR * cellSize, now, 170L + 26L * dist, true)
+                val dur = 150L + 24L * dist
+                sp.move(f.toC * cellSize, f.toR * cellSize, now, dur, true)
+                sp.landAt = 0L
+                longest = kotlin.math.max(longest, dur)
             }
             for (s in step.spawns) {
                 val sp = Sprite(s.tile, s.r, s.c, s.c * cellSize, s.fromR * cellSize)
                 val dist = (s.r - s.fromR).coerceAtLeast(1)
-                sp.move(s.c * cellSize, s.r * cellSize, now, 170L + 26L * dist, true)
+                val dur = 150L + 24L * dist
+                sp.move(s.c * cellSize, s.r * cellSize, now, dur, true)
+                sp.spawnAt = now
                 sprites[s.tile.id] = sp
+                longest = kotlin.math.max(longest, dur)
             }
-            240L
+            if (longest > 0L) busy = true
+            longest + 40L
         }
         is Step.Rebuild -> {
             rebuildSprites(step.tiles)
@@ -557,6 +580,15 @@ class GameView(context: Context) : View(context) {
     }
 
     private fun finalizeStep(step: Step) {
+        if (step is Step.Settle) {
+            val now = System.currentTimeMillis()
+            for (f in step.falls) {
+                sprites[f.id]?.landAt = now
+            }
+            for (s in step.spawns) {
+                sprites[s.tile.id]?.landAt = now
+            }
+        }
         if (step is Step.Clear) {
             for (cell in step.cells) {
                 val sp = spriteAt(cell.r, cell.c) ?: continue
@@ -586,12 +618,14 @@ class GameView(context: Context) : View(context) {
         refreshStars()
         save.persist()
         result = Result(true, stars, g.score, coins, g.level.id)
+        resultAt = System.currentTimeMillis()
         sound(R.raw.sfx_win)
     }
 
     private fun onLose(g: Game) {
         if (result != null) return
         result = Result(false, 0, g.score, 0, g.level.id)
+        resultAt = System.currentTimeMillis()
         sound(R.raw.sfx_lose)
     }
 
@@ -760,37 +794,80 @@ class GameView(context: Context) : View(context) {
     /* ------------------------------------------------------------ effects */
 
     internal fun burst(x: Float, y: Float, color: Int, count: Int) {
+        sparkBurst(x, y, color, count)
+    }
+
+    internal fun sparkBurst(x: Float, y: Float, color: Int, count: Int) {
         val now = System.currentTimeMillis()
         for (i in 0 until count) {
-            val ang = Random.nextFloat() * Math.PI.toFloat() * 2f
-            val speed = cellSize * (0.6f + Random.nextFloat() * 1.6f)
+            val ang = Random.nextFloat() * 6.2832f
+            val speed = cellSize * (0.8f + Random.nextFloat() * 1.9f)
             particles.add(
                 Particle(
                     x, y,
-                    kotlin.math.cos(ang) * speed,
-                    kotlin.math.sin(ang) * speed,
+                    cos(ang) * speed,
+                    sin(ang) * speed,
                     color,
                     now,
-                    520L + (Random.nextFloat() * 220f).toLong(),
-                    cellSize * (0.05f + Random.nextFloat() * 0.06f)
+                    420L + (Random.nextFloat() * 300f).toLong(),
+                    cellSize * (0.07f + Random.nextFloat() * 0.09f),
+                    SPARK,
+                    Random.nextFloat() * 90f,
+                    (Random.nextFloat() - 0.5f) * 540f,
+                    420f
                 )
             )
         }
     }
 
-    private fun updateEffects(now: Long) {
-        particles.removeAll { now - it.start > it.life }
-        floats.removeAll { now - it.start > 900L }
+    internal fun shardBurst(x: Float, y: Float, color: Int, count: Int) {
+        val now = System.currentTimeMillis()
+        for (i in 0 until count) {
+            val ang = Random.nextFloat() * 6.2832f
+            val speed = cellSize * (0.5f + Random.nextFloat() * 1.5f)
+            particles.add(
+                Particle(
+                    x, y,
+                    cos(ang) * speed,
+                    sin(ang) * speed - cellSize * 0.6f,
+                    color,
+                    now,
+                    380L + (Random.nextFloat() * 260f).toLong(),
+                    cellSize * (0.06f + Random.nextFloat() * 0.07f),
+                    SHARD,
+                    Random.nextFloat() * 360f,
+                    (Random.nextFloat() - 0.5f) * 720f,
+                    1100f
+                )
+            )
+        }
     }
 
-    internal fun fruitColor(type: Int): Int = when (type) {
-        0 -> 0xFFF43F5E.toInt()
-        1 -> 0xFFFF9F1C.toInt()
-        2 -> 0xFFFFE04D.toInt()
-        3 -> 0xFF7ED957.toInt()
-        4 -> 0xFF8B5CF6.toInt()
-        5 -> 0xFF6D5BFF.toInt()
-        else -> 0xFFF6EBD2.toInt()
+    internal fun ring(x: Float, y: Float, color: Int, radius: Float, life: Long) {
+        particles.add(Particle(x, y, 0f, 0f, color, System.currentTimeMillis(), life, radius, RING, 0f, 0f, 0f))
+    }
+
+    internal fun flash(x: Float, y: Float, color: Int, radius: Float, life: Long) {
+        particles.add(Particle(x, y, 0f, 0f, color, System.currentTimeMillis(), life, radius, FLASH, 0f, 0f, 0f))
+    }
+
+    internal fun shake(mag: Float, duration: Long) {
+        shakeMag = kotlin.math.max(shakeMag, mag)
+        shakeUntil = System.currentTimeMillis() + duration
+    }
+
+    private fun updateEffects(now: Long) {
+        particles.removeAll { now - it.start > it.life }
+        floats.removeAll { now - it.start > 950L }
+        if (now > shakeUntil) shakeMag = 0f
+    }
+
+    internal fun fruitColor(type: Int): Int = Art.produceColor(type)
+
+    internal fun shakeOffset(now: Long): Float {
+        if (now > shakeUntil || shakeMag <= 0f) return 0f
+        val k = (shakeUntil - now).toFloat() / 240f
+        return sin(now / 22.0).toFloat() * shakeMag * k.coerceIn(0f, 1f)
     }
 
     /* -------------------------------------------------------------- touch */
@@ -866,51 +943,24 @@ class GameView(context: Context) : View(context) {
     /* ------------------------------------------------------------- widgets */
 
     internal fun button(c: Canvas, rect: RectF, label: String, style: Style, action: () -> Unit) {
+        val radius = rect.height() * 0.34f
         when (style) {
-            Style.PRIMARY -> Art.gradientPanel(c, rect, rect.height() * 0.34f, Palette.LIME, 0xFF8ACB4A.toInt())
-            Style.SECONDARY -> Art.gradientPanel(c, rect, rect.height() * 0.34f, Palette.PANEL_SOFT, Palette.PANEL)
-            Style.DANGER -> Art.gradientPanel(c, rect, rect.height() * 0.34f, 0xFFFF8A9A.toInt(), Palette.DANGER)
-            Style.GHOST -> Art.panel(c, rect, rect.height() * 0.34f, 0x1AFFFFFF, 1.6f, 0x33FFFFFF)
+            Style.PRIMARY -> Art.buttonSkin(c, rect, radius, Palette.LIME, 0xFF7CBE3A.toInt())
+            Style.SECONDARY -> Art.buttonSkin(c, rect, radius, Palette.PANEL_SOFT, 0xFF0E2C21.toInt())
+            Style.DANGER -> Art.buttonSkin(c, rect, radius, 0xFFFF7D8F.toInt(), 0xFFC22B44.toInt())
+            Style.GHOST -> Art.panel(c, rect, radius, 0x1AFFFFFF, 1.6f, 0x44FFFFFF)
         }
         val textColor = when (style) {
-            Style.PRIMARY -> 0xFF10331F.toInt()
-            Style.DANGER -> 0xFF3A0710.toInt()
+            Style.PRIMARY -> 0xFF123A16.toInt()
+            Style.DANGER -> 0xFF3D0510.toInt()
             else -> Palette.CREAM
         }
         Art.text(
             c, label, rect.centerX(), rect.centerY() + rect.height() * 0.16f,
-            rect.height() * 0.36f, textColor, Paint.Align.CENTER, Art.bold
+            rect.height() * 0.36f, textColor, Paint.Align.CENTER, Art.bold,
+            style != Style.GHOST
         )
         hotspots.add(Hotspot(RectF(rect), action))
     }
 
-    internal fun pill(c: Canvas, rect: RectF, icon: (Canvas, Float, Float, Float) -> Unit, label: String) {
-        Art.panel(c, rect, rect.height() / 2f, 0x33000000)
-        val r = rect.height() * 0.3f
-        icon(c, rect.left + rect.height() * 0.55f, rect.centerY(), r)
-        Art.text(
-            c, label, rect.left + rect.height() * 1.05f, rect.centerY() + rect.height() * 0.16f,
-            rect.height() * 0.4f, Palette.CREAM, Paint.Align.LEFT, Art.bold
-        )
-    }
-
-    internal fun drawToast(c: Canvas, now: Long) {
-        val text = toastText ?: return
-        if (now > toastUntil) {
-            toastText = null
-            return
-        }
-        val w = min(widthPx * 0.86f, Art.measure(text, widthPx * 0.042f, Art.bold) + widthPx * 0.12f)
-        val rect = RectF(
-            (widthPx - w) / 2f,
-            heightPx * 0.78f,
-            (widthPx + w) / 2f,
-            heightPx * 0.78f + heightPx * 0.07f
-        )
-        Art.panel(c, rect, rect.height() / 2f, 0xEE10331F.toInt())
-        Art.text(
-            c, text, rect.centerX(), rect.centerY() + rect.height() * 0.16f,
-            widthPx * 0.042f, Palette.CREAM, Paint.Align.CENTER, Art.bold
-        )
-    }
-}
+ 

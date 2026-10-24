@@ -37,15 +37,22 @@ internal fun GameView.drawHome(c: Canvas) {
         { cc, cx, cy, r -> Art.heart(cc, cx, cy, r * 0.9f, true) }, "${save.lives}/${eco.maxLives}"
     )
 
-    Art.text(c, "میوه‌چین", w * 0.5f, h * 0.225f, w * 0.155f, Palette.CREAM, Paint.Align.CENTER, Art.black, true)
-    Art.text(c, "سه‌تا کنار هم بچین، باغ را پر کن!", w * 0.5f, h * 0.268f, w * 0.043f, Palette.MUTED)
+    // wooden sign behind the title
+    val sign = RectF(w * 0.08f, h * 0.165f, w * 0.92f, h * 0.275f)
+    Art.panel(c, RectF(sign.left + 3f, sign.top + 8f, sign.right + 3f, sign.bottom + 8f), w * 0.05f, 0x55000000)
+    Art.buttonSkin(c, sign, w * 0.05f, 0xFFA9713F.toInt(), 0xFF6E4220.toInt())
+    Art.text(c, "میوه‌چین", w * 0.5f, h * 0.243f, w * 0.125f, Palette.CREAM, Paint.Align.CENTER, Art.black, true)
+    Art.text(c, "سه‌تا کنار هم بچین، باغ را پر کن!", w * 0.5f, h * 0.305f, w * 0.043f, Palette.MUTED)
 
-    // produce parade
+    // produce parade, gently bobbing
+    val secs = (System.currentTimeMillis() % 100000L) / 1000f
     val types = intArrayOf(0, 1, 2, 4, 6)
     for (i in types.indices) {
         val x = w * (0.16f + 0.17f * i)
-        val y = h * (0.355f + if (i % 2 == 0) 0f else 0.018f)
-        Art.produce(c, types[i], x, y, w * 0.14f)
+        val bob = sin(secs * 1.8f + i * 0.9f) * h * 0.008f
+        val y = h * (0.365f + if (i % 2 == 0) 0f else 0.016f) + bob
+        Art.glow(c, x, y + w * 0.05f, w * 0.1f, Art.produceColor(types[i]), 0.16f)
+        Art.produce(c, types[i], x, y, w * 0.15f)
     }
 
     button(
@@ -109,11 +116,25 @@ internal fun GameView.drawMap(c: Canvas) {
         val rect = RectF(x, y, x + size, y + size)
 
         if (unlocked) {
-            Art.gradientPanel(c, rect, size * 0.24f, Palette.PANEL_SOFT, Palette.PANEL)
-            if (lvl.id == save.level) {
-                Art.panel(c, rect, size * 0.24f, 0x00000000, 3f, Palette.LIME)
+            val current = lvl.id == save.level
+            if (current) {
+                val pulse = 0.5f + 0.5f * sin(System.currentTimeMillis() / 180f).toFloat()
+                Art.glow(c, rect.centerX(), rect.centerY(), size * 0.78f, Palette.LIME, 0.22f + 0.16f * pulse)
             }
-            Art.text(c, "${lvl.id}", rect.centerX(), rect.centerY() - size * 0.02f, size * 0.36f, Palette.CREAM, Paint.Align.CENTER, Art.black)
+            Art.panel(
+                c,
+                RectF(rect.left + 2f, rect.top + 6f, rect.right + 2f, rect.bottom + 6f),
+                size * 0.26f, 0x55000000
+            )
+            if (current) {
+                Art.buttonSkin(c, rect, size * 0.26f, Palette.LIME, 0xFF7CBE3A.toInt())
+            } else {
+                Art.buttonSkin(c, rect, size * 0.26f, 0xFFA9713F.toInt(), 0xFF6E4220.toInt())
+            }
+            Art.text(
+                c, "${lvl.id}", rect.centerX(), rect.centerY() - size * 0.02f, size * 0.36f,
+                if (current) 0xFF123A16.toInt() else Palette.CREAM, Paint.Align.CENTER, Art.black, !current
+            )
             for (s in 0 until 3) {
                 Art.star(
                     c,
@@ -126,7 +147,7 @@ internal fun GameView.drawMap(c: Canvas) {
             }
             hotspots.add(Hotspot(RectF(rect), { startLevel(i) }))
         } else {
-            Art.panel(c, rect, size * 0.24f, 0x1AFFFFFF)
+            Art.panel(c, rect, size * 0.26f, 0x2AFFFFFF, 1.2f, 0x22FFFFFF)
             Art.lock(c, rect.centerX(), rect.centerY(), size * 0.2f, 0x66FFFFFF)
         }
     }
@@ -168,43 +189,84 @@ internal fun GameView.drawGame(c: Canvas) {
 
     drawObjectives(c, g, h * 0.155f)
 
-    // board plate
-    val plate = RectF(boardRect.left - cellSize * 0.12f, boardRect.top - cellSize * 0.12f, boardRect.right + cellSize * 0.12f, boardRect.bottom + cellSize * 0.12f)
-    Art.panel(c, plate, cellSize * 0.3f, 0x33000000)
+    // ------- wooden board with dark wells (reference look) -------
+    val pad = cellSize * 0.20f
+    val outer = RectF(
+        boardRect.left - pad, boardRect.top - pad,
+        boardRect.right + pad, boardRect.bottom + pad
+    )
+    c.save()
+    val sh = shakeOffset(now)
+    if (sh != 0f) c.translate(sh, 0f)
+
+    Art.panel(
+        c,
+        RectF(outer.left + cellSize * 0.03f, outer.top + cellSize * 0.09f, outer.right + cellSize * 0.03f, outer.bottom + cellSize * 0.09f),
+        cellSize * 0.32f, 0x66000000
+    )
+    Art.woodFrame(c, outer, boardRect, cellSize * 0.26f)
 
     for (r in 0 until g.rows) {
         for (col in 0 until g.cols) {
             if (!g.playable(r, col)) continue
             val x = boardRect.left + col * cellSize
             val y = boardRect.top + r * cellSize
-            Art.panel(c, RectF(x + 2f, y + 2f, x + cellSize - 2f, y + cellSize - 2f), cellSize * 0.22f, 0x1FFFFFFF)
-            if (g.ice[r][col] > 0) drawIce(c, RectF(x + 2f, y + 2f, x + cellSize - 2f, y + cellSize - 2f))
-        }
-    }
-
-    for (sp in sprites.values) {
-        val cx = boardRect.left + sp.x + cellSize / 2f
-        val cy = boardRect.top + sp.y + cellSize / 2f
-        var scale = 1f
-        var alpha = 255
-        if (sp.popStart > 0L) {
-            val k = ((now - sp.popStart).toFloat() / 190f).coerceIn(0f, 1f)
-            scale = 1f - 0.45f * k
-            alpha = (255 * (1f - k)).toInt().coerceIn(0, 255)
-        }
-        Art.produce(c, sp.tile.type, cx, cy, cellSize * 0.84f, alpha, scale)
-        val special = sp.tile.special
-        if (special != null && alpha > 40) {
-            Art.special(c, special, cx, cy, cellSize * 0.84f, alpha)
+            val cellRect = RectF(x + cellSize * 0.045f, y + cellSize * 0.045f, x + cellSize * 0.955f, y + cellSize * 0.955f)
+            Art.well(c, cellRect, cellSize * 0.24f)
+            if (g.ice[r][col] > 0) Art.ice(c, cellRect, 1f)
         }
     }
 
     val sel = selected
     if (sel != null && !busy) {
+        val pulse = 0.5f + 0.5f * sin(now / 130f).toFloat()
         val x = boardRect.left + sel.c * cellSize
         val y = boardRect.top + sel.r * cellSize
-        Art.panel(c, RectF(x + 2f, y + 2f, x + cellSize - 2f, y + cellSize - 2f), cellSize * 0.22f, 0x00000000, 3f, Palette.LIME)
+        val ringRect = RectF(x + cellSize * 0.02f, y + cellSize * 0.02f, x + cellSize * 0.98f, y + cellSize * 0.98f)
+        Art.glow(c, ringRect.centerX(), ringRect.centerY(), cellSize * 0.8f, Palette.LIME, 0.18f + 0.14f * pulse)
+        Art.panel(c, ringRect, cellSize * 0.26f, 0x00000000, 2.5f + pulse * 1.5f, Art.withAlpha(Palette.LIME, 0.6f + 0.4f * pulse))
     }
+
+    val seconds = (now % 1000000L) / 1000f
+    for (sp in sprites.values) {
+        val cx = boardRect.left + sp.x + cellSize / 2f
+        val cy = boardRect.top + sp.y + cellSize / 2f
+        var alpha = 255
+        var scale = 1f
+        var sx = 1f
+        var sy = 1f
+
+        if (sp.popStart > 0L) {
+            val k = ((now - sp.popStart).toFloat() / 210f).coerceIn(0f, 1f)
+            scale = 1f + 0.3f * sin(k * Math.PI.toFloat())
+            alpha = (255 * (1f - k * k)).toInt().coerceIn(0, 255)
+        }
+        if (sp.spawnAt > 0L && now - sp.spawnAt < 260L) {
+            val k = ((now - sp.spawnAt).toFloat() / 260f).coerceIn(0f, 1f)
+            scale *= 0.82f + 0.18f * k
+        }
+        if (sp.landAt > 0L && now - sp.landAt < 230L) {
+            val k = ((now - sp.landAt).toFloat() / 230f).coerceIn(0f, 1f)
+            val squash = sin(k * Math.PI.toFloat()) * 0.17f
+            sx = 1f + squash * 0.55f
+            sy = 1f - squash
+        }
+        val idle = if (!busy && g.status == Status.PLAYING && sp.dur == 0L) {
+            sin(seconds * 2.1f + sp.phase) * 0.016f
+        } else 0f
+        if (sel != null && sel.r == sp.r && sel.c == sp.c) scale *= 1.06f
+
+        c.save()
+        c.translate(cx, cy + idle * cellSize)
+        c.scale(scale * sx, scale * sy)
+        Art.produce(c, sp.tile.type, 0f, 0f, cellSize * 0.9f, alpha)
+        val special = sp.tile.special
+        if (special != null && alpha > 30) {
+            Art.special(c, special, 0f, 0f, cellSize * 0.9f, alpha, seconds * 0.6f + sp.phase)
+        }
+        c.restore()
+    }
+    c.restore()
 
     drawEffects(c, now)
     drawBoosters(c, g)
@@ -282,18 +344,59 @@ private fun GameView.drawBoosters(c: Canvas, g: Game) {
 private fun GameView.drawEffects(c: Canvas, now: Long) {
     val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     for (p in particles) {
-        val t = (now - p.start) / 1000f
-        val x = p.x + p.vx * t
-        val y = p.y + p.vy * t + 0.5f * 900f * t * t
-        val k = ((now - p.start).toFloat() / p.life).coerceIn(0f, 1f)
-        paint.color = Art.withAlpha(p.color, 1f - k)
-        c.drawCircle(x, y, p.radius * (1f - 0.3f * k), paint)
+        val age = (now - p.start).toFloat()
+        val k = (age / p.life).coerceIn(0f, 1f)
+        if (k >= 1f) continue
+        val t = age / 1000f
+        when (p.kind) {
+            GameView.SPARK -> {
+                val x = p.x + p.vx * t
+                val y = p.y + p.vy * t + 0.5f * p.gravity * t * t
+                val fade = (1f - k) * (1f - k)
+                Art.sparkle(c, x, y, p.radius * (1f + 0.4f * k), p.color, fade, p.rot + p.spin * t)
+            }
+            GameView.SHARD -> {
+                val x = p.x + p.vx * t
+                val y = p.y + p.vy * t + 0.5f * p.gravity * t * t
+                c.save()
+                c.rotate(p.rot + p.spin * t, x, y)
+                paint.color = Art.withAlpha(p.color, 1f - k)
+                c.drawRoundRect(
+                    RectF(x - p.radius, y - p.radius * 0.55f, x + p.radius, y + p.radius * 0.55f),
+                    p.radius * 0.3f, p.radius * 0.3f, paint
+                )
+                c.restore()
+            }
+            GameView.RING -> {
+                val r = p.radius * (0.25f + 0.95f * k)
+                paint.style = Paint.Style.STROKE
+                paint.strokeWidth = kotlin.math.max(1.5f, p.radius * 0.16f * (1f - k))
+                paint.color = Art.withAlpha(p.color, (1f - k) * 0.9f)
+                c.drawCircle(p.x, p.y, r, paint)
+                paint.style = Paint.Style.FILL
+            }
+            GameView.FLASH -> {
+                val r = p.radius * (0.5f + 1.1f * k)
+                paint.color = 0x00FFFFFF
+                Art.glow(c, p.x, p.y, r, p.color, (1f - k) * 0.55f)
+                paint.color = Art.withAlpha(0xFFFFFFFF.toInt(), (1f - k) * 0.35f)
+                c.drawCircle(p.x, p.y, r * 0.35f, paint)
+            }
+        }
     }
+
     for (f in floats) {
-        val k = ((now - f.start).toFloat() / 900f).coerceIn(0f, 1f)
+        val k = ((now - f.start).toFloat() / 950f).coerceIn(0f, 1f)
         val alpha = (1f - k * k).coerceIn(0f, 1f)
-        val y = f.y - k * heightPx * 0.06f
-        Art.text(c, f.text, f.x, y, f.size, Art.withAlpha(f.color, alpha), Paint.Align.CENTER, Art.black)
+        val pop = if (k < 0.18f) 0.6f + 2.2f * k else 1f
+        val y = f.y - k * heightPx * 0.055f
+        c.save()
+        c.scale(pop, pop, f.x, y)
+        Art.text(
+            c, f.text, f.x, y, f.size,
+            Art.withAlpha(f.color, alpha), Paint.Align.CENTER, Art.black, true
+        )
+        c.restore()
     }
 }
 
@@ -533,15 +636,19 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     if (res.win) {
         Art.text(c, "آفرین!", panel.centerX(), panel.top + h * 0.075f, w * 0.095f, Palette.LIME, Paint.Align.CENTER, Art.black, true)
         for (i in 0 until 3) {
-            val t = ((now % 700) / 700f)
-            val scale = if (i < res.stars) 1f + 0.08f * sin(t * 6.28f + i).toFloat() else 1f
-            Art.star(
-                c,
-                panel.centerX() + (i - 1) * w * 0.16f,
-                panel.top + h * 0.145f,
-                w * 0.06f * (if (i < res.stars) scale else 1f),
-                i < res.stars
-            )
+            val sx = panel.centerX() + (i - 1) * w * 0.16f
+            val sy = panel.top + h * 0.145f
+            val appeared = (now - resultAt) / 180f - i
+            val k = appeared.coerceIn(0f, 1f)
+            val pop = if (k < 1f) 0.2f + 1.15f * k + 0.18f * sin(k * Math.PI.toFloat()) else 1f
+            val idle = 1f + 0.05f * sin(now / 260f + i).toFloat()
+            if (i < res.stars && k > 0.4f) {
+                Art.glow(c, sx, sy, w * 0.13f, Palette.GOLD, 0.25f)
+            }
+            c.save()
+            c.scale(if (i < res.stars) pop * idle else 1f, if (i < res.stars) pop * idle else 1f, sx, sy)
+            Art.star(c, sx, sy, w * 0.06f, i < res.stars)
+            c.restore()
         }
         Art.text(c, "${res.score}", panel.centerX(), panel.top + h * 0.215f, w * 0.07f, Palette.CREAM, Paint.Align.CENTER, Art.black)
         Art.text(c, "امتیاز", panel.centerX(), panel.top + h * 0.245f, w * 0.036f, Palette.MUTED)
