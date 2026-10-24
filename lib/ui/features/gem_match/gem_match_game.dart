@@ -952,14 +952,20 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
       height: 68,
       child: Directionality(
         textDirection: TextDirection.ltr,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            AspectRatio(
-              aspectRatio: 1000 / 323,
-              child: _buildTitlePlaque(),
-            ),
-            const SizedBox(width: 6),
+        child: LayoutBuilder(
+          builder: (context, constraints) => Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              // Reference proportion: the title sign takes ~34% of the
+              // bar; the stats panel flexes in the middle.
+              SizedBox(
+                width: constraints.maxWidth * 0.34,
+                child: AspectRatio(
+                  aspectRatio: 1000 / 323,
+                  child: _buildTitlePlaque(),
+                ),
+              ),
+              const SizedBox(width: 6),
             Expanded(
               child: SizedBox(
                 height: 56,
@@ -991,14 +997,15 @@ class _GemMatchGameState extends State<GemMatchGame> with WidgetsBindingObserver
               onPressed: _phase.acceptsInput ? _pause : null,
             ),
             const SizedBox(width: 4),
-            _headerButton(
-              icon: Icons.lightbulb_rounded,
-              tooltip: 'راهنمایی',
-              plate: 'assets/ui/button-gold.png',
-              iconColor: GamePalette.chocolate,
-              onPressed: _phase.acceptsInput ? _showHint : null,
-            ),
-          ],
+              _headerButton(
+                icon: Icons.lightbulb_rounded,
+                tooltip: 'راهنمایی',
+                plate: 'assets/ui/button-gold.png',
+                iconColor: GamePalette.chocolate,
+                onPressed: _phase.acceptsInput ? _showHint : null,
+              ),
+            ],
+          ),
         ),
       ),
     );
