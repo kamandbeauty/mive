@@ -98,7 +98,7 @@ object Art {
 
     /* ------------------------------------------------------------ shapes */
 
-    fun panel(c: Canvas, rect: RectF, radius: Float, color: Int, stroke: Int = 0, strokeColor: Int = 0) {
+    fun panel(c: Canvas, rect: RectF, radius: Float, color: Int, stroke: Float = 0f, strokeColor: Int = 0) {
         shapePaint.reset()
         shapePaint.isAntiAlias = true
         shapePaint.color = color
