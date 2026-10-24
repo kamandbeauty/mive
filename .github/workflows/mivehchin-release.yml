@@ -50,7 +50,7 @@ jobs:
         working-directory: game-android
         run: |
           set -o pipefail
-          gradle --no-daemon assembleRelease --stacktrace 2>&1 | tee build.log
+          gradle --no-daemon assembleRelease --stacktrace 2>&1 | tee ../build.log
 
       - name: Sign the APK
         id: sign
@@ -73,7 +73,7 @@ jobs:
         run: |
           set +e
           : > ci-build-errors.log
-          for f in build.log sign.log; do
+          for f in build.log sign.log game-android/build.log game-android/sign.log; do
             if [ -f "$f" ]; then
               echo "=== $f ===" >> ci-build-errors.log
               grep -E "^(e: |FAILURE|\* What went wrong|Caused by|Execution failed|> |== |!! )" "$f" | head -300 >> ci-build-errors.log
