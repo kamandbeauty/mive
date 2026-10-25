@@ -13,3 +13,6 @@ captures/
 build.log
 sign.log
 ci-build-errors.log
+
+# generated fruit source photos (large); regenerate with tools/make-fruit.py
+ref-art/raw/

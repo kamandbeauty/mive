@@ -48,16 +48,7 @@ object Palette {
     val LEAF_LIGHT = 0xFF79D06A.toInt()
 }
 
-/* --------------------------------------------------------------- produce */
-
-private class Produce(
-    val outline: FloatArray,
-    val base: Int,
-    val deep: Int,
-    val light: Int,
-    val glow: Int,
-    val face: Int
-)
+private const val TYPES = 7
 
 object Art {
 
@@ -72,7 +63,6 @@ object Art {
     private val bitmapPaint = Paint(Paint.FILTER_BITMAP_FLAG or Paint.ANTI_ALIAS_FLAG)
     private val circlePaint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    private val gemCache = HashMap<Int, Bitmap>()
     private val starCache = HashMap<Int, Bitmap>()
     private var gardenCache: Bitmap? = null
     private var gardenW = 0
@@ -94,6 +84,7 @@ object Art {
             black = Typeface.DEFAULT_BOLD
         }
         gardenCache = null
+        loadProduce(ctx)
     }
 
     /* ---------------------------------------------------------------- text */
@@ -115,7 +106,7 @@ object Art {
         textPaint.textAlign = align
         textPaint.typeface = typeface
         if (shadow) {
-            textPaint.color = 0x88000000
+            textPaint.color = 0x88000000.toInt()
             c.drawText(s, x, y + size * 0.1f, textPaint)
             textPaint.color = 0x3D000000
             c.drawText(s, x, y + size * 0.2f, textPaint)
@@ -1197,389 +1188,60 @@ object Art {
 
     /* ------------------------------------------------------------ produce */
 
-    fun produce(c: Canvas, type: Int, cx: Float, cy: Float, size: Float, alpha: Int = 255, scale: Float = 1f) {
-        if (type < 0) return
-        val px = ((size * scale) / 2f).toInt() * 2
-        if (px < 8) return
-        val key = type * 4096 + px.coerceAtMost(4095)
-        val bmp = gemCache.getOrPut(key) { gemBitmap(type, px) }
-        bitmapPaint.alpha = alpha.coerceIn(0, 255)
-        c.drawBitmap(bmp, cx - bmp.width / 2f, cy - bmp.height / 2f, bitmapPaint)
+    private val fruitBitmaps = HashMap<Int, Bitmap>()
+
+    /**
+     * Loads the photographed produce sheets from assets/fruit/N.png.
+     * Kept separate from [init] so a missing asset degrades to nothing drawn
+     * instead of crashing the whole renderer.
+     */
+    fun loadProduce(ctx: Context) {
+        fruitBitmaps.clear()
+        for (i in 0 until TYPES) {
+            try {
+                ctx.assets.open("fruit/$i.png").use { stream ->
+                    val bmp = android.graphics.BitmapFactory.decodeStream(stream)
+                    if (bmp != null) fruitBitmaps[i] = bmp
+                }
+            } catch (e: Exception) {
+                // leave it out; produce() falls back to the tinted disc below
+            }
+        }
     }
 
-    private fun gemBitmap(type: Int, px: Int): Bitmap {
-        val bmp = Bitmap.createBitmap(px, px, Bitmap.Config.ARGB_8888)
-        val cv = Canvas(bmp)
-        cv.scale(px / 100f, px / 100f)
-        val p = produceSpec(type)
-        val pts = p.outline
-        val n = pts.size / 2
+    fun fruitImage(type: Int): Bitmap? = fruitBitmaps[type]
 
-        // ground shadow
+    fun produce(c: Canvas, type: Int, cx: Float, cy: Float, size: Float, alpha: Int = 255, scale: Float = 1f) {
+        if (type < 0) return
+        val s = size * scale
+        if (s <= 2f) return
+        val bmp = fruitBitmaps[type]
+        if (bmp == null) {
+            // graceful fallback: a tinted disc keeps the board readable
+            circle(c, cx, cy, s * 0.42f, withAlpha(produceColor(type), alpha / 255f))
+            return
+        }
+        bitmapPaint.alpha = alpha.coerceIn(0, 255)
+        val half = s / 2f
+        c.drawBitmap(bmp, null, RectF(cx - half, cy - half, cx + half, cy + half), bitmapPaint)
+    }
+
+    /** Soft coloured glow that sits behind a produce. */
+    fun produceHalo(c: Canvas, type: Int, cx: Float, cy: Float, size: Float) {
+        glow(c, cx, cy, size * 0.62f, produceColor(type), 0.30f)
+    }
+
+    /** Contact shadow under a produce, scaled to the sprite. */
+    fun produceShadow(c: Canvas, cx: Float, cy: Float, size: Float) {
         shapePaint.reset()
         shapePaint.isAntiAlias = true
         shapePaint.shader = RadialGradient(
-            CX, 94f, 40f,
-            intArrayOf(0x66000000, 0x2E000000, 0x00000000),
+            cx, cy, size * 0.4f,
+            intArrayOf(0x55000000, 0x22000000, 0x00000000),
             floatArrayOf(0f, 0.55f, 1f), Shader.TileMode.CLAMP
         )
-        cv.drawOval(RectF(10f, 80f, 90f, 100f), shapePaint)
-
-        // coloured halo makes the fruit pop off a dark socket
-        shapePaint.shader = RadialGradient(
-            CX, CY, 52f,
-            intArrayOf(withAlpha(p.glow, 0.34f), withAlpha(p.glow, 0.12f), 0x00FFFFFF),
-            floatArrayOf(0f, 0.55f, 1f), Shader.TileMode.CLAMP
-        )
-        cv.drawCircle(CX, CY, 52f, shapePaint)
+        c.drawOval(RectF(cx - size * 0.36f, cy - size * 0.12f, cx + size * 0.36f, cy + size * 0.12f), shapePaint)
         shapePaint.shader = null
-
-        val body = Path()
-        body.moveTo(pts[0], pts[1])
-        for (i in 1 until n) body.lineTo(pts[i * 2], pts[i * 2 + 1])
-        body.close()
-
-        fillPaint.reset()
-        fillPaint.isAntiAlias = true
-        fillPaint.color = p.base
-        cv.drawPath(body, fillPaint)
-
-        // table ring (inner plateau)
-        val tableXs = FloatArray(n)
-        val tableYs = FloatArray(n)
-        for (i in 0 until n) {
-            tableXs[i] = CX + (pts[i * 2] - CX) * 0.52f
-            tableYs[i] = CY + (pts[i * 2 + 1] - CY) * 0.52f
-        }
-        val table = Path()
-        table.moveTo(tableXs[0], tableYs[0])
-        for (i in 1 until n) table.lineTo(tableXs[i], tableYs[i])
-        table.close()
-
-        cv.save()
-        cv.clipPath(body)
-
-        // crown facets
-        for (i in 0 until n) {
-            val j = (i + 1) % n
-            val mx = (pts[i * 2] + pts[j * 2]) / 2f
-            val my = (pts[i * 2 + 1] + pts[j * 2 + 1]) / 2f
-            var dx = mx - CX
-            var dy = my - CY
-            val len = sqrt(dx * dx + dy * dy).coerceAtLeast(0.001f)
-            dx /= len
-            dy /= len
-            val dot = dx * LX + dy * LY
-            var k = 0.50f + 0.80f * (0.5f + 0.5f * dot)
-            if (my > 66f) k *= 0.88f
-            if (i % 2 == 0) k *= 1.10f else k *= 0.95f
-            val f = Path()
-            f.moveTo(pts[i * 2], pts[i * 2 + 1])
-            f.lineTo(pts[j * 2], pts[j * 2 + 1])
-            f.lineTo(tableXs[j], tableYs[j])
-            f.lineTo(tableXs[i], tableYs[i])
-            f.close()
-            fillPaint.color = shade(p.base, k)
-            cv.drawPath(f, fillPaint)
-        }
-
-        // table facets, brighter
-        for (i in 0 until n) {
-            val j = (i + 1) % n
-            val mx = (tableXs[i] + tableXs[j]) / 2f
-            val my = (tableYs[i] + tableYs[j]) / 2f
-            var dx = mx - CX
-            var dy = my - CY
-            val len = sqrt(dx * dx + dy * dy).coerceAtLeast(0.001f)
-            dx /= len
-            dy /= len
-            val dot = dx * LX + dy * LY
-            val k = 1.02f + 0.42f * (0.5f + 0.5f * dot)
-            val f = Path()
-            f.moveTo(tableXs[i], tableYs[i])
-            f.lineTo(tableXs[j], tableYs[j])
-            f.lineTo(CX, CY - 2f)
-            f.close()
-            fillPaint.color = shade(p.base, k)
-            cv.drawPath(f, fillPaint)
-        }
-
-        // specular wash
-        fillPaint.shader = RadialGradient(
-            33f, 26f, 66f,
-            intArrayOf(0xA6FFFFFF.toInt(), 0x33FFFFFF, 0x00FFFFFF),
-            floatArrayOf(0f, 0.42f, 1f), Shader.TileMode.CLAMP
-        )
-        cv.drawPath(body, fillPaint)
-        // bottom falloff
-        fillPaint.shader = RadialGradient(
-            76f, 86f, 56f,
-            intArrayOf(0x00000000, 0x26000000, 0x77000000),
-            floatArrayOf(0f, 0.5f, 1f), Shader.TileMode.CLAMP
-        )
-        cv.drawPath(body, fillPaint)
-        fillPaint.shader = null
-        cv.restore()
-
-        // bevel on the table edge
-        strokePaint.reset()
-        strokePaint.isAntiAlias = true
-        strokePaint.style = Paint.Style.STROKE
-        strokePaint.strokeWidth = 1.1f
-        strokePaint.color = withAlpha(p.light, 0.55f)
-        cv.drawPath(table, strokePaint)
-
-        // rim light along the lit edge
-        strokePaint.strokeWidth = 1.7f
-        strokePaint.shader = LinearGradient(
-            12f, 10f, 88f, 94f,
-            intArrayOf(0xFFFFFFFF.toInt(), 0x55FFFFFF, 0x00FFFFFF),
-            floatArrayOf(0f, 0.45f, 1f), Shader.TileMode.CLAMP
-        )
-        cv.drawPath(body, strokePaint)
-        strokePaint.shader = null
-
-        // dark outline
-        strokePaint.strokeWidth = 2.1f
-        strokePaint.color = withAlpha(p.deep, 0.6f)
-        cv.drawPath(body, strokePaint)
-
-        // specular blob + catchlight
-        fillPaint.reset()
-        fillPaint.isAntiAlias = true
-        fillPaint.shader = RadialGradient(
-            34f, 28f, 15f,
-            intArrayOf(0xF2FFFFFF.toInt(), 0x44FFFFFF, 0x00FFFFFF),
-            floatArrayOf(0f, 0.42f, 1f), Shader.TileMode.CLAMP
-        )
-        cv.drawOval(RectF(21f, 17f, 51f, 39f), fillPaint)
-        fillPaint.shader = null
-        fillPaint.color = 0xE6FFFFFF.toInt()
-        cv.drawCircle(29f, 24f, 2.9f, fillPaint)
-        cv.drawCircle(38f, 21f, 1.5f, fillPaint)
-
-        accents(cv, p)
-        return bmp
-    }
-
-    private fun accents(cv: Canvas, p: Produce) {
-        when (p.face) {
-            0 -> { // strawberry: seeds + leafy crown
-                fillPaint.reset()
-                fillPaint.isAntiAlias = true
-                fillPaint.color = 0xE6FFE9A8.toInt()
-                val seeds = floatArrayOf(
-                    38f, 48f, 50f, 44f, 62f, 49f, 32f, 58f, 44f, 60f, 56f, 59f,
-                    68f, 59f, 37f, 69f, 49f, 72f, 61f, 71f, 44f, 81f, 55f, 81f
-                )
-                var i = 0
-                while (i < seeds.size) {
-                    cv.save()
-                    cv.rotate(16f, seeds[i], seeds[i + 1])
-                    cv.drawOval(
-                        RectF(seeds[i] - 1.9f, seeds[i + 1] - 3f, seeds[i] + 1.9f, seeds[i + 1] + 3f),
-                        fillPaint
-                    )
-                    cv.restore()
-                    i += 2
-                }
-                val crown = Path()
-                crown.moveTo(33f, 30f)
-                crown.lineTo(27f, 15f)
-                crown.lineTo(42f, 23f)
-                crown.lineTo(50f, 9f)
-                crown.lineTo(58f, 23f)
-                crown.lineTo(73f, 15f)
-                crown.lineTo(67f, 31f)
-                crown.lineTo(50f, 36f)
-                crown.close()
-                fillPaint.color = Palette.LEAF
-                cv.drawPath(crown, fillPaint)
-                fillPaint.color = 0x33000000
-                cv.drawPath(crown, fillPaint)
-                strokePaint.reset()
-                strokePaint.isAntiAlias = true
-                strokePaint.style = Paint.Style.STROKE
-                strokePaint.strokeWidth = 1.6f
-                strokePaint.color = Palette.LEAF_DARK
-                cv.drawPath(crown, strokePaint)
-            }
-            1 -> { // orange: pores, leaf, split light
-                fillPaint.reset()
-                fillPaint.isAntiAlias = true
-                fillPaint.color = 0x2E8A4A00
-                val dots = floatArrayOf(
-                    36f, 46f, 52f, 40f, 63f, 47f, 45f, 56f, 58f, 61f, 34f, 61f, 69f, 55f, 42f, 71f, 56f, 72f
-                )
-                var i = 0
-                while (i < dots.size) {
-                    cv.drawCircle(dots[i], dots[i + 1], 1.6f, fillPaint)
-                    i += 2
-                }
-                val leafP = Path()
-                leafP.moveTo(50f, 24f)
-                leafP.cubicTo(60f, 10f, 78f, 12f, 83f, 19f)
-                leafP.cubicTo(72f, 29f, 58f, 30f, 50f, 24f)
-                leafP.close()
-                fillPaint.color = Palette.LEAF
-                cv.drawPath(leafP, fillPaint)
-                fillPaint.color = 0x33000000
-                cv.drawPath(leafP, fillPaint)
-                strokePaint.reset()
-                strokePaint.isAntiAlias = true
-                strokePaint.style = Paint.Style.STROKE
-                strokePaint.strokeWidth = 1.4f
-                strokePaint.color = Palette.LEAF_DARK
-                cv.drawPath(leafP, strokePaint)
-            }
-            2 -> { // lemon: pith arcs + leaf
-                strokePaint.reset()
-                strokePaint.isAntiAlias = true
-                strokePaint.style = Paint.Style.STROKE
-                strokePaint.strokeWidth = 1.4f
-                strokePaint.color = 0x33A87C00
-                for (a in intArrayOf(-58, -22, 22, 58)) {
-                    val rad = Math.toRadians(a.toDouble())
-                    cv.drawLine(
-                        CX - (30 * cos(rad)).toFloat(), CY - (26 * sin(rad)).toFloat(),
-                        CX + (30 * cos(rad)).toFloat(), CY + (26 * sin(rad)).toFloat(),
-                        strokePaint
-                    )
-                }
-                val leafP = Path()
-                leafP.moveTo(54f, 30f)
-                leafP.cubicTo(64f, 18f, 80f, 20f, 85f, 28f)
-                leafP.cubicTo(73f, 35f, 61f, 35f, 54f, 30f)
-                leafP.close()
-                fillPaint.reset()
-                fillPaint.isAntiAlias = true
-                fillPaint.color = Palette.LEAF
-                cv.drawPath(leafP, fillPaint)
-                fillPaint.color = 0x33000000
-                cv.drawPath(leafP, fillPaint)
-            }
-            3 -> { // apple: stem + leaf + blush
-                fillPaint.reset()
-                fillPaint.isAntiAlias = true
-                fillPaint.shader = RadialGradient(
-                    70f, 66f, 30f,
-                    intArrayOf(0x55FF6B57, 0x00FF6B57),
-                    floatArrayOf(0f, 1f), Shader.TileMode.CLAMP
-                )
-                cv.drawCircle(66f, 62f, 30f, fillPaint)
-                fillPaint.shader = null
-                strokePaint.reset()
-                strokePaint.isAntiAlias = true
-                strokePaint.style = Paint.Style.STROKE
-                strokePaint.strokeWidth = 3.4f
-                strokePaint.strokeCap = Paint.Cap.ROUND
-                strokePaint.color = 0xFF6B4B2A.toInt()
-                cv.drawLine(50f, 30f, 54f, 15f, strokePaint)
-                val leafP = Path()
-                leafP.moveTo(55f, 22f)
-                leafP.cubicTo(64f, 11f, 79f, 14f, 83f, 21f)
-                leafP.cubicTo(72f, 28f, 61f, 28f, 55f, 22f)
-                leafP.close()
-                fillPaint.color = Palette.LEAF
-                cv.drawPath(leafP, fillPaint)
-                strokePaint.strokeWidth = 1.4f
-                strokePaint.color = Palette.LEAF_DARK
-                cv.drawPath(leafP, strokePaint)
-            }
-            4 -> { // grapes: individual berries catching light
-                val balls = floatArrayOf(
-                    43f, 39f, 12.5f, 60f, 43f, 12.5f, 51f, 53f, 12.5f,
-                    35f, 55f, 11.5f, 66f, 58f, 11.5f, 49f, 66f, 11.5f,
-                    39f, 73f, 10.5f, 61f, 72f, 10.5f
-                )
-                var i = 0
-                while (i < balls.size) {
-                    val bx = balls[i]
-                    val by = balls[i + 1]
-                    val br = balls[i + 2]
-                    fillPaint.reset()
-                    fillPaint.isAntiAlias = true
-                    fillPaint.shader = RadialGradient(
-                        bx - br * 0.35f, by - br * 0.42f, br * 1.3f,
-                        intArrayOf(0xD9FFFFFF.toInt(), 0x1A000000, 0x70000000),
-                        floatArrayOf(0f, 0.5f, 1f), Shader.TileMode.CLAMP
-                    )
-                    cv.drawCircle(bx, by, br, fillPaint)
-                    fillPaint.shader = null
-                    strokePaint.reset()
-                    strokePaint.isAntiAlias = true
-                    strokePaint.style = Paint.Style.STROKE
-                    strokePaint.strokeWidth = 1f
-                    strokePaint.color = 0x33000000
-                    cv.drawCircle(bx, by, br, strokePaint)
-                    i += 3
-                }
-            }
-            5 -> { // eggplant: calyx + highlight streak
-                strokePaint.reset()
-                strokePaint.isAntiAlias = true
-                strokePaint.style = Paint.Style.STROKE
-                strokePaint.strokeCap = Paint.Cap.ROUND
-                strokePaint.strokeWidth = 3.4f
-                strokePaint.color = withAlpha(0xFFFFFFFF.toInt(), 0.35f)
-                val streak = Path()
-                streak.moveTo(34f, 50f)
-                streak.cubicTo(33f, 62f, 37f, 72f, 44f, 78f)
-                cv.drawPath(streak, strokePaint)
-                val calyx = Path()
-                calyx.moveTo(50f, 36f)
-                calyx.lineTo(33f, 28f)
-                calyx.lineTo(41f, 23f)
-                calyx.lineTo(37f, 11f)
-                calyx.lineTo(50f, 19f)
-                calyx.lineTo(63f, 11f)
-                calyx.lineTo(59f, 23f)
-                calyx.lineTo(67f, 28f)
-                calyx.close()
-                fillPaint.reset()
-                fillPaint.isAntiAlias = true
-                fillPaint.color = Palette.LEAF
-                cv.drawPath(calyx, fillPaint)
-                fillPaint.color = 0x33000000
-                cv.drawPath(calyx, fillPaint)
-                strokePaint.strokeWidth = 1.5f
-                strokePaint.color = Palette.LEAF_DARK
-                cv.drawPath(calyx, strokePaint)
-            }
-            else -> { // cauliflower: florets + leaves
-                fillPaint.reset()
-                fillPaint.isAntiAlias = true
-                val fl = floatArrayOf(
-                    37f, 41f, 14f, 59f, 45f, 14f, 48f, 30f, 13f,
-                    30f, 58f, 13f, 68f, 58f, 13f, 50f, 60f, 16f
-                )
-                var i = 0
-                while (i < fl.size) {
-                    fillPaint.shader = RadialGradient(
-                        fl[i] - 4f, fl[i + 1] - 5f, fl[i + 2] * 1.35f,
-                        intArrayOf(0xFFFFFFFF.toInt(), 0xFFF6EDD8.toInt(), 0xFFC7B48C.toInt()),
-                        floatArrayOf(0f, 0.55f, 1f), Shader.TileMode.CLAMP
-                    )
-                    cv.drawCircle(fl[i], fl[i + 1], fl[i + 2], fillPaint)
-                    fillPaint.shader = null
-                    i += 3
-                }
-                val leafL = Path()
-                leafL.moveTo(35f, 76f)
-                leafL.cubicTo(20f, 70f, 11f, 79f, 9f, 92f)
-                leafL.cubicTo(24f, 94f, 35f, 85f, 40f, 78f)
-                leafL.close()
-                val leafR = Path()
-                leafR.moveTo(65f, 76f)
-                leafR.cubicTo(80f, 70f, 89f, 79f, 91f, 92f)
-                leafR.cubicTo(76f, 94f, 65f, 85f, 60f, 78f)
-                leafR.close()
-                fillPaint.color = Palette.LEAF
-                cv.drawPath(leafL, fillPaint)
-                fillPaint.color = Palette.LEAF_LIGHT
-                cv.drawPath(leafR, fillPaint)
-            }
-        }
     }
 
     fun special(c: Canvas, specialName: String, cx: Float, cy: Float, size: Float, alpha: Int = 255, phase: Float = 0f) {
@@ -1690,77 +1352,14 @@ object Art {
 
     /* -------------------------------------------------------- produce spec */
 
-    private val specs = HashMap<Int, Produce>()
-
-    private fun produceSpec(type: Int): Produce = specs.getOrPut(type) {
-        when (type) {
-            0 -> Produce(
-                outline = floatArrayOf(
-                    24f, 36f, 30f, 26f, 41f, 22f, 50f, 27f, 59f, 22f, 70f, 26f, 76f, 36f, 78f, 50f,
-                    73f, 62f, 64f, 74f, 56f, 83f, 50f, 92f, 44f, 83f, 36f, 74f, 27f, 62f, 22f, 50f
-                ),
-                base = 0xFFE5324A.toInt(), deep = 0xFF8E0E24.toInt(), light = 0xFFFF9AA8.toInt(),
-                glow = 0xFFFF5A73.toInt(), face = 0
-            )
-            1 -> Produce(
-                outline = floatArrayOf(
-                    50f, 15f, 63f, 18f, 74f, 25f, 82f, 36f, 85f, 50f, 80f, 64f, 69f, 75f, 57f, 82f,
-                    44f, 82f, 32f, 76f, 22f, 65f, 17f, 51f, 20f, 36f, 30f, 24f, 40f, 18f
-                ),
-                base = 0xFFF59316.toInt(), deep = 0xFF9A5200.toInt(), light = 0xFFFFC46B.toInt(),
-                glow = 0xFFFFA22E.toInt(), face = 1
-            )
-            2 -> Produce(
-                outline = floatArrayOf(
-                    9f, 50f, 16f, 40f, 27f, 32f, 39f, 28f, 50f, 27f, 61f, 28f, 73f, 32f, 84f, 40f,
-                    91f, 50f, 84f, 60f, 73f, 68f, 61f, 72f, 50f, 73f, 39f, 72f, 27f, 68f, 16f, 60f
-                ),
-                base = 0xFFF5C518.toInt(), deep = 0xFFA87C00.toInt(), light = 0xFFFFF3A8.toInt(),
-                glow = 0xFFFFD93D.toInt(), face = 2
-            )
-            3 -> Produce(
-                outline = floatArrayOf(
-                    50f, 29f, 58f, 23f, 69f, 21f, 78f, 27f, 84f, 38f, 85f, 53f, 80f, 66f, 71f, 76f,
-                    61f, 82f, 50f, 84f, 39f, 82f, 29f, 76f, 20f, 66f, 15f, 53f, 16f, 38f, 22f, 27f, 31f, 21f, 42f, 23f
-                ),
-                base = 0xFF74CC33.toInt(), deep = 0xFF2C7A20.toInt(), light = 0xFFC6F58A.toInt(),
-                glow = 0xFF7ED957.toInt(), face = 3
-            )
-            4 -> Produce(
-                outline = floatArrayOf(
-                    50f, 21f, 62f, 24f, 72f, 32f, 79f, 44f, 80f, 57f, 74f, 69f, 63f, 78f, 50f, 83f,
-                    37f, 78f, 26f, 69f, 20f, 57f, 21f, 44f, 28f, 32f, 38f, 24f
-                ),
-                base = 0xFF9A57E8.toInt(), deep = 0xFF5B21A8.toInt(), light = 0xFFD8B4FE.toInt(),
-                glow = 0xFFA855F7.toInt(), face = 4
-            )
-            5 -> Produce(
-                outline = floatArrayOf(
-                    50f, 14f, 58f, 20f, 64f, 30f, 73f, 40f, 79f, 54f, 77f, 69f, 67f, 80f, 55f, 86f,
-                    43f, 85f, 31f, 77f, 22f, 65f, 20f, 50f, 26f, 36f, 36f, 26f, 44f, 18f
-                ),
-                base = 0xFF5B4BE0.toInt(), deep = 0xFF2A1E8C.toInt(), light = 0xFF9E93FF.toInt(),
-                glow = 0xFF7C6BFF.toInt(), face = 5
-            )
-            else -> Produce(
-                outline = floatArrayOf(
-                    50f, 16f, 62f, 20f, 73f, 27f, 81f, 38f, 84f, 51f, 79f, 63f, 69f, 74f, 57f, 80f,
-                    43f, 80f, 31f, 74f, 21f, 63f, 16f, 51f, 19f, 38f, 27f, 27f, 38f, 20f
-                ),
-                base = 0xFFF2E8CF.toInt(), deep = 0xFFB49F76.toInt(), light = 0xFFFFFFFF.toInt(),
-                glow = 0xFFFFF3D6.toInt(), face = 6
-            )
-        }
-    }
-
     fun produceColor(type: Int): Int = when (type) {
-        0 -> 0xFFFF5A73.toInt()
-        1 -> 0xFFFFA22E.toInt()
-        2 -> 0xFFFFD93D.toInt()
-        3 -> 0xFF7ED957.toInt()
-        4 -> 0xFFA855F7.toInt()
-        5 -> 0xFF7C6BFF.toInt()
-        6 -> 0xFFFFF3D6.toInt()
+        0 -> 0xFFE8334A.toInt()   // strawberry
+        1 -> 0xFFF59316.toInt()   // orange
+        2 -> 0xFFF5C518.toInt()   // lemon
+        3 -> 0xFF74CC33.toInt()   // green apple
+        4 -> 0xFF8B5CF6.toInt()   // grapes
+        5 -> 0xFF6E4BE0.toInt()   // aubergine
+        6 -> 0xFFF2E8CF.toInt()   // cauliflower
         else -> 0xFFFFFFFF.toInt()
     }
 }

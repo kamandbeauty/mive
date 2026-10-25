@@ -55,7 +55,7 @@ internal fun GameView.drawHome(c: Canvas) {
     val heartRect = rrect(w * 0.55f, h * 0.028f, w * 0.4f, pillH)
     Art.card(c, heartRect, pillH * 0.44f, Palette.DANGER)
     Art.badge(c, heartRect.left + pillH * 0.52f, heartRect.centerY(), pillH * 0.34f,
-        0xFFFF7D8F.toInt(), 0xFFC22B44.toInt(), 0xFF7A1226) { cc, cx, cy, r -> Art.heart(cc, cx, cy, r, true) }
+        0xFFFF7D8F.toInt(), 0xFFC22B44.toInt(), 0xFF7A1226.toInt()) { cc, cx, cy, r -> Art.heart(cc, cx, cy, r, true) }
     val lifeText = "${save.lives}/${eco.maxLives}"
     Art.text(c, lifeText, heartRect.right - w * 0.06f, heartRect.centerY() + pillH * 0.14f,
         pillH * 0.46f, Palette.CREAM, Paint.Align.RIGHT, Art.black, true)
@@ -88,7 +88,7 @@ internal fun GameView.drawHome(c: Canvas) {
     Art.leaf(c, ribbon.left + w * 0.045f, ribbon.centerY(), w * 0.06f, Palette.LEAF_DARK, Palette.LEAF, -20f)
     Art.leaf(c, ribbon.right - w * 0.045f, ribbon.centerY(), w * 0.06f, Palette.LEAF_DARK, Palette.LEAF, 20f)
 
-    Art.text(c, "سه‌تا کنار هم بچین، باغ را پر کن!", w * 0.5f, h * 0.222f, w * 0.043f, Palette.CREAM_DIM, Art.regular, true)
+    Art.text(c, "سه‌تا کنار هم بچین، باغ را پر کن!", w * 0.5f, h * 0.222f, w * 0.043f, Palette.CREAM_DIM, Paint.Align.CENTER, Art.regular, true)
 
     // --- produce parade on a shelf --------------------------------------
     val secs = (now % 100000L) / 1000f
@@ -109,13 +109,13 @@ internal fun GameView.drawHome(c: Canvas) {
     val playRect = RectF(w * 0.12f, h * 0.375f, w * 0.88f, h * 0.458f)
     Art.buttonSkin(c, playRect, playRect.height() * 0.36f, Palette.LIME, 0xFF6FAF30.toInt())
     Art.badge(c, playRect.left + playRect.height() * 0.56f, playRect.centerY(), playRect.height() * 0.33f,
-        0xFFFFFFFF.toInt(), 0xFFE9FBD0.toInt(), 0xFF6FAF30) { cc, cx, cy, r -> Art.play(cc, cx + r * 0.12f, cy, r * 0.95f, 0xFF2F6B14.toInt()) }
+        0xFFFFFFFF.toInt(), 0xFFE9FBD0.toInt(), 0xFF6FAF30.toInt()) { cc, cx, cy, r -> Art.play(cc, cx + r * 0.12f, cy, r * 0.95f, 0xFF2F6B14.toInt()) }
     Art.text(c, "بازی", playRect.centerX() + w * 0.02f, playRect.centerY() + playRect.height() * 0.17f,
         playRect.height() * 0.44f, 0xFF17330A.toInt(), Paint.Align.CENTER, Art.black, true)
     hotspots.add(Hotspot(RectF(playRect), {
         if (save.level - 1 < levels.size) startLevel(save.level - 1) else screen = Screen.MAP
     }))
-    Art.text(c, "ادامه از سطح ${save.level}", w * 0.5f, h * 0.492f, w * 0.042f, Palette.CREAM_DIM, Art.regular, true)
+    Art.text(c, "ادامه از سطح ${save.level}", w * 0.5f, h * 0.492f, w * 0.042f, Palette.CREAM_DIM, Paint.Align.CENTER, Art.regular, true)
 
     // --- 2x2 tiles ------------------------------------------------------
     val tiles = listOf(
@@ -268,7 +268,7 @@ internal fun GameView.drawMap(c: Canvas) {
     }
     c.restore()
 
-    Art.text(c, "بکش تا پایین بروی", w * 0.5f, h * 0.968f, w * 0.032f, 0x88FFF6E5.toInt(), Art.regular, true)
+    Art.text(c, "بکش تا پایین بروی", w * 0.5f, h * 0.968f, w * 0.032f, 0x88FFF6E5.toInt(), Paint.Align.CENTER, Art.regular, true)
 }
 
 /* ------------------------------------------------------------------ game */
@@ -328,7 +328,7 @@ internal fun GameView.drawGame(c: Canvas) {
     if (shape != null) {
         Art.woodShape(c, shape, outer, cellSize * 0.3f)
     } else {
-        Art.woodFrame(c, outer, boardRect, cellSize * 0.26f)
+        Art.panel(c, outer, cellSize * 0.26f, 0xFF8A5528.toInt())
     }
 
     for (r in 0 until g.rows) {
@@ -389,13 +389,19 @@ internal fun GameView.drawGame(c: Canvas) {
         val type = sp.tile.type
         c.save()
         c.translate(cx, cy + idle * cellSize)
+        if (type >= 0 && alpha > 30) {
+            Art.produceHalo(c, type, 0f, 0f, cellSize * 0.95f)
+        }
+        if (alpha > 200) {
+            Art.produceShadow(c, 0f, cellSize * 0.36f, cellSize * 0.8f)
+        }
         c.scale(scale * sx, scale * sy)
         if (type >= 0) {
-            Art.produce(c, type, 0f, 0f, cellSize * 1.02f, alpha)
+            Art.produce(c, type, 0f, -cellSize * 0.02f, cellSize * 1.14f, alpha)
         }
         val special = sp.tile.special
         if (special != null && alpha > 30) {
-            Art.special(c, special, 0f, 0f, cellSize * 0.98f, alpha, seconds * 0.6f + sp.phase)
+            Art.special(c, special, 0f, 0f, cellSize * 1.0f, alpha, seconds * 0.6f + sp.phase)
         }
         c.restore()
     }
@@ -651,7 +657,7 @@ internal fun GameView.drawShop(c: Canvas) {
     Art.card(c, rect, cardH * 0.26f, Palette.DANGER)
     val badgeR = cardH * 0.3f
     Art.badge(c, rect.left + cardH * 0.34f + badgeR, rect.centerY(), badgeR,
-        0xFFFF7D8F.toInt(), 0xFFC22B44.toInt(), 0xFF7A1226) { cc, cx, cy, r -> Art.heart(cc, cx, cy, r, true) }
+        0xFFFF7D8F.toInt(), 0xFFC22B44.toInt(), 0xFF7A1226.toInt()) { cc, cx, cy, r -> Art.heart(cc, cx, cy, r, true) }
     Art.text(c, "یک جان", rect.right - cardH * 0.28f, rect.centerY() - cardH * 0.1f,
         cardH * 0.24f, Palette.CREAM, Paint.Align.RIGHT, Art.bold, true)
     Art.text(c, "برای وقتی که جان کم آوردی", rect.right - cardH * 0.28f, rect.centerY() + cardH * 0.17f,
@@ -767,7 +773,7 @@ internal fun GameView.drawWheel(c: Canvas) {
             0xFF17330A.toInt(), Paint.Align.CENTER, Art.black)
         hotspots.add(Hotspot(RectF(ok), { wheelPrize = null }))
     } else {
-        Art.text(c, "هر ۴ ساعت یک چرخ رایگان", cx, h * 0.85f, w * 0.04f, Palette.CREAM_DIM, Art.regular, true)
+        Art.text(c, "هر ۴ ساعت یک چرخ رایگان", cx, h * 0.85f, w * 0.04f, Palette.CREAM_DIM, Paint.Align.CENTER, Art.regular, true)
     }
 }
 
@@ -836,7 +842,7 @@ internal fun GameView.drawPass(c: Canvas) {
             hotspots.add(Hotspot(RectF(btn), { claimTier(tier) }))
         }
     }
-    Art.text(c, "بکش تا پله‌های بیشتر ببینی", w * 0.5f, h * 0.968f, w * 0.032f, 0x88FFF6E5.toInt(), Art.regular, true)
+    Art.text(c, "بکش تا پله‌های بیشتر ببینی", w * 0.5f, h * 0.968f, w * 0.032f, 0x88FFF6E5.toInt(), Paint.Align.CENTER, Art.regular, true)
 }
 
 /* -------------------------------------------------------------- settings */
