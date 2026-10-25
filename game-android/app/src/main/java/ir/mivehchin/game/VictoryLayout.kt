@@ -55,7 +55,7 @@ internal class VictoryGeometry(
 
         var plaqueH = avail * 0.142f
         var chipH = avail * 0.048f
-        var starR = minOf(w * 0.062f, avail * 0.052f)
+        var starRv = minOf(w * 0.062f, avail * 0.052f)
         var scoreH = avail * 0.170f
         var capH = avail * 0.062f
         var priH = avail * 0.095f
@@ -67,7 +67,7 @@ internal class VictoryGeometry(
         var g5 = avail * 0.045f
         var g6 = avail * 0.024f
 
-        fun stackOf(): Float = plaqueH + chipH + starR * 2.72f + scoreH + capH + priH + secH +
+        fun stackOf(): Float = plaqueH + chipH + starRv * 2.72f + scoreH + capH + priH + secH +
             g1 + g2 + g3 + g4 + g5 + g6
 
         var stack = stackOf()
@@ -76,7 +76,7 @@ internal class VictoryGeometry(
             val f = avail / stack
             plaqueH *= f
             chipH *= f
-            starR *= f
+            starRv *= f
             scoreH *= f
             capH *= f
             priH *= f
@@ -103,6 +103,7 @@ internal class VictoryGeometry(
         plaque = Box(inner.centerX - pw * 0.315f, plaqueTop, inner.centerX + pw * 0.315f, plaqueTop + plaqueH)
         chip = Box(plaque.left + pw * 0.055f, plaque.bottom + g1,
             plaque.right - pw * 0.055f, plaque.bottom + g1 + chipH)
+        starR = starRv
         socketR = starR * 1.36f
         starCy = chip.bottom + g2 + socketR
         score = Box(inner.left + pw * 0.072f, starCy + socketR + g3,
