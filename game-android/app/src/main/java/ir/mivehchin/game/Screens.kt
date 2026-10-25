@@ -1431,6 +1431,7 @@ private fun GameView.drawPause(c: Canvas) {
     c.restore()
 }
 private fun Canvas.crown(cx: Float, cy: Float, wd: Float, ht: Float) {
+    if (Art.sprite(this, "crown", cx, cy, ht * 1.30f)) return
     val fill = Paint(Paint.ANTI_ALIAS_FLAG)
     val line = Paint(Paint.ANTI_ALIAS_FLAG)
     line.style = Paint.Style.STROKE
@@ -1566,17 +1567,28 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     val cornerR = pw * 0.062f
     val leafD = Palette.LEAF_DARK
     val leafL = Palette.LEAF_LIGHT
-    Art.sprout(c, inner.left + pw * 0.034f, inner.top + pw * 0.046f, cornerR, 148f, leafD, leafL)
-    Art.sprout(c, inner.right - pw * 0.034f, inner.top + pw * 0.046f, cornerR, 32f, leafD, leafL)
-    Art.sprout(c, inner.left + pw * 0.034f, inner.bottom - pw * 0.030f, cornerR * 0.88f, 212f, leafD, leafL)
-    Art.sprout(c, inner.right - pw * 0.034f, inner.bottom - pw * 0.030f, cornerR * 0.88f, 328f, leafD, leafL)
+    if (!Art.sprite(c, "sprig", inner.left + pw * 0.048f, inner.top + pw * 0.062f, cornerR * 1.9f, -24f)) {
+        Art.sprout(c, inner.left + pw * 0.034f, inner.top + pw * 0.046f, cornerR, 148f, leafD, leafL)
+    }
+    if (!Art.sprite(c, "sprig", inner.right - pw * 0.048f, inner.top + pw * 0.062f, cornerR * 1.9f, 24f)) {
+        Art.sprout(c, inner.right - pw * 0.034f, inner.top + pw * 0.046f, cornerR, 32f, leafD, leafL)
+    }
+    if (!Art.sprite(c, "sprig", inner.left + pw * 0.044f, inner.bottom - pw * 0.042f, cornerR * 1.7f, -156f)) {
+        Art.sprout(c, inner.left + pw * 0.034f, inner.bottom - pw * 0.030f, cornerR * 0.88f, 212f, leafD, leafL)
+    }
+    if (!Art.sprite(c, "sprig", inner.right - pw * 0.044f, inner.bottom - pw * 0.042f, cornerR * 1.7f, 156f)) {
+        Art.sprout(c, inner.right - pw * 0.034f, inner.bottom - pw * 0.030f, cornerR * 0.88f, 328f, leafD, leafL)
+    }
     for ((fx, fy, pr, col) in listOf(
         Quad(inner.left + pw * 0.052f, inner.top + pw * 0.086f, pw * 0.020f, 0xFFFF8FA3.toInt()),
         Quad(inner.right - pw * 0.052f, inner.top + pw * 0.086f, pw * 0.020f, 0xFFB9A6FF.toInt()),
         Quad(inner.left + pw * 0.058f, inner.bottom - pw * 0.062f, pw * 0.018f, 0xFFFFD166.toInt()),
         Quad(inner.right - pw * 0.058f, inner.bottom - pw * 0.062f, pw * 0.018f, 0xFFFF8FA3.toInt())
     )) {
-        Art.flower(c, fx, fy, pr, col, 0xFFFFF3C4.toInt())
+        val painted = if (col == 0xFFB9A6FF.toInt()) "flower_violet" else "flower_pink"
+        if (!Art.sprite(c, painted, fx, fy, pr * 3.0f)) {
+            Art.flower(c, fx, fy, pr, col, 0xFFFFF3C4.toInt())
+        }
     }
     Art.berries(c, inner.right - pw * 0.088f, inner.top + pw * 0.070f, pw * 0.012f)
     Art.strawberry(c, inner.left + pw * 0.092f, inner.top + pw * 0.072f, pw * 0.044f)

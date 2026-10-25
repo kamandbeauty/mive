@@ -85,6 +85,7 @@ object Art {
         }
         gardenCache = null
         loadProduce(ctx)
+        loadSkin(ctx)
     }
 
     /* ---------------------------------------------------------------- text */
@@ -309,7 +310,12 @@ object Art {
     }
 
     /** Chunky game button with rim, gloss and a bottom lip. */
-    fun buttonSkin(c: Canvas, rect: RectF, radius: Float, top: Int, bottom: Int) {
+    fun buttonSkin(c: Canvas, rect: RectF, radius: Float, top: Int, bottom: Int, skinName: String? = null) {
+        val bmp = skinName?.let { skinBitmaps[it] }
+        if (bmp != null) {
+            nineSlice(c, bmp, rect, INSET_BUTTON)
+            return
+        }
         // drop shadow
         shapePaint.reset()
         shapePaint.isAntiAlias = true
@@ -578,7 +584,17 @@ object Art {
 
     /** Static garden scenery, cached; animated layers are drawn on top. */
     fun bgGarden(c: Canvas, w: Float, h: Float, t: Float) {
-        if (gardenCache == null || gardenW != w.toInt() || gardenH != h.toInt()) {
+        val backdrop = skinBitmaps["bg_garden"]
+        if (backdrop != null) {
+            // centre-crop the painted garden to the viewport
+            val scale = Math.max(w / backdrop.width, h / backdrop.height)
+            val dw = backdrop.width * scale
+            val dh = backdrop.height * scale
+            val left = (w - dw) / 2f
+            val top = (h - dh) / 2f
+            bitmapPaint.alpha = 255
+            c.drawBitmap(backdrop, null, RectF(left, top, left + dw, top + dh), bitmapPaint)
+        } else if (gardenCache == null || gardenW != w.toInt() || gardenH != h.toInt()) {
             gardenCache = buildGarden(w.toInt().coerceAtLeast(1), h.toInt().coerceAtLeast(1))
             gardenW = w.toInt()
             gardenH = h.toInt()
@@ -1242,6 +1258,81 @@ object Art {
 
     /* ------------------------------------------------------------ produce */
 
+    /* ================================================================= skin */
+    // Bitmaps painted in tools/make-art.py and shipped in assets/art/. Every
+    // helper keeps its vector fallback, so a missing file degrades gracefully.
+
+    private val skinBitmaps = HashMap<String, Bitmap>()
+
+    /** Nine-slice insets, in bitmap pixels, for the stretchable pieces. */
+    private const val INSET_FRAME = 58f
+    private const val INSET_PLAQUE = 58f
+    private const val INSET_BUTTON = 52f
+    private const val INSET_CAPSULE = 46f
+
+    fun loadSkin(ctx: Context) {
+        skinBitmaps.clear()
+        for (name in listOf(
+            "char_idle", "char_cheer", "char_sad", "bg_garden",
+            "frame", "plaque", "btn_lime", "btn_royal", "btn_gold", "btn_danger",
+            "capsule", "socket", "crown", "sprig", "strawberry", "lemon", "berries",
+            "flower_pink", "flower_violet", "coin_star"
+        )) {
+            val bmp = openAsset(ctx, "art/$name.webp") ?: openAsset(ctx, "art/$name.png")
+            if (bmp != null) skinBitmaps[name] = bmp
+        }
+        Helper.bind(
+            skinBitmaps["char_idle"], skinBitmaps["char_cheer"], skinBitmaps["char_sad"]
+        )
+    }
+
+    fun skin(name: String): Bitmap? = skinBitmaps[name]
+
+    private val sliceSrc = android.graphics.Rect()
+    private val sliceDst = RectF()
+
+    /**
+     * Draws [bmp] into [rect] as a nine-slice: the four corners keep their
+     * pixel size, the edges and the centre stretch. [inset] is in bitmap px.
+     */
+    fun nineSlice(c: Canvas, bmp: Bitmap, rect: RectF, inset: Float) {
+        val bw = bmp.width.toFloat()
+        val bh = bmp.height.toFloat()
+        val i = inset.coerceAtMost(bw * 0.45f).coerceAtMost(bh * 0.45f)
+        val iw = Math.min(i, rect.width() / 2.05f)
+        val ih = Math.min(i, rect.height() / 2.05f)
+        val xs = floatArrayOf(0f, i, bw - i, bw)
+        val ys = floatArrayOf(0f, i, bh - i, bh)
+        val dxs = floatArrayOf(rect.left, rect.left + iw, rect.right - iw, rect.right)
+        val dys = floatArrayOf(rect.top, rect.top + ih, rect.bottom - ih, rect.bottom)
+        bitmapPaint.alpha = 255
+        for (r in 0..2) {
+            for (col in 0..2) {
+                if (dxs[col + 1] - dxs[col] < 0.4f || dys[r + 1] - dys[r] < 0.4f) continue
+                sliceSrc.set(
+                    xs[col].toInt(), ys[r].toInt(),
+                    xs[col + 1].toInt().coerceAtMost(bmp.width), ys[r + 1].toInt().coerceAtMost(bmp.height)
+                )
+                sliceDst.set(dxs[col], dys[r], dxs[col + 1], dys[r + 1])
+                c.drawBitmap(bmp, sliceSrc, sliceDst, bitmapPaint)
+            }
+        }
+    }
+
+    /** Sprite helper: draws a skin bitmap scaled to [size] around (cx, cy). */
+    fun sprite(c: Canvas, name: String, cx: Float, cy: Float, size: Float, rot: Float = 0f, alpha: Int = 255): Boolean {
+        val bmp = skinBitmaps[name] ?: return false
+        if (size <= 1f) return false
+        val halfW = size * 0.5f * bmp.width / bmp.height
+        c.save()
+        if (rot != 0f) c.rotate(rot, cx, cy)
+        bitmapPaint.alpha = alpha.coerceIn(0, 255)
+        c.drawBitmap(bmp, null, RectF(cx - halfW, cy - size * 0.5f, cx + halfW, cy + size * 0.5f), bitmapPaint)
+        bitmapPaint.alpha = 255
+        c.restore()
+        return true
+    }
+
     private val fruitBitmaps = HashMap<Int, Bitmap>()
 
     /**
@@ -1582,6 +1673,7 @@ object Art {
 
     /** Small strawberry, sized by [size] (full width). */
     fun strawberry(c: Canvas, cx: Float, cy: Float, size: Float) {
+        if (sprite(c, "strawberry", cx, cy, size * 0.78f)) return
         val w2 = size * 0.31f
         val h2 = size * 0.40f
         val body = Path()
@@ -1614,6 +1706,7 @@ object Art {
 
     /** Lemon with a highlight and a leaf. */
     fun lemon(c: Canvas, cx: Float, cy: Float, size: Float) {
+        if (sprite(c, "lemon", cx, cy, size * 0.80f)) return
         shapePaint.reset()
         shapePaint.isAntiAlias = true
         shapePaint.shader = LinearGradient(
@@ -1634,6 +1727,7 @@ object Art {
 
     /** A little bunch of blueberries. */
     fun berries(c: Canvas, cx: Float, cy: Float, r: Float) {
+        if (sprite(c, "berries", cx, cy, r * 3.4f)) return
         val spots = floatArrayOf(-1.2f, 0.2f, 0f, -0.5f, 1.1f, 0.15f, -0.4f, 0.9f, 0.7f, 1.0f)
         for (i in 0 until 5) {
             val bx = cx + spots[i * 2] * r
@@ -1679,6 +1773,11 @@ object Art {
 
     /** Cream + double-gold dialog frame with a bevel, gloss and soft drop shadow. */
     fun frame(c: Canvas, rect: RectF, radius: Float, rim: Float, bodyTop: Int, bodyBottom: Int) {
+        val bmp = skinBitmaps["frame"]
+        if (bmp != null) {
+            nineSlice(c, bmp, rect, INSET_FRAME)
+            return
+        }
         dropShadow(c, rect, radius, rim * 0.9f, rim * 0.55f, 0.55f)
         // outer gold
         gradRR(c, rect, radius, intArrayOf(0xFFFFF0BE.toInt(), 0xFFEABA4C.toInt(), 0xFF8C580C.toInt()))
@@ -1701,6 +1800,11 @@ object Art {
 
     /** Wooden plaque body: gold aura, grain, bevel, gloss and studs. */
     fun woodBody(c: Canvas, rect: RectF, t: Float, shineStrength: Float = 0.28f) {
+        val bmp = skinBitmaps["plaque"]
+        if (bmp != null) {
+            nineSlice(c, bmp, rect, INSET_PLAQUE)
+            return
+        }
         val rad = rect.height() * 0.34f
         dropShadow(c, rect, rad, rect.height() * 0.16f, rect.height() * 0.06f, 0.55f)
         // gold aura ring
@@ -1774,11 +1878,16 @@ object Art {
     /** Cream capsule that carries a reward line with a spinning coin. */
     fun rewardCapsule(c: Canvas, rect: RectF, label: String, coinFlip: Float, enabled: Boolean = true) {
         val rad = rect.height() / 2f
-        dropShadow(c, rect, rad, rect.height() * 0.14f, rect.height() * 0.06f, 0.45f)
-        gradRR(c, rect, rad, intArrayOf(0xFFFFFCF0.toInt(), 0xFFFFF2D6.toInt(), 0xFFF2DCA8.toInt()))
-        gloss(c, rect, rad, 0.50f, 0.42f)
-        bevel(c, rect, rad, rect.height() * 0.06f, 0.14f, 0.30f)
-        panel(c, rect, rad, 0x00000000, Math.max(1.6f, rect.height() * 0.045f), 0xFFD8A238.toInt())
+        skinBitmaps["capsule"]?.let { bmp ->
+            nineSlice(c, bmp, RectF(rect.left, rect.top - rect.height() * 0.10f, rect.right, rect.bottom + rect.height() * 0.10f), INSET_CAPSULE)
+        }
+        if (skinBitmaps["capsule"] == null) {
+            dropShadow(c, rect, rad, rect.height() * 0.14f, rect.height() * 0.06f, 0.45f)
+            gradRR(c, rect, rad, intArrayOf(0xFFFFFCF0.toInt(), 0xFFFFF2D6.toInt(), 0xFFF2DCA8.toInt()))
+            gloss(c, rect, rad, 0.50f, 0.42f)
+            bevel(c, rect, rad, rect.height() * 0.06f, 0.14f, 0.30f)
+            panel(c, rect, rad, 0x00000000, Math.max(1.6f, rect.height() * 0.045f), 0xFFD8A238.toInt())
+        }
         // the coin sits on the trailing (right) edge, the label reads to its left
         val coinCx = rect.right - rect.height() * 0.66f
         c.save()
@@ -1808,6 +1917,11 @@ object Art {
     fun socketPlate(c: Canvas, cx: Float, cy: Float, r: Float, filled: Boolean, alpha: Float = 1f) {
         if (alpha <= 0.02f) return
         if (filled) glow(c, cx, cy, r * 1.9f, Palette.GOLD, 0.22f * alpha)
+        val art = skinBitmaps["socket"]
+        if (art != null && filled) {
+            sprite(c, "socket", cx, cy, r * 2.10f, 0f, (alpha * 255).toInt())
+            return
+        }
         val box = RectF(cx - r, cy - r, cx + r, cy + r)
         val rad = r * 0.50f
         gradRR(

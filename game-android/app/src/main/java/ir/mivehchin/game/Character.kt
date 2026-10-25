@@ -1,5 +1,6 @@
 package ir.mivehchin.game
 
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
@@ -18,6 +19,27 @@ import kotlin.math.sin
 internal object Helper {
 
     enum class Mood { IDLE, CHEER, SAD }
+
+    // Painted art loaded from assets/art (see Art.loadSkin). When present it
+    // replaces the vector drawing entirely; the vector path stays as fallback.
+    private var imgIdle: Bitmap? = null
+    private var imgCheer: Bitmap? = null
+    private var imgSad: Bitmap? = null
+    private val bitmapPaint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
+
+    fun bind(idle: Bitmap?, cheer: Bitmap?, sad: Bitmap?) {
+        imgIdle = idle
+        imgCheer = cheer
+        imgSad = sad
+    }
+
+    private fun art(mood: Mood): Bitmap? = when (mood) {
+        Mood.CHEER -> imgCheer ?: imgIdle
+        Mood.SAD -> imgSad ?: imgIdle
+        else -> imgIdle
+    }
+
+    val hasArt: Boolean get() = imgIdle != null
 
     private val p = Paint(Paint.ANTI_ALIAS_FLAG)
     private val stroke = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -46,6 +68,26 @@ internal object Helper {
      */
     fun draw(c: Canvas, cx: Float, cy: Float, height: Float, mood: Mood, t: Float, bob: Float = 0f) {
         if (height <= 4f) return
+        val bmp = art(mood)
+        if (bmp != null) {
+            val feet = cy - bob
+            // a gentle squash keeps the painting alive without extra frames
+            val squash = if (mood == Mood.CHEER) 1f + 0.02f * sin(t * 6f) else 1f
+            val hh = height * squash
+            val ww = hh * bmp.width / bmp.height
+            bitmapPaint.alpha = 255
+            c.drawBitmap(bmp, null, RectF(cx - ww * 0.5f, feet - hh, cx + ww * 0.5f, feet), bitmapPaint)
+            if (mood == Mood.CHEER) {
+                for (i in 0 until 3) {
+                    val a = t * 2.2f + i * 2.09f
+                    Art.sparkle(
+                        c, cx + (kotlin.math.cos(a) * height * 0.34f), feet - height * 0.62f + (sin(a) * height * 0.16f),
+                        height * 0.030f, Palette.GOLD, 0.55f + 0.35f * sin(t * 5f + i), t * 90f
+                    )
+                }
+            }
+            return
+        }
         val h = height
         val u = h / 100f          // one unit = 1% of her height
         val feet = cy - bob
@@ -245,6 +287,27 @@ internal object Helper {
 
     /** Bust-only portrait for HUD chips: circle framing, no legs. */
     fun portrait(c: Canvas, cx: Float, cy: Float, r: Float, mood: Mood, t: Float) {
+        val bmp = art(mood)
+        if (bmp != null) {
+            p.color = 0x5510311F
+            c.drawCircle(cx + r * 0.05f, cy + r * 0.07f, r, p)
+            p.color = 0xFF2B6B49.toInt()
+            c.drawCircle(cx, cy, r, p)
+            c.save()
+            val clip = Path()
+            clip.addCircle(cx, cy, r * 0.94f, Path.Direction.CW)
+            c.clipPath(clip)
+            val dh = r * 5.6f
+            val dw = dh * bmp.width / bmp.height
+            val top = cy - dh * 0.30f
+            bitmapPaint.alpha = 255
+            c.drawBitmap(bmp, null, RectF(cx - dw * 0.5f, top, cx + dw * 0.5f, top + dh), bitmapPaint)
+            c.restore()
+            stroke.strokeWidth = Math.max(1.6f, r * 0.10f)
+            stroke.color = Art.withAlpha(Palette.GOLD, 0.85f)
+            c.drawCircle(cx, cy, r * 0.97f, stroke)
+            return
+        }
         p.color = 0x5510311F
         c.drawCircle(cx + r * 0.05f, cy + r * 0.07f, r, p)
         p.color = 0xFF2B6B49.toInt()

@@ -1220,7 +1220,14 @@ class GameView(context: Context) : View(context) {
                 Art.glow(c, body.centerX(), body.centerY(), body.width() * 0.52f, rim, 0.10f + 0.08f * pulse)
             }
         }
-        Art.buttonSkin(c, body, radius, top, bottom)
+        val skinName = when (style) {
+            Style.PRIMARY -> "btn_lime"
+            Style.ROYAL -> "btn_royal"
+            Style.GOLD -> "btn_gold"
+            Style.DANGER -> "btn_danger"
+            else -> null
+        }
+        Art.buttonSkin(c, body, radius, top, bottom, skinName)
 
         c.save()
         val clip = Path()
