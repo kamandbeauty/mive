@@ -32,6 +32,9 @@ private fun fmtTime(ms: Long): String {
 
 private fun rrect(x: Float, y: Float, w: Float, h: Float) = RectF(x, y, x + w, y + h)
 
+/** Vertical scroll position of the star-pass list. */
+internal var passScroll = 0
+
 private fun iconFor(kind: String, c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
     when {
         kind.startsWith("hammer") -> Art.hammer(c, cx, cy, r, color)
