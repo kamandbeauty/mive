@@ -72,7 +72,8 @@ class HomeLayoutTest {
             assertTrue("chips above logo at ${w}x$h", l.coin.bottom <= l.logo.top)
             assertTrue("coin chip is wide enough", l.coin.width >= w * 0.22f)
             assertTrue("settings button is square", kotlin.math.abs(l.settings.width - l.settings.height) < 0.5f)
-            assertTrue("settings is at the leading edge", l.settings.left < l.lives.left)
+            assertEquals("the map is the first dock entry, on the right", l.tiles.first().right, l.dock.right, 0.5f)
+            assertTrue("settings sits on the trailing edge in RTL", l.settings.left > l.lives.right)
         }
     }
 }

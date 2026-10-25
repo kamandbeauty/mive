@@ -28,12 +28,13 @@ internal class HomeLayout(width: Float, height: Float) {
     init {
         val chipH = height * 0.056f
         val chipTop = height * 0.028f
-        settings = Box(margin, chipTop, margin + chipH, chipTop + chipH)
+        // RTL: settings on the trailing (right) edge, balances on the leading (left) edge
+        settings = Box(width - margin - chipH, chipTop, width - margin, chipTop + chipH)
 
         val coinW = width * 0.285f
-        coin = Box(width - margin - coinW, chipTop, width - margin, chipTop + chipH)
+        coin = Box(margin, chipTop, margin + coinW, chipTop + chipH)
         val livesW = width * 0.245f
-        lives = Box(coin.left - width * 0.018f - livesW, chipTop, coin.left - width * 0.018f, chipTop + chipH)
+        lives = Box(coin.right + width * 0.018f, chipTop, coin.right + width * 0.018f + livesW, chipTop + chipH)
 
         val logoH = height * 0.086f
         val logoTop = height * 0.100f
@@ -45,7 +46,8 @@ internal class HomeLayout(width: Float, height: Float) {
         val tileGap = Design.gap(width, 1.6f)
         val tileW = (dock.width - tileGap * 3f) / 4f
         tiles = (0 until 4).map { i ->
-            val left = dock.left + i * (tileW + tileGap)
+            // index 0 is the first destination for the player, so it sits on the right
+            val left = dock.right - (i + 1) * tileW - i * tileGap
             Box(left, dock.top, left + tileW, dock.bottom)
         }
 
@@ -62,8 +64,8 @@ internal class HomeLayout(width: Float, height: Float) {
 
     fun violations(): List<String> {
         val out = ArrayList<String>()
-        if (lives.right > coin.left) out.add("lives chip overlaps coin chip")
-        if (coin.left < settings.right) out.add("coin chip overlaps settings button")
+        if (lives.left < coin.right) out.add("lives chip overlaps coin chip")
+        if (lives.right > settings.left) out.add("lives chip overlaps settings button")
         if (logo.top < coin.bottom) out.add("logo overlaps the resource chips")
         if (play.top < hero.top) out.add("helper area has negative height")
         if (captionY > dock.top) out.add("continue caption collides with the dock")

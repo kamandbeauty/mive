@@ -227,16 +227,19 @@ internal fun GameView.drawHome(c: Canvas) {
         Helper.draw(c, girlCx, girlFeet, girlH, Helper.Mood.IDLE, if (reduce) 0f else t,
             if (reduce) 0f else sin(t * 1.6f) * girlH * 0.012f)
 
-        // fruit décor flanking her, scaled with the hero area
+        // produce resting on the grass either side of her, never over her body
         val types = intArrayOf(0, 2, 4, 6)
-        val spots = floatArrayOf(-0.34f, 0.34f, -0.44f, 0.44f)
+        val spots = floatArrayOf(-0.36f, 0.36f, -0.44f, 0.44f)
+        val lifts = floatArrayOf(0.30f, 0.30f, 0.44f, 0.44f)
+        val sizes = floatArrayOf(0.20f, 0.20f, 0.15f, 0.15f)
         for (i in types.indices) {
             val x = girlCx + w * spots[i]
-            val y = girlFeet - girlH * (0.30f + 0.16f * (i / 2)) + if (reduce) 0f else sin(t * 1.5f + i) * h * 0.006f
-            val r = girlH * (if (i < 2) 0.16f else 0.13f)
-            Art.glow(c, x, y, r * 2.1f, Art.produceColor(types[i]), 0.18f)
-            Art.produce(c, types[i], x, y, r * 2.1f)
-            Art.sparkle(c, x + r * 0.9f, y - r * 0.9f, w * 0.012f, 0xFFFFFFFF.toInt(),
+            val bob = if (reduce) 0f else sin(t * 1.5f + i) * girlH * 0.010f
+            val y = girlFeet - girlH * lifts[i] + bob
+            val r = girlH * sizes[i]
+            Art.glow(c, x, y, r * 0.95f, Art.produceColor(types[i]), 0.22f)
+            Art.produce(c, types[i], x, y, r)
+            Art.sparkle(c, x + r * 0.86f, y - r * 0.86f, w * 0.011f, 0xFFFFFFFF.toInt(),
                 if (reduce) 0.5f else 0.35f + 0.4f * sin(t * 2.4f + i * 1.3f), t * 70f)
         }
     }
@@ -450,7 +453,7 @@ internal fun GameView.drawGame(c: Canvas) {
     /* ----------------------------------------------------------- top chrome */
     val back = RectF(hud.back.left, hud.back.top, hud.back.right, hud.back.bottom)
     Art.iconButton(c, back, pressActive && back.contains(pressX, pressY)) { cc, cx, cy, r ->
-        Art.chevronLeft(cc, cx, cy, r * 1.1f, Palette.CREAM)
+        Art.chevronRight(cc, cx, cy, r * 1.1f, Palette.CREAM)
     }
     hotspots.add(Hotspot(RectF(back), { paused = true }))
 
@@ -489,14 +492,15 @@ internal fun GameView.drawGame(c: Canvas) {
     val frac = if (lvl.target > 0) g.score.toFloat() / lvl.target else 0f
     Art.progress(c, bar, frac, Palette.GREEN, 0x66081A12)
 
+    // RTL: the running score hangs on the right (start), the target on the left (end)
     val scoreLabel = fa(g.score)
     val scoreSize = Art.fit(scoreLabel, scoreRect.height() * 0.34f, scoreRect.width() * 0.34f, Art.black)
-    Art.text(c, scoreLabel, scoreRect.left + scoreRect.width() * 0.045f,
-        scoreRect.top + scoreRect.height() * 0.40f, scoreSize, Palette.CREAM, Paint.Align.LEFT, Art.black, true)
+    Art.text(c, scoreLabel, scoreRect.right - scoreRect.width() * 0.045f,
+        scoreRect.top + scoreRect.height() * 0.40f, scoreSize, Palette.CREAM, Paint.Align.RIGHT, Art.black, true)
     val targetLabel = "هدف ${fa(lvl.target)}"
     val targetSize = Art.fit(targetLabel, scoreRect.height() * 0.24f, scoreRect.width() * 0.38f, Art.bold)
-    Art.text(c, targetLabel, scoreRect.right - scoreRect.width() * 0.045f,
-        scoreRect.top + scoreRect.height() * 0.38f, targetSize, Palette.CREAM_DIM, Paint.Align.RIGHT, Art.bold)
+    Art.text(c, targetLabel, scoreRect.left + scoreRect.width() * 0.045f,
+        scoreRect.top + scoreRect.height() * 0.38f, targetSize, Palette.CREAM_DIM, Paint.Align.LEFT, Art.bold)
 
     if (hasGoals) {
         drawObjectives(c, g, hud.goals.top, RectF(hud.goals.left, hud.goals.top, hud.goals.right, hud.goals.bottom))
@@ -754,7 +758,7 @@ private fun GameView.drawBoosters(c: Canvas, g: Game) {
             if (armed) Palette.LIME else Palette.CREAM_DIM, Paint.Align.CENTER, Art.bold)
 
         val owned = save.booster(kind)
-        val bx = body.right - rect.width() * 0.14f
+        val bx = body.left + rect.width() * 0.14f
         val by = body.top + rect.width() * 0.14f
         Art.circle(c, bx, by, rect.width() * 0.145f, if (owned > 0) Palette.LIME else 0x66202830)
         val countSize = Art.fit(fa(owned), rect.width() * 0.17f, rect.width() * 0.20f, Art.black)
@@ -921,9 +925,10 @@ internal fun GameView.drawShop(c: Canvas) {
             Art.frame(c, rect, Design.radiusCard(w), Design.rim(w) * 0.72f,
                 Design.CREAM_TOP, Design.CREAM_BOTTOM)
 
-            val badgeR = cardH * 0.26f
-            val bx = rect.left + cardH * 0.30f + badgeR
-            val by = rect.centerY() - cardH * 0.06f
+            val row = RowGeometry(Box(rect.left, rect.top, rect.right, rect.bottom), cardH)
+            val badgeR = row.icon.width / 2f
+            val bx = row.icon.centerX
+            val by = row.icon.centerY
             var title: String
             var desc: String
             var price: Int
@@ -947,17 +952,18 @@ internal fun GameView.drawShop(c: Canvas) {
                 Art.heart(c, bx, by, badgeR * 0.56f, true, Palette.CREAM)
             }
 
-            val textRight = rect.right - cardH * 0.28f
-            val titleSize = Art.fit(title, cardH * 0.24f, rect.width() * 0.52f, Art.black)
+            val textRight = row.text.right
+            val textRoom = row.text.width
+            val titleSize = Art.fit(title, cardH * 0.24f, textRoom, Art.black)
             Art.text(c, title, textRight, rect.centerY() - cardH * 0.06f, titleSize,
                 Design.INK_ON_CREAM, Paint.Align.RIGHT, Art.black)
-            val descSize = Art.fit(desc, cardH * 0.16f, rect.width() * 0.52f, Art.regular)
+            val descSize = Art.fit(desc, cardH * 0.16f, textRoom, Art.regular)
             Art.text(c, desc, textRight, rect.centerY() + cardH * 0.20f, descSize,
                 Design.INK_BODY, Paint.Align.RIGHT, Art.regular)
 
             if (owned > 0) {
-                val chip = RectF(rect.left + cardH * 0.24f, rect.top + cardH * 0.12f,
-                    rect.left + cardH * 1.36f, rect.top + cardH * 0.12f + cardH * 0.24f)
+                val chip = RectF(row.action.left, rect.top + cardH * 0.10f,
+                    row.action.right, rect.top + cardH * 0.10f + cardH * 0.19f)
                 Art.panel(c, chip, chip.height() / 2f, 0x331F6B45)
                 val ownSize = Art.fit("دارید: ${fa(owned)}", chip.height() * 0.62f, chip.width() * 0.86f, Art.bold)
                 Art.text(c, "دارید: ${fa(owned)}", chip.centerX(), chip.centerY() + ownSize * 0.36f, ownSize,
@@ -965,8 +971,7 @@ internal fun GameView.drawShop(c: Canvas) {
             }
 
             val canAfford = save.coins >= price
-            val buy = RectF(rect.left + cardH * 0.22f, rect.top + cardH * 0.30f,
-                rect.left + cardH * 1.46f, rect.bottom - cardH * 0.16f)
+            val buy = RectF(row.action.left, row.action.top, row.action.right, row.action.bottom)
             button(c, buy, fa(price), if (canAfford) Style.GOLD else Style.SECONDARY,
                 { cc, cx, cy, r -> Art.coin(cc, cx, cy, r) }) {
                 if (idx < eco.shop.size) buyItem(eco.shop[idx]) else buyLife()
@@ -1095,10 +1100,12 @@ internal fun GameView.drawWheel(c: Canvas) {
         val card = RectF(w * 0.14f, h * 0.800f, w * 0.86f, h * 0.905f)
         c.enterGroup(enterK(now, 0f), card.centerX(), card.centerY(), h * 0.04f) {
             Art.glow(c, card.centerX(), card.centerY(), card.width() * 0.55f, Palette.GOLD, 0.22f)
-            Art.card(c, card, card.height() * 0.26f, Palette.GOLD)
-            Art.text(c, "جایزه", card.centerX(), card.top + card.height() * 0.28f, card.height() * 0.19f, Palette.MUTED)
-            Art.text(c, prize.label, card.centerX(), card.centerY() + card.height() * 0.12f, card.height() * 0.34f,
-                Palette.GOLD, Paint.Align.CENTER, Art.black, true)
+            Art.frame(c, card, Design.radiusDialog(w), Design.rim(w), Design.CREAM_TOP, Design.CREAM_BOTTOM)
+            Art.text(c, "جایزه", card.centerX(), card.top + card.height() * 0.26f, card.height() * 0.19f,
+                Design.INK_BODY, Paint.Align.CENTER, Art.bold)
+            val prizeSize = Art.fit(prize.label, card.height() * 0.34f, card.width() * 0.60f, Art.black)
+            Art.text(c, prize.label, card.centerX(), card.centerY() + card.height() * 0.16f, prizeSize,
+                0xFFB0740A.toInt(), Paint.Align.CENTER, Art.black)
             val ok = RectF(card.right - w * 0.26f, card.top + card.height() * 0.20f, card.right - w * 0.045f, card.bottom - card.height() * 0.20f)
             button(c, ok, "باشه", Style.PRIMARY) { wheelPrize = null }
             for (i in 0 until 8) {
@@ -1162,9 +1169,10 @@ internal fun GameView.drawPass(c: Canvas) {
                 Art.panel(c, rect, Design.radiusCard(w), 0x99103122.toInt(), 1.6f, 0x33FFF6E5)
             }
 
-            val badgeR = cardH * 0.26f
-            val bx = rect.left + cardH * 0.30f + badgeR
-            val by = rect.centerY()
+            val row = RowGeometry(Box(rect.left, rect.top, rect.right, rect.bottom), cardH, cardH * 1.20f, cardH * 0.50f)
+            val badgeR = row.icon.width / 2f
+            val bx = row.icon.centerX
+            val by = row.icon.centerY
             if (unlocked) {
                 Art.circle(c, bx, by, badgeR, if (claimed) 0xFF9A6A0C.toInt() else 0xFF1F6B45.toInt())
                 Art.circle(c, bx, by - badgeR * 0.06f, badgeR * 0.85f,
@@ -1175,17 +1183,17 @@ internal fun GameView.drawPass(c: Canvas) {
                 Art.lock(c, bx, by, badgeR * 0.62f, 0x99FFF6E5.toInt())
             }
 
-            val textRight = rect.right - cardH * 0.28f
-            val titleSize = Art.fit(tier.label, cardH * 0.23f, rect.width() * 0.52f, Art.black)
+            val textRight = row.text.right
+            val textRoom = row.text.width
+            val titleSize = Art.fit(tier.label, cardH * 0.23f, textRoom, Art.black)
             Art.text(c, tier.label, textRight, rect.centerY() - cardH * 0.06f, titleSize,
                 if (unlocked) Design.INK_ON_CREAM else Palette.CREAM_DIM, Paint.Align.RIGHT, Art.black)
             val sub = "پله ${fa(tier.index)} • ${fa(tier.stars)} ستاره"
-            val subSize = Art.fit(sub, cardH * 0.155f, rect.width() * 0.52f, Art.regular)
+            val subSize = Art.fit(sub, cardH * 0.155f, textRoom, Art.regular)
             Art.text(c, sub, textRight, rect.centerY() + cardH * 0.20f, subSize,
                 if (unlocked) Design.INK_BODY else Palette.MUTED, Paint.Align.RIGHT, Art.regular)
 
-            val btn = RectF(rect.left + cardH * 0.22f, rect.top + cardH * 0.24f,
-                rect.left + cardH * 1.44f, rect.bottom - cardH * 0.20f)
+            val btn = RectF(row.action.left, row.action.top, row.action.right, row.action.bottom)
             when {
                 claimed -> {
                     Art.panel(c, btn, btn.height() * 0.42f, 0xFF1F6B45.toInt())
@@ -1227,21 +1235,25 @@ internal fun GameView.drawSettings(c: Canvas) {
     val soundRect = RectF(w * 0.045f, rowY, w * 0.955f, rowY + rowH)
     c.enterGroup(enterK(now, 70f), soundRect.centerX(), soundRect.centerY(), h * 0.035f) {
         Art.frame(c, soundRect, Design.radiusCard(w), Design.rim(w) * 0.72f, Design.CREAM_TOP, Design.CREAM_BOTTOM)
-        val badgeR = rowH * 0.26f
-        val bx = soundRect.left + rowH * 0.30f + badgeR
-        Art.circle(c, bx, soundRect.centerY(), badgeR, 0xFF1F6B45.toInt())
-        Art.circle(c, bx, soundRect.centerY() - badgeR * 0.06f, badgeR * 0.85f, 0xFF2F8A56.toInt())
-        Art.gear(c, bx, soundRect.centerY(), badgeR * 0.56f, Palette.CREAM)
+        val row = RowGeometry(
+            Box(soundRect.left, soundRect.top, soundRect.right, soundRect.bottom), rowH,
+            rowH * 0.80f, rowH * 0.42f, rowH * 0.52f
+        )
+        val badgeR = row.icon.width / 2f
+        val bx = row.icon.centerX
+        Art.circle(c, bx, row.icon.centerY, badgeR, 0xFF1F6B45.toInt())
+        Art.circle(c, bx, row.icon.centerY - badgeR * 0.06f, badgeR * 0.85f, 0xFF2F8A56.toInt())
+        Art.gear(c, bx, row.icon.centerY, badgeR * 0.56f, Palette.CREAM)
 
-        Art.text(c, "صدا و موسیقی", soundRect.right - rowH * 0.30f, soundRect.centerY() - rowH * 0.06f,
-            Art.fit("صدا و موسیقی", rowH * 0.24f, soundRect.width() * 0.42f, Art.black),
+        val labelRight = row.text.right
+        Art.text(c, "صدا و موسیقی", labelRight, soundRect.centerY() - rowH * 0.06f,
+            Art.fit("صدا و موسیقی", rowH * 0.24f, row.text.width, Art.black),
             Design.INK_ON_CREAM, Paint.Align.RIGHT, Art.black)
-        Art.text(c, if (save.sound) "روشن" else "خاموش", soundRect.right - rowH * 0.30f,
+        Art.text(c, if (save.sound) "روشن" else "خاموش", labelRight,
             soundRect.centerY() + rowH * 0.21f, rowH * 0.17f,
             if (save.sound) 0xFF1F6B45.toInt() else Design.INK_BODY, Paint.Align.RIGHT, Art.bold)
 
-        val toggle = RectF(soundRect.left + rowH * 0.30f, soundRect.centerY() - rowH * 0.20f,
-            soundRect.left + rowH * 0.30f + rowH * 0.78f, soundRect.centerY() + rowH * 0.20f)
+        val toggle = RectF(row.action.left, row.action.top, row.action.right, row.action.bottom)
         if (save.sound) Art.glow(c, toggle.centerX(), toggle.centerY(), toggle.width() * 0.62f, Palette.LIME, 0.18f)
         Art.panel(c, toggle, toggle.height() / 2f + 2f, if (save.sound) 0xFF2C7534.toInt() else 0xFF7C8A72.toInt())
         Art.panel(c, toggle, toggle.height() / 2f + 2f, 0x00000000, 1.6f,
@@ -1263,11 +1275,12 @@ internal fun GameView.drawSettings(c: Canvas) {
     val motionRect = RectF(w * 0.045f, rowY + rowH + h * 0.014f, w * 0.955f, rowY + rowH * 2f + h * 0.014f)
     c.enterGroup(enterK(now, 130f), motionRect.centerX(), motionRect.centerY(), h * 0.03f) {
         Art.panel(c, motionRect, Design.radiusCard(w), 0x8C103122.toInt(), 1.4f, 0x33FFF6E5)
-        Art.text(c, "انیمیشن‌ها", motionRect.right - rowH * 0.26f, motionRect.centerY() + rowH * 0.09f,
+        Art.text(c, "انیمیشن‌ها", motionRect.right - rowH * 0.30f, motionRect.centerY() + rowH * 0.09f,
             rowH * 0.20f, Palette.CREAM, Paint.Align.RIGHT, Art.bold)
         val state = if (reduceMotion) "کم — طبق تنظیمات دستگاه" else "کامل"
-        Art.text(c, state, motionRect.left + rowH * 0.26f, motionRect.centerY() + rowH * 0.09f,
-            rowH * 0.16f, Palette.MUTED, Paint.Align.LEFT, Art.regular)
+        val stateSize = Art.fit(state, rowH * 0.16f, motionRect.width() * 0.52f, Art.regular)
+        Art.text(c, state, motionRect.left + rowH * 0.30f, motionRect.centerY() + rowH * 0.09f,
+            stateSize, Palette.MUTED, Paint.Align.LEFT, Art.regular)
     }
 
     /* ---------------------------------------------------------------- about */
@@ -1830,15 +1843,15 @@ private fun GameView.header(c: Canvas, title: String) {
     }
 
     val backH = h * 0.066f
-    val back = RectF(margin, h * 0.030f, margin + backH, h * 0.030f + backH)
+    val back = RectF(w - margin - backH, h * 0.030f, w - margin, h * 0.030f + backH)
     c.enterGroup(enterK(now, 40f), back.centerX(), back.centerY(), h * 0.02f) {
         val pressed = pressActive && back.contains(pressX, pressY)
-        Art.iconButton(c, back, pressed) { cc, cx, cy, r -> Art.chevronLeft(cc, cx, cy, r, Palette.CREAM) }
+        Art.iconButton(c, back, pressed) { cc, cx, cy, r -> Art.chevronRight(cc, cx, cy, r, Palette.CREAM) }
         hotspots.add(Hotspot(RectF(back), { screen = Screen.HOME }))
     }
 
     val chipH = h * 0.056f
-    val chip = RectF(w - margin - w * 0.140f, h * 0.035f, w - margin, h * 0.035f + chipH)
+    val chip = RectF(margin, h * 0.035f, margin + w * 0.140f, h * 0.035f + chipH)
     c.enterGroup(enterK(now, 40f), chip.centerX(), chip.centerY(), h * 0.02f) {
         Art.coinChip(c, chip, save.coins, t)
     }

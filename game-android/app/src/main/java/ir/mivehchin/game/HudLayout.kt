@@ -29,10 +29,11 @@ internal class HudGeometry(width: Float, height: Float, val hasGoals: Boolean) {
 
         val chromeH = h * 0.062f
         val chromeTop = h * 0.026f
-        back = Box(margin, chromeTop, margin + chromeH, chromeTop + chromeH)
+        // RTL: back sits on the trailing (right) edge, the balance on the leading (left)
+        back = Box(w - margin - chromeH, chromeTop, w - margin, chromeTop + chromeH)
         title = Box(w * 0.235f, chromeTop, w * 0.765f, chromeTop + chromeH)
         val coinW = w * 0.145f
-        coin = Box(w - margin - coinW, chromeTop + chromeH * 0.06f, w - margin, chromeTop + chromeH * 0.94f)
+        coin = Box(margin, chromeTop + chromeH * 0.06f, margin + coinW, chromeTop + chromeH * 0.94f)
 
         val rowTop = chromeTop + chromeH + h * 0.016f
         val rowH = h * 0.070f
@@ -66,8 +67,8 @@ internal class HudGeometry(width: Float, height: Float, val hasGoals: Boolean) {
     fun violations(height: Float): List<String> {
         val out = ArrayList<String>()
         if (moves.right > score.left) out.add("moves card overlaps the score card")
-        if (title.left < back.right) out.add("title plaque overlaps the back button")
-        if (title.right > coin.left) out.add("title plaque overlaps the coin chip")
+        if (title.right > back.left) out.add("title plaque overlaps the back button")
+        if (title.left < coin.right) out.add("title plaque overlaps the coin chip")
         if (hasGoals && goals.top < score.bottom) out.add("goal chips overlap the score row")
         if (guide.right > booster.left) out.add("guide portrait overlaps the booster toolbar")
         if (cards.last().right > booster.right + 0.5f) out.add("booster cards overflow their band")

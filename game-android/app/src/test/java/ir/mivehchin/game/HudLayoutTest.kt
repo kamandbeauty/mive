@@ -71,6 +71,17 @@ class HudLayoutTest {
     }
 
     @Test
+    fun rtlPutsBackOnTheRightAndTheBalanceOnTheLeft() {
+        for ((w, h) in sizes) {
+            val g = HudGeometry(w, h, true)
+            assertTrue("back hugs the right edge at ${w}x$h", g.back.right >= w - w * 0.05f)
+            assertTrue("coin chip hugs the left edge at ${w}x$h", g.coin.left <= w * 0.05f)
+            assertTrue("back is right of the title", g.back.left > g.title.right)
+            assertTrue("coin is left of the title", g.coin.right < g.title.left)
+        }
+    }
+
+    @Test
     fun goalChipsOnlyReserveSpaceWhenTheLevelHasGoals() {
         val withGoals = HudGeometry(360f, 800f, true)
         val without = HudGeometry(360f, 800f, false)

@@ -1454,15 +1454,15 @@ object Art {
         icon(c, body.centerX(), body.centerY(), body.height() * 0.26f)
     }
 
-    /** Compact pill with a coin on the trailing edge and a balance. */
+    /** Compact pill: balance on the right (RTL start), coin on the left. */
     fun coinChip(c: Canvas, rect: RectF, amount: Int, t: Float = 0f) {
         panel(c, rect, rect.height() / 2f, 0x66081710)
         panel(c, rect, rect.height() / 2f, 0x00000000, 1.4f, 0x44FFE9C8)
         val coinR = rect.height() * 0.30f
-        coin(c, rect.right - rect.height() * 0.40f, rect.centerY(), coinR)
+        coin(c, rect.left + rect.height() * 0.40f, rect.centerY(), coinR)
         val label = fa(amount)
         val size = fit(label, rect.height() * 0.42f, rect.width() - rect.height() * 1.05f, bold)
-        text(c, label, rect.left + rect.width() * 0.42f, rect.centerY() + size * 0.36f, size,
+        text(c, label, rect.right - rect.width() * 0.40f, rect.centerY() + size * 0.36f, size,
             Palette.CREAM, Paint.Align.CENTER, bold, true)
     }
 
@@ -1475,13 +1475,13 @@ object Art {
             RectF(rect.left + 6f, rect.top + 5f, rect.right - 6f, rect.centerY() - 2f),
             rect.height() * 0.46f, 0x33FFFFFF
         )
-        val coinCx = rect.right - rect.height() * 0.66f
+        val coinCx = rect.left + rect.height() * 0.66f
         c.save()
         c.scale(coinFlip.coerceIn(0.2f, 1f), 1f, coinCx, rect.centerY())
         coin(c, coinCx, rect.centerY(), rect.height() * 0.34f)
         c.restore()
         val size = fit(label, rect.height() * 0.46f, rect.width() - rect.height() * 1.30f, black)
-        text(c, label, rect.centerX() - rect.height() * 0.28f, rect.centerY() + size * 0.36f, size,
+        text(c, label, rect.centerX() + rect.height() * 0.28f, rect.centerY() + size * 0.36f, size,
             if (enabled) 0xFF8A5A05.toInt() else 0xFF9C8A6A.toInt(), Paint.Align.CENTER, black, true)
     }
 
