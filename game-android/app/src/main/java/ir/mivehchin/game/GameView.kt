@@ -310,9 +310,11 @@ class GameView(context: Context) : View(context) {
         val spanC = maxC - minC + 1
 
         val sidePad = widthPx * 0.05f
-        val hasGoals = g != null && g.level.collect.isNotEmpty()
-        val top = heightPx * (if (hasGoals) 0.235f else 0.200f)
-        val bottom = heightPx * 0.190f
+        val hasGoals = g != null && (g.level.collect.isNotEmpty() || g.iceLeft > 0)
+        // the HUD owns the bands above and below the board, so neither can overlap
+        val hud = HudGeometry(widthPx, heightPx, hasGoals)
+        val top = hud.boardTop
+        val bottom = heightPx - hud.boardBottom
         val availH = heightPx - top - bottom
 
         // 0.34 of a cell is the wooden rim that hangs around the shape

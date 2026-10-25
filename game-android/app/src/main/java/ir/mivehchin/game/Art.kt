@@ -1381,4 +1381,158 @@ object Art {
         6 -> 0xFFF2E8CF.toInt()   // cauliflower
         else -> 0xFFFFFFFF.toInt()
     }
+
+    /* ================================================================ skin */
+
+    /**
+     * Shrinks [size] until [s] fits [maxWidth]. Never grows, never goes silly small.
+     * Every screen funnels its Persian labels through this so nothing ever clips.
+     */
+    fun fit(s: String, size: Float, maxWidth: Float, typeface: Typeface = black): Float {
+        if (maxWidth <= 0f || s.isEmpty()) return size
+        val need = measure(s, size, typeface)
+        if (need <= maxWidth) return size
+        return (size * (maxWidth / need)).coerceAtLeast(size * 0.45f)
+    }
+
+    /** Cream + gold dialog frame: drop shadow, golden rim, cream body, hairline. */
+    fun frame(c: Canvas, rect: RectF, radius: Float, rim: Float, bodyTop: Int, bodyBottom: Int) {
+        panel(
+            c,
+            RectF(rect.left + rim * 0.25f, rect.top + rim * 1.1f, rect.right + rim * 0.25f, rect.bottom + rim * 1.1f),
+            radius, 0x66031409
+        )
+        gradientPanel(c, rect, radius, Design.FRAME_TOP, Design.FRAME_BOTTOM)
+        val inner = RectF(rect.left + rim, rect.top + rim, rect.right - rim, rect.bottom - rim)
+        gradientPanel(c, inner, radius * 0.9f, bodyTop, bodyBottom)
+        panel(c, inner, radius * 0.9f, 0x00000000, Math.max(1.5f, rim * 0.16f), withAlpha(Design.FRAME_DEEP, 0.42f))
+        panel(
+            c,
+            RectF(inner.left + rim, inner.top + rim, inner.right - rim, inner.top + inner.height() * 0.10f),
+            radius * 0.72f, 0x1AFFFFFF
+        )
+    }
+
+    /** Soft cream surface used inside frames for secondary blocks. */
+    fun softBlock(c: Canvas, rect: RectF, radius: Float, alpha: Float = 1f) {
+        panel(c, rect, radius, withAlpha(0xFFF3DFB8.toInt(), 0.55f * alpha))
+        panel(c, rect, radius, 0x00000000, 1.2f, withAlpha(Design.FRAME_BOTTOM, 0.35f * alpha))
+    }
+
+    /** Wooden plaque with shadow, inner bevel, gold studs, shine and a title. */
+    fun woodTitle(c: Canvas, rect: RectF, label: String, size: Float, t: Float, shineStrength: Float = 0.28f) {
+        val rad = rect.height() * 0.34f
+        panel(
+            c,
+            RectF(rect.left + 4f, rect.top + rect.height() * 0.12f, rect.right + 4f, rect.bottom + rect.height() * 0.12f),
+            rad, 0x66000000
+        )
+        plaque(c, rect, rad)
+        c.stud(rect.left + rect.height() * 0.30f, rect.centerY(), rect.height() * 0.085f)
+        c.stud(rect.right - rect.height() * 0.30f, rect.centerY(), rect.height() * 0.085f)
+        val fitted = fit(label, size, rect.width() * 0.72f, black)
+        text(c, label, rect.centerX(), rect.centerY() + fitted * 0.36f, fitted, Palette.CREAM, Paint.Align.CENTER, black, true)
+        c.shine(rect, rad, t, 0.33f, 0.12f, shineStrength)
+    }
+
+    /** Rounded glass button for a single icon (back, close, gear). */
+    fun iconButton(c: Canvas, rect: RectF, pressed: Boolean = false, icon: (Canvas, Float, Float, Float) -> Unit) {
+        val body = if (pressed) {
+            RectF(rect.left, rect.top + rect.height() * 0.06f, rect.right, rect.bottom)
+        } else rect
+        val rad = body.height() * 0.36f
+        if (!pressed) {
+            panel(
+                c,
+                RectF(body.left, body.top + body.height() * 0.12f, body.right, body.bottom + body.height() * 0.12f),
+                rad, 0x55000000
+            )
+        }
+        gradientPanel(c, body, rad, 0x3DFFFFFF, 0x14FFFFFF)
+        panel(c, body, rad, withAlpha(Palette.PANEL_DEEP, 0.55f))
+        panel(c, body, rad, 0x00000000, 1.5f, 0x66FFFFFF)
+        icon(c, body.centerX(), body.centerY(), body.height() * 0.26f)
+    }
+
+    /** Compact pill with a coin on the trailing edge and a balance. */
+    fun coinChip(c: Canvas, rect: RectF, amount: Int, t: Float = 0f) {
+        panel(c, rect, rect.height() / 2f, 0x66081710)
+        panel(c, rect, rect.height() / 2f, 0x00000000, 1.4f, 0x44FFE9C8)
+        val coinR = rect.height() * 0.30f
+        coin(c, rect.right - rect.height() * 0.40f, rect.centerY(), coinR)
+        val label = fa(amount)
+        val size = fit(label, rect.height() * 0.42f, rect.width() - rect.height() * 1.05f, bold)
+        text(c, label, rect.left + rect.width() * 0.42f, rect.centerY() + size * 0.36f, size,
+            Palette.CREAM, Paint.Align.CENTER, bold, true)
+    }
+
+    /** Cream capsule that carries a reward line with a spinning coin. */
+    fun rewardCapsule(c: Canvas, rect: RectF, label: String, coinFlip: Float, enabled: Boolean = true) {
+        panel(c, rect, rect.height() / 2f, 0xFFFFF6DF.toInt())
+        panel(c, rect, rect.height() / 2f, 0x00000000, 2.2f, 0xCCE0A63A.toInt())
+        panel(
+            c,
+            RectF(rect.left + 6f, rect.top + 5f, rect.right - 6f, rect.centerY() - 2f),
+            rect.height() * 0.46f, 0x33FFFFFF
+        )
+        val coinCx = rect.right - rect.height() * 0.66f
+        c.save()
+        c.scale(coinFlip.coerceIn(0.2f, 1f), 1f, coinCx, rect.centerY())
+        coin(c, coinCx, rect.centerY(), rect.height() * 0.34f)
+        c.restore()
+        val size = fit(label, rect.height() * 0.46f, rect.width() - rect.height() * 1.30f, black)
+        text(c, label, rect.centerX() - rect.height() * 0.28f, rect.centerY() + size * 0.36f, size,
+            if (enabled) 0xFF8A5A05.toInt() else 0xFF9C8A6A.toInt(), Paint.Align.CENTER, black, true)
+    }
+
+    /** Objective chip: fruit + progress, used by the in-game HUD. */
+    fun goalChip(c: Canvas, rect: RectF, type: Int, have: Int, need: Int, done: Boolean) {
+        val rad = rect.height() * 0.46f
+        panel(c, rect, rad, if (done) 0xCC1F6B45.toInt() else 0xB30A2418.toInt())
+        panel(c, rect, rad, 0x00000000, 1.4f, if (done) 0x66B6F08A else 0x33FFF0DC)
+        if (type >= 0) produce(c, type, rect.right - rect.height() * 0.54f, rect.centerY(), rect.height() * 0.92f)
+        val size = fit("$have/$need", rect.height() * 0.40f, rect.width() - rect.height() * 1.05f, black)
+        text(c, "${fa(have)}/${fa(need)}", rect.left + rect.height() * 0.34f, rect.centerY() + size * 0.36f, size,
+            if (done) 0xFFB6F08A.toInt() else Palette.CREAM, Paint.Align.LEFT, black, true)
+    }
+
+    /** Carved socket + star, shared by the result panel and the map nodes. */
+    fun starSocket(c: Canvas, cx: Float, cy: Float, r: Float, filled: Boolean, alpha: Float = 1f) {
+        if (alpha <= 0.02f) return
+        val socket = RectF(cx - r * 1.30f, cy - r * 1.30f, cx + r * 1.30f, cy + r * 1.30f)
+        panel(c, socket, r * 0.72f, withAlpha(0xFFFDEFD2.toInt(), alpha))
+        panel(c, socket, r * 0.72f, 0x00000000, 2.2f, withAlpha(0xFFD9A93F.toInt(), alpha))
+        panel(
+            c, RectF(socket.left + 5f, socket.top + 5f, socket.right - 5f, socket.bottom - 5f),
+            r * 0.66f, 0x00000000, 1.1f, withAlpha(0xFFFFFFFF.toInt(), 0.55f * alpha)
+        )
+        star(c, cx, cy, r * if (filled) 1f else 0.95f, filled,
+            if (filled) Palette.GOLD else withAlpha(0xFFC9AE7C.toInt(), alpha))
+    }
+
+    /** Deep emerald readout: small caption over a large value. */
+    fun hudCard(
+        c: Canvas,
+        rect: RectF,
+        caption: String,
+        value: String,
+        accent: Int,
+        valueColor: Int = Palette.CREAM,
+        glowAmount: Float = 0f
+    ) {
+        val rad = rect.height() * 0.32f
+        if (glowAmount > 0f) glow(c, rect.centerX(), rect.centerY(), rect.height() * 1.1f, accent, glowAmount)
+        panel(
+            c,
+            RectF(rect.left + 2f, rect.top + rect.height() * 0.10f, rect.right + 2f, rect.bottom + rect.height() * 0.10f),
+            rad, 0x55000000
+        )
+        gradientPanel(c, rect, rad, Design.GLASS_TOP, Design.GLASS_BOTTOM)
+        panel(c, rect, rad, 0x00000000, 1.6f, withAlpha(accent, 0.55f))
+        val cap = fit(caption, rect.height() * 0.22f, rect.width() * 0.8f, bold)
+        text(c, caption, rect.centerX(), rect.top + rect.height() * 0.32f, cap, Palette.MUTED, Paint.Align.CENTER, regular)
+        val val_ = fit(value, rect.height() * 0.42f, rect.width() * 0.74f, black)
+        text(c, value, rect.centerX(), rect.top + rect.height() * 0.80f, val_, valueColor, Paint.Align.CENTER, black, true)
+    }
+
 }
