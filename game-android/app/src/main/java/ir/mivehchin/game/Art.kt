@@ -1779,13 +1779,14 @@ object Art {
         gloss(c, rect, rad, 0.50f, 0.42f)
         bevel(c, rect, rad, rect.height() * 0.06f, 0.14f, 0.30f)
         panel(c, rect, rad, 0x00000000, Math.max(1.6f, rect.height() * 0.045f), 0xFFD8A238.toInt())
-        val coinCx = rect.left + rect.height() * 0.66f
+        // the coin sits on the trailing (right) edge, the label reads to its left
+        val coinCx = rect.right - rect.height() * 0.66f
         c.save()
         c.scale(coinFlip.coerceIn(0.2f, 1f), 1f, coinCx, rect.centerY())
         coin(c, coinCx, rect.centerY(), rect.height() * 0.36f)
         c.restore()
         val size = fit(label, rect.height() * 0.44f, rect.width() - rect.height() * 1.30f, black)
-        text(c, label, rect.centerX() + rect.height() * 0.26f, rect.centerY() + size * 0.36f, size,
+        text(c, label, rect.centerX() - rect.height() * 0.26f, rect.centerY() + size * 0.36f, size,
             if (enabled) 0xFF8A5A05.toInt() else 0xFF9C8A6A.toInt(), Paint.Align.CENTER, black, true)
     }
 

@@ -110,8 +110,9 @@ internal class VictoryGeometry(
         starCy = chip.bottom + g2 + socketR
         score = Box(inner.left + pw * 0.072f, starCy + socketR + g3,
             inner.right - pw * 0.072f, starCy + socketR + g3 + scoreH)
-        capsule = Box(inner.centerX - pw * 0.255f, score.bottom + g4,
-            inner.centerX + pw * 0.255f, score.bottom + g4 + capH)
+        // wide enough for the coin plus a "+N سکه" line, like the reference capsule
+        capsule = Box(inner.centerX - pw * 0.330f, score.bottom + g4,
+            inner.centerX + pw * 0.330f, score.bottom + g4 + capH)
         primary = Box(inner.left + pw * 0.082f, capsule.bottom + g5,
             inner.right - pw * 0.082f, capsule.bottom + g5 + priH)
         secondary = Box(primary.left, primary.bottom + g6, primary.right, primary.bottom + g6 + secH)
