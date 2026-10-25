@@ -1046,6 +1046,21 @@ object Art {
         c.drawPath(p, strokePaint)
     }
 
+    /** RTL "back": the arrow that points to the right edge. */
+    fun chevronRight(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        strokePaint.reset()
+        strokePaint.isAntiAlias = true
+        strokePaint.style = Paint.Style.STROKE
+        strokePaint.strokeWidth = r * 0.28f
+        strokePaint.strokeCap = Paint.Cap.ROUND
+        strokePaint.color = color
+        val p = Path()
+        p.moveTo(cx - r * 0.35f, cy - r * 0.55f)
+        p.lineTo(cx + r * 0.3f, cy)
+        p.lineTo(cx - r * 0.35f, cy + r * 0.55f)
+        c.drawPath(p, strokePaint)
+    }
+
     fun close(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
         strokePaint.reset()
         strokePaint.isAntiAlias = true
