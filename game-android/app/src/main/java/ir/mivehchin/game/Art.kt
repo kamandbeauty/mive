@@ -955,6 +955,7 @@ object Art {
 
     fun coin(c: Canvas, cx: Float, cy: Float, r: Float) {
         glow(c, cx, cy, r * 1.6f, Palette.GOLD, 0.22f)
+        if (sprite(c, "coin_star", cx, cy, r * 2.12f)) return
         circle(c, cx, cy, r, 0xFFA96C12.toInt())
         shapePaint.reset()
         shapePaint.isAntiAlias = true
@@ -1292,7 +1293,7 @@ object Art {
             "frame", "plaque", "btn_lime", "btn_royal", "btn_gold", "btn_danger",
             "capsule", "socket", "crown", "sprig", "strawberry", "lemon", "berries",
             "flower_pink", "flower_violet", "coin_star",
-            "plate_emerald", "card_glass", "pill_dark",
+            "plate_emerald", "card_glass", "pill_dark", "badge", "badge_current",
             "ic_play", "ic_gear", "ic_hammer", "ic_shuffle", "ic_cart", "ic_wheel",
             "ic_home", "ic_map", "ic_heart", "ic_lock", "ic_plus_moves",
             "ic_close", "ic_chev_left", "ic_chev_right", "ic_star"
@@ -1899,6 +1900,20 @@ object Art {
         c.stud(rect.left + rect.height() * 0.26f, rect.centerY(), rect.height() * 0.075f)
         c.stud(rect.right - rect.height() * 0.26f, rect.centerY(), rect.height() * 0.075f)
         c.shine(rect, rad, t, 0.33f, 0.12f, shineStrength * 0.9f)
+    }
+
+    /** Square wooden level node for the map; falls back to [plaque]. */
+    fun nodeBadge(c: Canvas, rect: RectF, radius: Float, current: Boolean) {
+        val name = if (current) "badge_current" else "badge"
+        if (skinPanel(c, rect, name, 78f)) return
+        if (current) {
+            gradRR(c, rect, radius, intArrayOf(0xFF6ED08D.toInt(), 0xFF3FA25E.toInt(), 0xFF12502F.toInt()))
+            bevel(c, rect, radius, radius * 0.10f, 0.16f, 0.30f)
+            gloss(c, rect, radius, 0.48f, 0.26f)
+            panel(c, rect, radius, 0x00000000, 3f, Palette.LIME)
+        } else {
+            plaque(c, rect, radius)
+        }
     }
 
     /** Wooden plaque with a gold aura, grain, bevel, gloss, studs and 3D lettering. */

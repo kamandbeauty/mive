@@ -409,6 +409,45 @@ def make_plates():
     d.rounded_rectangle(box, rad, outline=(255, 214, 120, 170), width=4)
     img.save(os.path.join(OUT, "card_glass.png"))
 
+
+    # square wooden level node for the map
+    img = Image.new("RGBA", (300, 300), (0, 0, 0, 0))
+    box = (8, 10, 292, 282)
+    rad = 66
+    shape(img, (box[0] - 5, box[1] - 5, box[2] + 5, box[3] + 5), int(rad * 1.02),
+          [(0, (255, 236, 176, 255)), (0.55, (222, 164, 66, 255)), (1, (140, 88, 10, 255))])
+    drop_shadow(img, box, rad, dy=9, blur=12, strength=130)
+    shape(img, box, rad, [(0, (176, 120, 72, 255)), (0.30, (134, 82, 42, 255)),
+                          (0.72, (100, 56, 24, 255)), (1, (62, 32, 12, 255))])
+    hi = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    ImageDraw.Draw(hi).rounded_rectangle((box[0] + 16, box[1] + 14, box[2] - 16, box[1] + 108), rad,
+                                         fill=(255, 236, 200, 30))
+    img.alpha_composite(hi.filter(ImageFilter.GaussianBlur(8)))
+    bevel(img, box, rad, 7, 120, 46)
+    # socket well
+    shape(img, (box[0] + 34, box[1] + 40, box[2] - 34, box[3] - 34), rad - 26,
+          [(0, (74, 40, 16, 255)), (1, (44, 22, 8, 150))])
+    img.save(os.path.join(OUT, "badge.png"))
+
+    img = Image.new("RGBA", (300, 300), (0, 0, 0, 0))
+    box = (8, 10, 292, 282)
+    rad = 66
+    shape(img, (box[0] - 5, box[1] - 5, box[2] + 5, box[3] + 5), int(rad * 1.02),
+          [(0, (214, 255, 176, 255)), (0.55, (140, 214, 80, 255)), (1, (72, 132, 24, 255))])
+    drop_shadow(img, box, rad, dy=9, blur=12, strength=130)
+    shape(img, box, rad, [(0, (126, 220, 156, 255)), (0.32, (63, 162, 94, 255)),
+                          (0.74, (24, 104, 62, 255)), (1, (10, 56, 34, 255))])
+    hi = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    ImageDraw.Draw(hi).rounded_rectangle((box[0] + 16, box[1] + 14, box[2] - 16, box[1] + 108), rad,
+                                         fill=(255, 255, 240, 46))
+    img.alpha_composite(hi.filter(ImageFilter.GaussianBlur(8)))
+    bevel(img, box, rad, 7, 120, 52)
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle(box, rad, outline=(210, 255, 150, 240), width=6)
+    shape(img, (box[0] + 34, box[1] + 40, box[2] - 34, box[3] - 34), rad - 26,
+          [(0, (16, 74, 44, 255)), (1, (8, 42, 24, 170))])
+    img.save(os.path.join(OUT, "badge_current.png"))
+
     # dark wood level pill
     # drawn at the aspect the game actually uses (a 196x34 pill), so the
     # nine-slice only ever stretches horizontally

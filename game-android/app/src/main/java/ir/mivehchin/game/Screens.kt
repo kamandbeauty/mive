@@ -203,12 +203,12 @@ internal fun GameView.drawHome(c: Canvas) {
             c.save()
             c.scale(1f + 0.02f * sin(t * 1.6f), 1f + 0.02f * sin(t * 1.6f),
                 logo.centerX(), logo.top)
-            c.crown(logo.centerX(), logo.top - logo.height() * 0.06f,
-                logo.height() * 0.54f, logo.height() * 0.40f)
+            c.crown(logo.centerX(), logo.top - logo.height() * 0.22f,
+                logo.height() * 0.62f, logo.height() * 0.46f)
             c.restore()
         } else {
-            c.crown(logo.centerX(), logo.top - logo.height() * 0.06f,
-                logo.height() * 0.54f, logo.height() * 0.40f)
+            c.crown(logo.centerX(), logo.top - logo.height() * 0.22f,
+                logo.height() * 0.62f, logo.height() * 0.46f)
         }
     }
 
@@ -415,15 +415,7 @@ internal fun GameView.drawMap(c: Canvas) {
             // carved wooden level badge
             Art.panel(c, RectF(rect.left, rect.top + size * 0.08f, rect.right, rect.bottom + size * 0.08f),
                 size * 0.30f, 0x55000000)
-            if (current) {
-                Art.gradRR(c, rect, size * 0.30f,
-                    intArrayOf(0xFF6ED08D.toInt(), 0xFF3FA25E.toInt(), 0xFF12502F.toInt()))
-                Art.bevel(c, rect, size * 0.30f, size * 0.035f, 0.16f, 0.30f)
-                Art.gloss(c, rect, size * 0.30f, 0.48f, 0.26f)
-                Art.panel(c, rect, size * 0.30f, 0x00000000, 3f, Palette.LIME)
-            } else {
-                Art.plaque(c, rect, size * 0.30f)
-            }
+            Art.nodeBadge(c, rect, size * 0.30f, current)
             Art.panel(c, socket, size * 0.25f, if (current) 0x332EA96A else 0x3310311F)
             Art.panel(c, socket, size * 0.25f, 0x00000000, 1.2f, 0x33FFF6E5)
 
