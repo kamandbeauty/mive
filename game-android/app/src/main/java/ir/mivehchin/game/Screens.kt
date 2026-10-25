@@ -1126,7 +1126,7 @@ internal fun GameView.drawPass(c: Canvas) {
         Art.panel(c, RectF(bar.left + 3f, bar.top + 7f, bar.right + 3f, bar.bottom + 7f), bar.height() / 2f, 0x55000000)
         Art.panel(c, bar, bar.height() / 2f, 0xCC0A2418.toInt())
         Art.progress(c, bar, (save.totalStars / 60f).coerceIn(0f, 1f), Palette.GOLD, 0x660A1F16)
-        Art.panel(c, bar, bar.height() / 2f, 0x00000000, 1.8f, 0x88FFE9C8)
+        Art.panel(c, bar, bar.height() / 2f, 0x00000000, 1.8f, 0x88FFE9C8.toInt())
         Art.star(c, bar.left + bar.height() * 0.5f, bar.centerY(), bar.height() * 0.32f, true)
         val stars = "${fa(save.totalStars)} ستاره"
         val size = Art.fit(stars, bar.height() * 0.44f, bar.width() * 0.70f, Art.black)
@@ -1189,7 +1189,7 @@ internal fun GameView.drawPass(c: Canvas) {
             when {
                 claimed -> {
                     Art.panel(c, btn, btn.height() * 0.42f, 0xFF1F6B45.toInt())
-                    Art.panel(c, btn, btn.height() * 0.42f, 0x00000000, 1.4f, 0x88B6F08A)
+                    Art.panel(c, btn, btn.height() * 0.42f, 0x00000000, 1.4f, 0x88B6F08A.toInt())
                     val s2 = Art.fit("گرفته شد", btn.height() * 0.34f, btn.width() * 0.82f, Art.bold)
                     Art.text(c, "گرفته شد", btn.centerX(), btn.centerY() + s2 * 0.36f, s2,
                         0xFFB6F08A.toInt(), Paint.Align.CENTER, Art.bold)
@@ -1400,6 +1400,56 @@ private fun GameView.drawPause(c: Canvas) {
     }
     c.restore()
 }
+private fun Canvas.crown(cx: Float, cy: Float, wd: Float, ht: Float) {
+    val fill = Paint(Paint.ANTI_ALIAS_FLAG)
+    val line = Paint(Paint.ANTI_ALIAS_FLAG)
+    line.style = Paint.Style.STROKE
+    line.strokeWidth = Math.max(2f, wd * 0.026f)
+    line.color = 0xFF7A4A05.toInt()
+
+    val body = Path()
+    body.moveTo(cx - wd * 0.50f, cy + ht * 0.34f)
+    body.lineTo(cx - wd * 0.48f, cy - ht * 0.14f)
+    body.lineTo(cx - wd * 0.24f, cy + ht * 0.12f)
+    body.lineTo(cx, cy - ht * 0.46f)
+    body.lineTo(cx + wd * 0.24f, cy + ht * 0.12f)
+    body.lineTo(cx + wd * 0.48f, cy - ht * 0.14f)
+    body.lineTo(cx + wd * 0.50f, cy + ht * 0.34f)
+    body.close()
+
+    fill.shader = android.graphics.LinearGradient(
+        cx, cy - ht * 0.5f, cx, cy + ht * 0.4f,
+        0xFFFFF3B8.toInt(), 0xFFD99A12.toInt(), android.graphics.Shader.TileMode.CLAMP
+    )
+    drawPath(body, fill)
+    drawPath(body, line)
+    fill.shader = null
+
+    fill.color = 0xFFB06E06.toInt()
+    drawRoundRect(RectF(cx - wd * 0.50f, cy + ht * 0.16f, cx + wd * 0.50f, cy + ht * 0.36f), ht * 0.08f, ht * 0.08f, fill)
+    fill.color = 0xFFE5455F.toInt()
+    drawCircle(cx, cy + ht * 0.06f, wd * 0.055f, fill)
+    fill.color = 0xFF59C3FF.toInt()
+    drawCircle(cx - wd * 0.255f, cy + ht * 0.02f, wd * 0.036f, fill)
+    drawCircle(cx + wd * 0.255f, cy + ht * 0.02f, wd * 0.036f, fill)
+    fill.color = 0x99FFFFFF.toInt()
+    drawCircle(cx - wd * 0.02f, cy - ht * 0.06f, wd * 0.018f, fill)
+}
+
+/** Three leaves fanning out of a point, used on the panel corners. */
+private fun Canvas.sprig(cx: Float, cy: Float, r: Float, rot: Float, dark: Int, light: Int) {
+    for (i in 0 until 3) {
+        val a = Math.toRadians((rot - 34f + i * 34f).toDouble())
+        Art.leaf(
+            this,
+            cx + (cos(a) * r * 0.55f).toFloat(),
+            cy + (sin(a) * r * 0.55f).toFloat(),
+            r * (1f - 0.14f * abs(i - 1)),
+            dark, light, rot - 34f + i * 34f
+        )
+    }
+}
+
 private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     val w = widthPx
     val h = heightPx
