@@ -40,7 +40,8 @@ internal class VictoryGeometry(
     val primary: Box
     val secondary: Box
     /** True when the content had to be scaled down to fit a short screen. */
-    val compressed: Boolean
+    var compressed: Boolean = false
+        private set
 
     init {
         val w = width

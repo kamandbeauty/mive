@@ -1615,7 +1615,7 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
                 result = null
                 screen = Screen.MAP
             }
-            c.shine(secondary, secH * 0.40f, if (reduceMotion) 0.1f else t, 0.36f, 0.25f, 0.20f)
+            c.shine(secondary, secondary.height() * 0.40f, if (reduceMotion) 0.1f else t, 0.36f, 0.25f, 0.20f)
         } else {
             button(c, primary, "۵ حرکت با ۸۰ سکه", Style.GOLD,
                 { cc, cx, cy, r -> Art.coin(cc, cx, cy, r) }) { buyMovesForCoins() }
