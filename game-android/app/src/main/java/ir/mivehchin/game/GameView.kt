@@ -3,6 +3,7 @@ package ir.mivehchin.game
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.RectF
 import android.media.SoundPool
 import android.view.MotionEvent
@@ -26,7 +27,7 @@ class GameView(context: Context) : View(context) {
         const val SHOCK = 5
     }
 
-    enum class Style { PRIMARY, SECONDARY, GHOST, DANGER }
+    enum class Style { PRIMARY, SECONDARY, GHOST, DANGER, GOLD, GLASS }
 
     class Hotspot(val rect: RectF, val action: () -> Unit)
 
@@ -114,6 +115,8 @@ class GameView(context: Context) : View(context) {
     internal var boosterMode: String? = null
     internal var result: Result? = null
     internal var resultAt = 0L
+    internal var screenAt = 0L
+    private var lastScreen: Screen? = null
     internal var resultStarSfx = 0
     internal var resultCoinSfx = false
     internal var paused = false
@@ -220,8 +223,21 @@ class GameView(context: Context) : View(context) {
             updateWheel(now)
         }
 
+        if (screen != lastScreen) {
+            lastScreen = screen
+            screenAt = now
+        }
+
         hotspots.clear()
         drawBackdrop(canvas)
+        val age = (now - screenAt).toFloat()
+        val enter = ((age / 320f).coerceIn(0f, 1f)).let { 1f - (1f - it) * (1f - it) * (1f - it) }
+        canvas.save()
+        if (enter < 0.999f) {
+            canvas.translate(0f, (1f - enter) * heightPx * 0.022f)
+            val sc = 0.975f + 0.025f * enter
+            canvas.scale(sc, sc, widthPx / 2f, heightPx / 2f)
+        }
         when (screen) {
             Screen.HOME -> drawHome(canvas)
             Screen.MAP -> drawMap(canvas)
@@ -231,6 +247,7 @@ class GameView(context: Context) : View(context) {
             Screen.PASS -> drawPass(canvas)
             Screen.SETTINGS -> drawSettings(canvas)
         }
+        canvas.restore()
         drawOverlays(canvas)
         drawToast(canvas, now)
 
@@ -1095,21 +1112,75 @@ class GameView(context: Context) : View(context) {
 
     /* ------------------------------------------------------------- widgets */
 
-    internal fun button(c: Canvas, rect: RectF, label: String, style: Style, action: () -> Unit) {
-        val radius = rect.height() * 0.34f
+    internal fun button(
+        c: Canvas,
+        rect: RectF,
+        label: String,
+        style: Style,
+        icon: ((Canvas, Float, Float, Float) -> Unit)? = null,
+        action: () -> Unit
+    ) {
+        val radius = rect.height() * 0.40f
+        val t = System.currentTimeMillis() / 1000f
+        val top: Int
+        val bottom: Int
+        val textColor: Int
+        val rim: Int
         when (style) {
-            Style.PRIMARY -> Art.buttonSkin(c, rect, radius, Palette.LIME, 0xFF7CBE3A.toInt())
-            Style.SECONDARY -> Art.buttonSkin(c, rect, radius, Palette.PANEL_SOFT, 0xFF0E2C21.toInt())
-            Style.DANGER -> Art.buttonSkin(c, rect, radius, 0xFFFF7D8F.toInt(), 0xFFC22B44.toInt())
-            Style.GHOST -> Art.panel(c, rect, radius, 0x1AFFFFFF, 1.6f, 0x44FFFFFF)
+            Style.PRIMARY -> {
+                top = 0xFFD6FA8A.toInt(); bottom = 0xFF5FA22A.toInt(); textColor = 0xFF14330B.toInt(); rim = Palette.LIME
+            }
+            Style.GOLD -> {
+                top = 0xFFFFE08A.toInt(); bottom = 0xFFC98814.toInt(); textColor = 0xFF43280A.toInt(); rim = Palette.GOLD
+            }
+            Style.DANGER -> {
+                top = 0xFFFF9AA6.toInt(); bottom = 0xFFC22B44.toInt(); textColor = 0xFF3D0510.toInt(); rim = Palette.DANGER
+            }
+            Style.SECONDARY -> {
+                top = 0xFF2E5C48.toInt(); bottom = 0xFF103528.toInt(); textColor = Palette.CREAM; rim = 0xFF7BD6A6.toInt()
+            }
+            Style.GLASS -> {
+                top = 0x33FFFFFF; bottom = 0x14000000; textColor = Palette.CREAM; rim = 0x55FFFFFF
+            }
+            else -> {
+                top = 0x1AFFFFFF; bottom = 0x0D000000; textColor = Palette.CREAM; rim = 0x44FFFFFF
+            }
         }
-        val textColor = when (style) {
-            Style.PRIMARY -> 0xFF123A16.toInt()
-            Style.DANGER -> 0xFF3D0510.toInt()
-            else -> Palette.CREAM
+
+        val drop = rect.height() * 0.12f
+        Art.panel(c, RectF(rect.left + rect.height() * 0.02f, rect.top + drop, rect.right + rect.height() * 0.02f, rect.bottom + drop),
+            radius, 0x66000000)
+        if (style == Style.PRIMARY || style == Style.GOLD || style == Style.DANGER) {
+            val pulse = 0.5f + 0.5f * sin(t * 2.4f)
+            Art.glow(c, rect.centerX(), rect.centerY(), rect.width() * 0.52f, rim, 0.10f + 0.08f * pulse)
+        }
+        Art.buttonSkin(c, rect, radius, top, bottom)
+
+        // glossy cap
+        c.save()
+        val clip = Path()
+        clip.addRoundRect(rect, radius, radius, Path.Direction.CW)
+        c.clipPath(clip)
+        val gloss = Paint(Paint.ANTI_ALIAS_FLAG)
+        gloss.color = 0x2EFFFFFF
+        c.drawRoundRect(
+            RectF(rect.left + radius * 0.30f, rect.top + radius * 0.16f, rect.right - radius * 0.30f, rect.top + rect.height() * 0.46f),
+            radius * 0.7f, radius * 0.7f, gloss
+        )
+        gloss.color = 0x14000000
+        c.drawRect(rect.left, rect.bottom - rect.height() * 0.16f, rect.right, rect.bottom, gloss)
+        c.restore()
+
+        c.shine(rect, radius, t, 0.5f, (rect.height() * 0.013f) % 1f, if (style == Style.GHOST || style == Style.GLASS) 0.12f else 0.34f)
+
+        Art.panel(c, rect, radius, 0x00000000, 1.6f, Art.withAlpha(rim, 0.55f))
+
+        val textX = if (icon != null) rect.centerX() - rect.height() * 0.26f else rect.centerX()
+        if (icon != null) {
+            icon(c, rect.left + rect.height() * 0.62f, rect.centerY(), rect.height() * 0.27f)
         }
         Art.text(
-            c, label, rect.centerX(), rect.centerY() + rect.height() * 0.16f,
+            c, label, textX, rect.centerY() + rect.height() * 0.17f,
             rect.height() * 0.36f, textColor, Paint.Align.CENTER, Art.bold,
             style != Style.GHOST
         )
