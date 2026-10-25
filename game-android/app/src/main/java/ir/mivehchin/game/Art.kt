@@ -124,8 +124,10 @@ object Art {
         size: Float,
         fill: Int,
         outline: Int,
-        typeface: Typeface = black
+        typeface: Typeface = black,
+        alpha: Float = 1f
     ) {
+        if (alpha <= 0.02f) return
         textPaint.reset()
         textPaint.isAntiAlias = true
         textPaint.textSize = size
@@ -308,25 +310,29 @@ object Art {
 
     /** Chunky game button with rim, gloss and a bottom lip. */
     fun buttonSkin(c: Canvas, rect: RectF, radius: Float, top: Int, bottom: Int) {
+        // drop shadow
         shapePaint.reset()
         shapePaint.isAntiAlias = true
-        shapePaint.color = darken(bottom, 0.5f)
+        shapePaint.color = withAlpha(darken(bottom, 0.55f), 0.55f)
         c.drawRoundRect(
-            RectF(rect.left, rect.top + rect.height() * 0.10f, rect.right, rect.bottom + rect.height() * 0.11f),
+            RectF(rect.left, rect.top + rect.height() * 0.12f, rect.right, rect.bottom + rect.height() * 0.14f),
             radius, radius, shapePaint
         )
-        gradientPanel(c, rect, radius, top, bottom)
+        // body: light top, saturated middle, deep bottom
+        gradRR(c, rect, radius, intArrayOf(lighten(top, 0.22f), top, bottom, darken(bottom, 0.22f)))
+        bevel(c, rect, radius, rect.height() * 0.055f, 0.18f, 0.34f)
+        gloss(c, rect, radius, 0.46f, 0.38f)
         strokePaint.reset()
         strokePaint.isAntiAlias = true
         strokePaint.style = Paint.Style.STROKE
-        strokePaint.strokeWidth = Math.max(1.6f, rect.height() * 0.04f)
-        strokePaint.color = withAlpha(lighten(top, 0.45f), 0.8f)
+        strokePaint.strokeWidth = Math.max(1.6f, rect.height() * 0.035f)
+        strokePaint.color = withAlpha(lighten(top, 0.60f), 0.75f)
         c.drawRoundRect(
             RectF(rect.left + 1f, rect.top + 1f, rect.right - 1f, rect.bottom - 1f),
             radius, radius, strokePaint
         )
-        strokePaint.strokeWidth = Math.max(1f, rect.height() * 0.02f)
-        strokePaint.color = 0x40000000
+        strokePaint.strokeWidth = Math.max(1f, rect.height() * 0.018f)
+        strokePaint.color = 0x4D000000
         c.drawRoundRect(rect, radius, radius, strokePaint)
     }
 
@@ -1384,6 +1390,251 @@ object Art {
         }
     }
 
+
+    /* ============================================================== premium */
+
+    /** Vertical multi-stop gradient inside a rounded rect. */
+    fun gradRR(c: Canvas, rect: RectF, radius: Float, colors: IntArray) {
+        val pos = FloatArray(colors.size) { it / (colors.size - 1f).coerceAtLeast(1f) }
+        shapePaint.reset()
+        shapePaint.isAntiAlias = true
+        shapePaint.shader = LinearGradient(
+            rect.left, rect.top, rect.left, rect.bottom, colors, pos, Shader.TileMode.CLAMP
+        )
+        c.drawRoundRect(rect, radius, radius, shapePaint)
+        shapePaint.shader = null
+    }
+
+    /** Soft drop shadow built from stacked offset round rects (no blur needed). */
+    fun dropShadow(c: Canvas, rect: RectF, radius: Float, dy: Float, spread: Float, strength: Float) {
+        for (i in 3 downTo 1) {
+            val k = i / 3f
+            shapePaint.reset()
+            shapePaint.isAntiAlias = true
+            shapePaint.color = withAlpha(0xFF03160A.toInt(), strength * (0.34f - 0.09f * k))
+            val g = spread * k
+            c.drawRoundRect(
+                RectF(rect.left - g, rect.top + dy + g * 0.4f, rect.right + g, rect.bottom + dy + g),
+                radius + g, radius + g, shapePaint
+            )
+        }
+    }
+
+    /** Specular band over the top part of a shape, fading to nothing. */
+    fun gloss(c: Canvas, rect: RectF, radius: Float, fraction: Float, alpha: Float) {
+        if (fraction <= 0f || alpha <= 0f) return
+        val band = RectF(rect.left, rect.top, rect.right, rect.top + rect.height() * fraction)
+        if (band.height() <= 1f) return
+        c.save()
+        val clip = Path()
+        clip.addRoundRect(rect, radius, radius, Path.Direction.CW)
+        c.clipPath(clip)
+        shapePaint.reset()
+        shapePaint.isAntiAlias = true
+        shapePaint.shader = LinearGradient(
+            band.left, band.top, band.left, band.bottom,
+            intArrayOf(withAlpha(0xFFFFFFFF.toInt(), alpha), withAlpha(0xFFFFFFFF.toInt(), alpha * 0.42f), 0x00FFFFFF),
+            floatArrayOf(0f, 0.55f, 1f), Shader.TileMode.CLAMP
+        )
+        c.drawRect(band, shapePaint)
+        shapePaint.shader = null
+        c.restore()
+    }
+
+    /**
+     * Inner bevel: one stroke of the outline, clipped to the inside, shaded by a vertical
+     * gradient so the top lip reads dark and the bottom lip reads lit.
+     */
+    fun bevel(c: Canvas, rect: RectF, radius: Float, thickness: Float, topDark: Float = 0.20f, bottomLight: Float = 0.30f) {
+        val t = Math.max(1f, thickness)
+        if (rect.height() < t * 3f || rect.width() < t * 3f) return
+        c.save()
+        val clip = Path()
+        clip.addRoundRect(rect, radius, radius, Path.Direction.CW)
+        c.clipPath(clip)
+        strokePaint.reset()
+        strokePaint.isAntiAlias = true
+        strokePaint.style = Paint.Style.STROKE
+        strokePaint.strokeWidth = t * 2f
+        strokePaint.shader = LinearGradient(
+            rect.centerX(), rect.top, rect.centerX(), rect.bottom,
+            intArrayOf(
+                withAlpha(0xFF2A1200.toInt(), topDark),
+                withAlpha(0xFF2A1200.toInt(), topDark * 0.55f),
+                0x002A1200, 0x00FFFFFF,
+                withAlpha(0xFFFFFFFF.toInt(), bottomLight),
+                withAlpha(0xFFFFFFFF.toInt(), bottomLight * 0.75f)
+            ),
+            floatArrayOf(0f, 0.06f, 0.20f, 0.72f, 0.94f, 1f),
+            Shader.TileMode.CLAMP
+        )
+        c.drawRoundRect(
+            RectF(rect.left + t * 0.5f, rect.top + t * 0.5f, rect.right - t * 0.5f, rect.bottom - t * 0.5f),
+            radius, radius, strokePaint
+        )
+        strokePaint.shader = null
+        c.restore()
+    }
+
+    /** Three-dimensional lettering: dark outline, body, then a top highlight. */
+    fun text3d(
+        c: Canvas,
+        s: String,
+        x: Float,
+        y: Float,
+        size: Float,
+        fill: Int,
+        outline: Int,
+        typeface: Typeface = black
+    ) {
+        textPaint.reset()
+        textPaint.isAntiAlias = true
+        textPaint.textSize = size
+        textPaint.textAlign = Paint.Align.CENTER
+        textPaint.typeface = typeface
+        // soft drop first
+        textPaint.style = Paint.Style.STROKE
+        textPaint.strokeWidth = size * 0.20f
+        textPaint.strokeJoin = Paint.Join.ROUND
+        textPaint.color = withAlpha(0xFF2A1404.toInt(), 0.35f * alpha)
+        c.drawText(s, x, y + size * 0.10f, textPaint)
+        // outline
+        textPaint.strokeWidth = size * 0.15f
+        textPaint.color = withAlpha(outline, alpha)
+        c.drawText(s, x, y, textPaint)
+        // body
+        textPaint.style = Paint.Style.FILL
+        textPaint.shader = LinearGradient(
+            x, y - size * 0.78f, x, y + size * 0.16f,
+            intArrayOf(withAlpha(lighten(fill, 0.55f), alpha), withAlpha(fill, alpha), withAlpha(darken(fill, 0.16f), alpha)),
+            floatArrayOf(0f, 0.55f, 1f), Shader.TileMode.CLAMP
+        )
+        c.drawText(s, x, y, textPaint)
+        textPaint.shader = null
+        // top highlight, clipped to the upper part of the glyphs
+        c.save()
+        c.clipRect(x - measure(s, size, typeface), y - size * 0.86f, x + measure(s, size, typeface), y - size * 0.34f)
+        textPaint.color = withAlpha(0xFFFFFFFF.toInt(), 0.20f * alpha)
+        c.drawText(s, x, y - size * 0.02f, textPaint)
+        c.restore()
+    }
+
+    /** Leaf with a light-to-dark body and a soft vein. */
+    fun leafRich(c: Canvas, cx: Float, cy: Float, size: Float, rot: Float, dark: Int, light: Int) {
+        c.save()
+        c.rotate(rot, cx, cy)
+        val p = Path()
+        val half = size * 0.40f
+        val len = size * 0.95f
+        p.moveTo(cx, cy - len * 0.5f)
+        p.cubicTo(cx + half * 1.25f, cy - len * 0.20f, cx + half * 1.15f, cy + len * 0.22f, cx, cy + len * 0.5f)
+        p.cubicTo(cx - half * 1.15f, cy + len * 0.22f, cx - half * 1.25f, cy - len * 0.20f, cx, cy - len * 0.5f)
+        p.close()
+        shapePaint.reset()
+        shapePaint.isAntiAlias = true
+        shapePaint.shader = LinearGradient(
+            cx - half, cy - len * 0.4f, cx + half, cy + len * 0.4f,
+            light, dark, Shader.TileMode.CLAMP
+        )
+        c.drawPath(p, shapePaint)
+        shapePaint.shader = null
+        strokePaint.reset()
+        strokePaint.isAntiAlias = true
+        strokePaint.style = Paint.Style.STROKE
+        strokePaint.strokeWidth = Math.max(1f, size * 0.035f)
+        strokePaint.color = withAlpha(0xFF1B4A22.toInt(), 0.32f)
+        c.drawPath(p, strokePaint)
+        strokePaint.strokeWidth = Math.max(1f, size * 0.045f)
+        strokePaint.color = withAlpha(lighten(light, 0.35f), 0.55f)
+        c.drawLine(cx, cy - len * 0.40f, cx, cy + len * 0.42f, strokePaint)
+        c.restore()
+    }
+
+    /** Three leaves fanned out of a point, used around plaques and cards. */
+    fun sprout(c: Canvas, cx: Float, cy: Float, r: Float, rot: Float, dark: Int, light: Int) {
+        for (i in -1..1) {
+            val a = rot + i * 34f
+            leafRich(
+                c,
+                cx + (cos(Math.toRadians(a.toDouble())) * r * 0.42f).toFloat(),
+                cy + (sin(Math.toRadians(a.toDouble())) * r * 0.42f).toFloat(),
+                r * (1f - 0.12f * Math.abs(i)),
+                a - 90f, dark, light
+            )
+        }
+    }
+
+    /** Small strawberry, sized by [size] (full width). */
+    fun strawberry(c: Canvas, cx: Float, cy: Float, size: Float) {
+        val w2 = size * 0.31f
+        val h2 = size * 0.40f
+        val body = Path()
+        body.moveTo(cx - w2, cy - h2 * 0.30f)
+        body.cubicTo(cx - w2 * 0.9f, cy + h2 * 0.55f, cx - w2 * 0.45f, cy + h2 * 0.95f, cx, cy + h2)
+        body.cubicTo(cx + w2 * 0.45f, cy + h2 * 0.95f, cx + w2 * 0.9f, cy + h2 * 0.55f, cx + w2, cy - h2 * 0.30f)
+        body.close()
+        shapePaint.reset()
+        shapePaint.isAntiAlias = true
+        shapePaint.shader = LinearGradient(
+            cx - w2, cy - h2, cx + w2, cy + h2,
+            0xFFFF7A82.toInt(), 0xFFC81F33.toInt(), Shader.TileMode.CLAMP
+        )
+        c.drawPath(body, shapePaint)
+        shapePaint.shader = null
+        circle(c, cx - w2 * 0.38f, cy - h2 * 0.15f, size * 0.055f, 0x99FFD9D9.toInt())
+        val seeds = floatArrayOf(-0.45f, 0.05f, 0.45f, -0.20f, 0.30f)
+        for (i in seeds.indices) {
+            circle(c, cx + seeds[i] * w2, cy + (0.12f + (i % 3) * 0.22f) * h2, size * 0.028f, 0xE6FFE9AA.toInt())
+        }
+        for (i in 0 until 5) {
+            val a = Math.toRadians(i * 72.0 - 90.0)
+            leafRich(
+                c, cx + (cos(a) * size * 0.15f).toFloat(), cy - h2 * 0.70f + (sin(a) * size * 0.06f).toFloat(),
+                size * 0.30f, i * 72f, 0xFF2C7A30.toInt(), 0xFF7ED05C.toInt()
+            )
+        }
+        circle(c, cx, cy - h2 * 0.80f, size * 0.045f, 0xFF7A4A14.toInt())
+    }
+
+    /** Lemon with a highlight and a leaf. */
+    fun lemon(c: Canvas, cx: Float, cy: Float, size: Float) {
+        shapePaint.reset()
+        shapePaint.isAntiAlias = true
+        shapePaint.shader = LinearGradient(
+            cx - size * 0.8f, cy - size * 0.6f, cx + size * 0.8f, cy + size * 0.6f,
+            0xFFFFF08A.toInt(), 0xFFD9A200.toInt(), Shader.TileMode.CLAMP
+        )
+        c.drawOval(
+            RectF(cx - size * 0.85f, cy - size * 0.60f, cx + size * 0.85f, cy + size * 0.60f), shapePaint
+        )
+        shapePaint.shader = null
+        c.drawOval(
+            RectF(cx - size * 0.58f, cy - size * 0.42f, cx - size * 0.02f, cy - size * 0.06f),
+            Paint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xB3FFF8CC.toInt() }
+        )
+        leafRich(c, cx + size * 0.52f, cy - size * 0.52f, size * 0.62f, 35f,
+            0xFF2C7A30.toInt(), 0xFF7ED05C.toInt())
+    }
+
+    /** A little bunch of blueberries. */
+    fun berries(c: Canvas, cx: Float, cy: Float, r: Float) {
+        val spots = floatArrayOf(-1.2f, 0.2f, 0f, -0.5f, 1.1f, 0.15f, -0.4f, 0.9f, 0.7f, 1.0f)
+        for (i in 0 until 5) {
+            val bx = cx + spots[i * 2] * r
+            val by = cy + spots[i * 2 + 1] * r
+            shapePaint.reset()
+            shapePaint.isAntiAlias = true
+            shapePaint.shader = RadialGradient(
+                bx - r * 0.3f, by - r * 0.35f, r * 1.5f,
+                0xFF8E7BE0.toInt(), 0xFF4E3C9E.toInt(), Shader.TileMode.CLAMP
+            )
+            c.drawCircle(bx, by, r, shapePaint)
+            shapePaint.shader = null
+            circle(c, bx - r * 0.28f, by - r * 0.32f, r * 0.26f, 0x66FFFFFF)
+        }
+        leafRich(c, cx + r * 0.8f, cy - r * 1.5f, r * 2.1f, 40f, 0xFF2C7A30.toInt(), 0xFF7ED05C.toInt())
+    }
+
     /* -------------------------------------------------------- produce spec */
 
     fun produceColor(type: Int): Int = when (type) {
@@ -1410,22 +1661,20 @@ object Art {
         return (size * (maxWidth / need)).coerceAtLeast(size * 0.45f)
     }
 
-    /** Cream + gold dialog frame: drop shadow, golden rim, cream body, hairline. */
+    /** Cream + double-gold dialog frame with a bevel, gloss and soft drop shadow. */
     fun frame(c: Canvas, rect: RectF, radius: Float, rim: Float, bodyTop: Int, bodyBottom: Int) {
-        panel(
-            c,
-            RectF(rect.left + rim * 0.25f, rect.top + rim * 1.1f, rect.right + rim * 0.25f, rect.bottom + rim * 1.1f),
-            radius, 0x66031409
-        )
-        gradientPanel(c, rect, radius, Design.FRAME_TOP, Design.FRAME_BOTTOM)
+        dropShadow(c, rect, radius, rim * 0.9f, rim * 0.55f, 0.55f)
+        // outer gold
+        gradRR(c, rect, radius, intArrayOf(0xFFFFF0BE.toInt(), 0xFFEABA4C.toInt(), 0xFF8C580C.toInt()))
+        // inner gold lip
+        val lip = RectF(rect.left + rim * 0.42f, rect.top + rim * 0.42f, rect.right - rim * 0.42f, rect.bottom - rim * 0.42f)
+        gradRR(c, lip, radius * 0.94f, intArrayOf(0xFFFFFCE0.toInt(), 0xFFFFE28A.toInt(), 0xFFCE9222.toInt()))
+        // cream body
         val inner = RectF(rect.left + rim, rect.top + rim, rect.right - rim, rect.bottom - rim)
-        gradientPanel(c, inner, radius * 0.9f, bodyTop, bodyBottom)
-        panel(c, inner, radius * 0.9f, 0x00000000, Math.max(1.5f, rim * 0.16f), withAlpha(Design.FRAME_DEEP, 0.42f))
-        panel(
-            c,
-            RectF(inner.left + rim, inner.top + rim, inner.right - rim, inner.top + inner.height() * 0.10f),
-            radius * 0.72f, 0x1AFFFFFF
-        )
+        gradRR(c, inner, radius * 0.90f, intArrayOf(bodyTop, lighten(bodyTop, 0.30f), bodyBottom, darken(bodyBottom, 0.10f)))
+        bevel(c, inner, radius * 0.90f, rim * 0.75f, 0.16f, 0.34f)
+        gloss(c, inner, radius * 0.90f, 0.20f, 0.16f)
+        panel(c, inner, radius * 0.90f, 0x00000000, Math.max(1.4f, rim * 0.14f), withAlpha(Design.FRAME_DEEP, 0.35f))
     }
 
     /** Soft cream surface used inside frames for secondary blocks. */
@@ -1434,20 +1683,44 @@ object Art {
         panel(c, rect, radius, 0x00000000, 1.2f, withAlpha(Design.FRAME_BOTTOM, 0.35f * alpha))
     }
 
-    /** Wooden plaque with shadow, inner bevel, gold studs, shine and a title. */
-    fun woodTitle(c: Canvas, rect: RectF, label: String, size: Float, t: Float, shineStrength: Float = 0.28f) {
+    /** Wooden plaque body: gold aura, grain, bevel, gloss and studs. */
+    fun woodBody(c: Canvas, rect: RectF, t: Float, shineStrength: Float = 0.28f) {
         val rad = rect.height() * 0.34f
-        panel(
-            c,
-            RectF(rect.left + 4f, rect.top + rect.height() * 0.12f, rect.right + 4f, rect.bottom + rect.height() * 0.12f),
-            rad, 0x66000000
-        )
-        plaque(c, rect, rad)
-        c.stud(rect.left + rect.height() * 0.30f, rect.centerY(), rect.height() * 0.085f)
-        c.stud(rect.right - rect.height() * 0.30f, rect.centerY(), rect.height() * 0.085f)
-        val fitted = fit(label, size, rect.width() * 0.72f, black)
-        text(c, label, rect.centerX(), rect.centerY() + fitted * 0.36f, fitted, Palette.CREAM, Paint.Align.CENTER, black, true)
-        c.shine(rect, rad, t, 0.33f, 0.12f, shineStrength)
+        dropShadow(c, rect, rad, rect.height() * 0.16f, rect.height() * 0.06f, 0.55f)
+        // gold aura ring
+        val halo = RectF(rect.left - rect.height() * 0.07f, rect.top - rect.height() * 0.07f,
+            rect.right + rect.height() * 0.07f, rect.bottom + rect.height() * 0.07f)
+        gradRR(c, halo, rad * 1.16f,
+            intArrayOf(0xFFFFF4C4.toInt(), 0xFFE8B252.toInt(), 0xFF96600E.toInt()))
+        // wood body
+        gradRR(c, rect, rad, intArrayOf(0xFF96603A.toInt(), 0xFF74421F.toInt(), 0xFF46220C.toInt()))
+        // grain
+        c.save()
+        val clip = Path()
+        clip.addRoundRect(rect, rad, rad, Path.Direction.CW)
+        c.clipPath(clip)
+        shapePaint.reset()
+        shapePaint.isAntiAlias = true
+        shapePaint.color = 0x33000000
+        var y = rect.top + rect.height() * 0.16f
+        while (y < rect.bottom) {
+            c.drawRect(rect.left, y, rect.right, y + rect.height() * 0.022f, shapePaint)
+            y += rect.height() * 0.16f
+        }
+        c.restore()
+        bevel(c, rect, rad, rect.height() * 0.05f, 0.22f, 0.26f)
+        gloss(c, rect, rad, 0.40f, shineStrength * 0.75f)
+        c.stud(rect.left + rect.height() * 0.26f, rect.centerY(), rect.height() * 0.075f)
+        c.stud(rect.right - rect.height() * 0.26f, rect.centerY(), rect.height() * 0.075f)
+        c.shine(rect, rad, t, 0.33f, 0.12f, shineStrength * 0.9f)
+    }
+
+    /** Wooden plaque with a gold aura, grain, bevel, gloss, studs and 3D lettering. */
+    fun woodTitle(c: Canvas, rect: RectF, label: String, size: Float, t: Float, shineStrength: Float = 0.28f) {
+        woodBody(c, rect, t, shineStrength)
+        val fitted = fit(label, size, rect.width() * 0.62f, black)
+        text3d(c, label, rect.centerX(), rect.centerY() + fitted * 0.36f, fitted,
+            Palette.CREAM, 0xFF4E2A08.toInt(), black)
     }
 
     /** Rounded glass button for a single icon (back, close, gear). */
@@ -1471,8 +1744,9 @@ object Art {
 
     /** Compact pill: balance on the right (RTL start), coin on the left. */
     fun coinChip(c: Canvas, rect: RectF, amount: Int, t: Float = 0f) {
-        panel(c, rect, rect.height() / 2f, 0x66081710)
-        panel(c, rect, rect.height() / 2f, 0x00000000, 1.4f, 0x44FFE9C8)
+        gradRR(c, rect, rect.height() / 2f, intArrayOf(0xFF2E6E4C.toInt(), 0xFF11412B.toInt(), 0xFF08251A.toInt()))
+        gloss(c, rect, rect.height() / 2f, 0.48f, 0.22f)
+        panel(c, rect, rect.height() / 2f, 0x00000000, Math.max(1.2f, rect.height() * 0.05f), 0x66FFE9C8)
         val coinR = rect.height() * 0.30f
         coin(c, rect.left + rect.height() * 0.40f, rect.centerY(), coinR)
         val label = fa(amount)
@@ -1483,20 +1757,19 @@ object Art {
 
     /** Cream capsule that carries a reward line with a spinning coin. */
     fun rewardCapsule(c: Canvas, rect: RectF, label: String, coinFlip: Float, enabled: Boolean = true) {
-        panel(c, rect, rect.height() / 2f, 0xFFFFF6DF.toInt())
-        panel(c, rect, rect.height() / 2f, 0x00000000, 2.2f, 0xCCE0A63A.toInt())
-        panel(
-            c,
-            RectF(rect.left + 6f, rect.top + 5f, rect.right - 6f, rect.centerY() - 2f),
-            rect.height() * 0.46f, 0x33FFFFFF
-        )
+        val rad = rect.height() / 2f
+        dropShadow(c, rect, rad, rect.height() * 0.14f, rect.height() * 0.06f, 0.45f)
+        gradRR(c, rect, rad, intArrayOf(0xFFFFFCF0.toInt(), 0xFFFFF2D6.toInt(), 0xFFF2DCA8.toInt()))
+        gloss(c, rect, rad, 0.50f, 0.42f)
+        bevel(c, rect, rad, rect.height() * 0.06f, 0.14f, 0.30f)
+        panel(c, rect, rad, 0x00000000, Math.max(1.6f, rect.height() * 0.045f), 0xFFD8A238.toInt())
         val coinCx = rect.left + rect.height() * 0.66f
         c.save()
         c.scale(coinFlip.coerceIn(0.2f, 1f), 1f, coinCx, rect.centerY())
-        coin(c, coinCx, rect.centerY(), rect.height() * 0.34f)
+        coin(c, coinCx, rect.centerY(), rect.height() * 0.36f)
         c.restore()
-        val size = fit(label, rect.height() * 0.46f, rect.width() - rect.height() * 1.30f, black)
-        text(c, label, rect.centerX() + rect.height() * 0.28f, rect.centerY() + size * 0.36f, size,
+        val size = fit(label, rect.height() * 0.44f, rect.width() - rect.height() * 1.30f, black)
+        text(c, label, rect.centerX() + rect.height() * 0.26f, rect.centerY() + size * 0.36f, size,
             if (enabled) 0xFF8A5A05.toInt() else 0xFF9C8A6A.toInt(), Paint.Align.CENTER, black, true)
     }
 
@@ -1511,18 +1784,42 @@ object Art {
             if (done) 0xFFB6F08A.toInt() else Palette.CREAM, Paint.Align.LEFT, black, true)
     }
 
-    /** Carved socket + star, shared by the result panel and the map nodes. */
+    /** Carved, glossy socket + star, shared by the result panel and the map nodes. */
+    fun socketPlate(c: Canvas, cx: Float, cy: Float, r: Float, filled: Boolean, alpha: Float = 1f) {
+        if (alpha <= 0.02f) return
+        if (filled) glow(c, cx, cy, r * 1.9f, Palette.GOLD, 0.22f * alpha)
+        val box = RectF(cx - r, cy - r, cx + r, cy + r)
+        val rad = r * 0.50f
+        gradRR(
+            c, box, rad,
+            if (filled) intArrayOf(withAlpha(0xFFFFFBE4.toInt(), alpha), withAlpha(0xFFEFCB80.toInt(), alpha))
+            else intArrayOf(withAlpha(0xFFEDE4D2.toInt(), alpha), withAlpha(0xFFC6B899.toInt(), alpha))
+        )
+        bevel(c, box, rad, r * 0.12f, 0.22f, 0.30f)
+        gloss(c, box, rad, 0.44f, if (filled) 0.42f else 0.26f)
+        panel(c, box, rad, 0x00000000, Math.max(1.8f, r * 0.11f),
+            if (filled) withAlpha(0xFFFFD878.toInt(), alpha) else withAlpha(0xFFF6E8CC.toInt(), alpha))
+        // carved inner well
+        panel(c, RectF(box.left + r * 0.16f, box.top + r * 0.16f, box.right - r * 0.16f, box.bottom - r * 0.16f),
+            rad * 0.78f, if (filled) withAlpha(0x33B8740C.toInt(), alpha) else withAlpha(0x33A89A7C.toInt(), alpha))
+        // leaf pair at the bottom corners
+        val leafD = if (filled) 0xFF2C7A34.toInt() else 0xFF6E7A62.toInt()
+        val leafL = if (filled) 0xFF8AD268.toInt() else 0xFFA8B49A.toInt()
+        leafRich(c, box.left + r * 0.06f, box.bottom - r * 0.04f, r * 0.62f, 42f, leafD, leafL)
+        leafRich(c, box.right - r * 0.06f, box.bottom - r * 0.04f, r * 0.62f, -42f, leafD, leafL)
+    }
+
+    /** Socket plus a star inside it. */
     fun starSocket(c: Canvas, cx: Float, cy: Float, r: Float, filled: Boolean, alpha: Float = 1f) {
         if (alpha <= 0.02f) return
-        val socket = RectF(cx - r * 1.30f, cy - r * 1.30f, cx + r * 1.30f, cy + r * 1.30f)
-        panel(c, socket, r * 0.72f, withAlpha(0xFFFDEFD2.toInt(), alpha))
-        panel(c, socket, r * 0.72f, 0x00000000, 2.2f, withAlpha(0xFFD9A93F.toInt(), alpha))
-        panel(
-            c, RectF(socket.left + 5f, socket.top + 5f, socket.right - 5f, socket.bottom - 5f),
-            r * 0.66f, 0x00000000, 1.1f, withAlpha(0xFFFFFFFF.toInt(), 0.55f * alpha)
-        )
-        star(c, cx, cy, r * if (filled) 1f else 0.95f, filled,
-            if (filled) Palette.GOLD else withAlpha(0xFFC9AE7C.toInt(), alpha))
+        socketPlate(c, cx, cy, r, filled, alpha)
+        if (filled) {
+            star(c, cx, cy, r * 1.02f, true, Palette.GOLD)
+            star(c, cx, cy - r * 0.05f, r * 0.86f, true, 0xFFFFE38A.toInt())
+            circle(c, cx - r * 0.30f, cy - r * 0.36f, r * 0.16f, withAlpha(0xFFFFFFFF.toInt(), 0.55f * alpha))
+        } else {
+            star(c, cx, cy, r * 0.98f, false, withAlpha(0xFFB0A48C.toInt(), alpha))
+        }
     }
 
     /** Deep emerald readout: small caption over a large value. */

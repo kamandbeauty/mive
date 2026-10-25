@@ -40,6 +40,9 @@ private fun GameView.appVersion(): String = try {
 
 private fun rrect(x: Float, y: Float, w: Float, h: Float) = RectF(x, y, x + w, y + h)
 
+/** Four-value tuple used by the ornament loops. */
+private data class Quad(val a: Float, val b: Float, val c: Float, val d: Int)
+
 /** Vertical scroll position of the star-pass list. */
 internal var passScroll = 0
 
@@ -1539,20 +1542,30 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     c.scale(openScale, openScale, panel.centerX(), panel.centerY())
 
     /* -------------------------------------------------------------- panel */
-    Art.panel(c, RectF(panel.left + w * 0.004f, panel.top + h * 0.013f, panel.right + w * 0.004f, panel.bottom + h * 0.013f),
-        radius, 0x7703140C)
-    Art.gradientPanel(c, panel, radius, goldTop, goldBot)
-    Art.gradientPanel(c, inner, radius * 0.88f, creamTop, creamBot)
-    Art.panel(c, inner, radius * 0.88f, 0x00000000, 2f, 0x55B8740C)
+    Art.frame(c, panel, radius, rim, creamTop, creamBot)
+    Art.panel(c, RectF(inner.left + rim * 0.8f, inner.top + rim * 0.8f, inner.right - rim * 0.8f, inner.bottom - rim * 0.8f),
+        radius * 0.80f, 0x00000000, Math.max(1f, rim * 0.16f), Art.withAlpha(goldBot, 0.30f))
     Art.panel(c, RectF(inner.left + rim, gardenTop - avail * 0.02f, inner.right - rim, inner.bottom - rim * 0.4f),
         radius * 0.62f, 0x10000000)
 
     /* ------------------------------------------------- corner decorations */
-    val cornerR = pw * 0.060f
-    c.sprig(inner.left + pw * 0.030f, inner.top + pw * 0.042f, cornerR, 155f, Palette.LEAF_DARK, Palette.LEAF_LIGHT)
-    c.sprig(inner.right - pw * 0.030f, inner.top + pw * 0.042f, cornerR, 25f, Palette.LEAF_DARK, Palette.LEAF_LIGHT)
-    c.sprig(inner.left + pw * 0.030f, inner.bottom - pw * 0.026f, cornerR * 0.86f, 205f, Palette.LEAF_DARK, Palette.LEAF_LIGHT)
-    c.sprig(inner.right - pw * 0.030f, inner.bottom - pw * 0.026f, cornerR * 0.86f, 335f, Palette.LEAF_DARK, Palette.LEAF_LIGHT)
+    val cornerR = pw * 0.062f
+    val leafD = Palette.LEAF_DARK
+    val leafL = Palette.LEAF_LIGHT
+    Art.sprout(c, inner.left + pw * 0.034f, inner.top + pw * 0.046f, cornerR, 148f, leafD, leafL)
+    Art.sprout(c, inner.right - pw * 0.034f, inner.top + pw * 0.046f, cornerR, 32f, leafD, leafL)
+    Art.sprout(c, inner.left + pw * 0.034f, inner.bottom - pw * 0.030f, cornerR * 0.88f, 212f, leafD, leafL)
+    Art.sprout(c, inner.right - pw * 0.034f, inner.bottom - pw * 0.030f, cornerR * 0.88f, 328f, leafD, leafL)
+    for ((fx, fy, pr, col) in listOf(
+        Quad(inner.left + pw * 0.052f, inner.top + pw * 0.086f, pw * 0.020f, 0xFFFF8FA3.toInt()),
+        Quad(inner.right - pw * 0.052f, inner.top + pw * 0.086f, pw * 0.020f, 0xFFB9A6FF.toInt()),
+        Quad(inner.left + pw * 0.058f, inner.bottom - pw * 0.062f, pw * 0.018f, 0xFFFFD166.toInt()),
+        Quad(inner.right - pw * 0.058f, inner.bottom - pw * 0.062f, pw * 0.018f, 0xFFFF8FA3.toInt())
+    )) {
+        Art.flower(c, fx, fy, pr, col, 0xFFFFF3C4.toInt())
+    }
+    Art.berries(c, inner.right - pw * 0.088f, inner.top + pw * 0.070f, pw * 0.012f)
+    Art.strawberry(c, inner.left + pw * 0.092f, inner.top + pw * 0.072f, pw * 0.044f)
 
     /* ------------------------------------------------- garden along the base */
     Art.bush(c, inner.left + pw * 0.14f, inner.bottom + avail * 0.010f, pw * 0.38f, avail * 0.085f,
@@ -1586,13 +1599,10 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     c.save()
     c.translate(0f, (1f - plaqueK) * -h * 0.028f)
     if (plaqueK > 0.02f) {
-        Art.panel(c, RectF(plaque.left + 4f, plaque.top + h * 0.010f, plaque.right + 4f, plaque.bottom + h * 0.010f),
-            plaqueH * 0.34f, 0x66000000)
-        Art.plaque(c, plaque, plaqueH * 0.34f)
-        c.shine(plaque, plaqueH * 0.34f, if (reduceMotion) 0.1f else t, 0.34f, 0.15f, 0.30f)
-        Art.flower(c, plaque.left + plaqueH * 0.34f, plaque.centerY(), plaqueH * 0.085f,
+        Art.woodBody(c, plaque, if (reduceMotion) 0.1f else t, 0.30f)
+        Art.flower(c, plaque.left + plaqueH * 0.35f, plaque.centerY(), plaqueH * 0.090f,
             0xFFFF8FA3.toInt(), 0xFFFFF3C4.toInt())
-        Art.flower(c, plaque.right - plaqueH * 0.34f, plaque.centerY(), plaqueH * 0.085f,
+        Art.flower(c, plaque.right - plaqueH * 0.35f, plaque.centerY(), plaqueH * 0.090f,
             0xFFB9A6FF.toInt(), 0xFFFFF3C4.toInt())
     }
     c.restore()
@@ -1600,17 +1610,16 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     val titleA = k(170f, 300f)
     if (titleA > 0.04f) {
         val text = if (win) "آفرین!" else "حرکات تمام شد"
-        val maxW = plaque.width() * 0.66f
-        var size = plaqueH * (if (win) 0.50f else 0.36f)
+        val maxW = plaque.width() * 0.60f
+        var size = plaqueH * (if (win) 0.50f else 0.34f)
         val need = Art.measure(text, size, Art.black)
         if (need > maxW) size *= (maxW / need).coerceIn(0.5f, 1f)
-        if (win) {
-            Art.title(c, text, plaque.centerX(), plaque.centerY() + size * 0.36f, size,
-                Art.withAlpha(0xFFFFD24A.toInt(), titleA), Art.withAlpha(inkBrown, titleA))
-        } else {
-            Art.title(c, text, plaque.centerX(), plaque.centerY() + size * 0.34f, size,
-                Art.withAlpha(Palette.CREAM, titleA), Art.withAlpha(0xFF5A0A18.toInt(), titleA))
-        }
+        Art.text3d(
+            c, text, plaque.centerX(), plaque.centerY() + size * 0.36f, size,
+            if (win) 0xFFFFD24A.toInt() else Palette.CREAM,
+            if (win) inkBrown else 0xFF5A0A18.toInt(),
+            Art.black, titleA
+        )
     }
 
     if (win && plaqueK > 0.45f) {
@@ -1644,13 +1653,9 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     if (win) {
         for (i in 0 until 3) {
             val sx = inner.centerX() + (i - 1) * pw * 0.205f
-            val socket = RectF(sx - socketR, starCy - socketR, sx + socketR, starCy + socketR)
             val socketA = k(330f + i * 60f, 300f)
             if (socketA <= 0.03f) continue
-            Art.panel(c, socket, starR * 0.74f, Art.withAlpha(0xFFFDEFD2.toInt(), socketA))
-            Art.panel(c, socket, starR * 0.74f, 0x00000000, 2.2f, Art.withAlpha(0xFFD9A93F.toInt(), socketA))
-            Art.panel(c, RectF(socket.left + 5f, socket.top + 5f, socket.right - 5f, socket.bottom - 5f),
-                starR * 0.68f, 0x00000000, 1.1f, Art.withAlpha(0xFFFFFFFF.toInt(), 0.55f * socketA))
+            Art.socketPlate(c, sx, starCy, socketR, i < res.stars, socketA)
 
             if (i >= res.stars) {
                 Art.star(c, sx, starCy, starR * 0.95f, false, Art.withAlpha(0xFFC9AE7C.toInt(), socketA))
@@ -1805,6 +1810,29 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
             }
             c.shine(secondary, secondary.height() * 0.40f, if (reduceMotion) 0.1f else t, 0.36f, 0.25f, 0.20f)
         }
+    }
+
+    /* --------------------------------------------------------------- لاله */
+    if (btnK > 0.25f) {
+        val girlH = avail * 0.225f
+        val feetY = inner.bottom - gardenH * 0.12f
+        val gx = inner.left + girlH * 0.30f
+        val ga = ((btnK - 0.25f) / 0.75f).coerceIn(0f, 1f)
+        c.save()
+        c.translate(0f, (1f - ga) * girlH * 0.35f)
+        Art.panel(c, RectF(gx - girlH * 0.26f, feetY - girlH * 0.03f, gx + girlH * 0.26f, feetY + girlH * 0.03f),
+            girlH * 0.03f, Art.withAlpha(0xFF04150D.toInt(), 0.30f * ga))
+        Helper.draw(
+            c, gx, feetY, girlH,
+            when {
+                !win -> Helper.Mood.SAD
+                res.stars >= 2 -> Helper.Mood.CHEER
+                else -> Helper.Mood.IDLE
+            },
+            if (reduceMotion) 0f else t,
+            if (reduceMotion) 0f else (0.012f + 0.010f * sin(t * 2.2f)) * girlH
+        )
+        c.restore()
     }
 
     /* ------------------------------------------------- celebration sparkles */
