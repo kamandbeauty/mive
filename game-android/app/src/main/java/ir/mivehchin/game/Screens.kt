@@ -397,7 +397,7 @@ internal fun GameView.drawGame(c: Canvas) {
         }
         c.scale(scale * sx, scale * sy)
         if (type >= 0) {
-            Art.produce(c, type, 0f, -cellSize * 0.02f, cellSize * 1.14f, alpha)
+            Art.produce(c, type, 0f, -cellSize * 0.015f, cellSize * 1.18f, alpha)
         }
         val special = sp.tile.special
         if (special != null && alpha > 30) {

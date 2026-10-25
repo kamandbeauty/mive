@@ -1198,15 +1198,15 @@ object Art {
     fun loadProduce(ctx: Context) {
         fruitBitmaps.clear()
         for (i in 0 until TYPES) {
-            try {
-                ctx.assets.open("fruit/$i.png").use { stream ->
-                    val bmp = android.graphics.BitmapFactory.decodeStream(stream)
-                    if (bmp != null) fruitBitmaps[i] = bmp
-                }
-            } catch (e: Exception) {
-                // leave it out; produce() falls back to the tinted disc below
-            }
+            val bmp = openAsset(ctx, "fruit/$i.webp") ?: openAsset(ctx, "fruit/$i.png")
+            if (bmp != null) fruitBitmaps[i] = bmp
         }
+    }
+
+    private fun openAsset(ctx: Context, name: String): Bitmap? = try {
+        ctx.assets.open(name).use { android.graphics.BitmapFactory.decodeStream(it) }
+    } catch (e: Exception) {
+        null
     }
 
     fun fruitImage(type: Int): Bitmap? = fruitBitmaps[type]

@@ -244,8 +244,8 @@ class GameView(context: Context) : View(context) {
         val rowsN = game?.rows ?: 9
         val colsN = game?.cols ?: 8
         val pad = widthPx * 0.035f
-        val top = heightPx * 0.262f
-        val bottom = heightPx * 0.238f
+        val top = heightPx * 0.250f
+        val bottom = heightPx * 0.228f
         val availH = heightPx - top - bottom
         val cellW = (widthPx - 2 * pad) / colsN
         val cellH = availH / rowsN

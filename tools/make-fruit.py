@@ -138,9 +138,11 @@ def main():
             print(f"skip {i}: missing source", file=sys.stderr)
             continue
         out = build(i)
-        path = os.path.join(OUT, f"{i}.png")
-        out.save(path, optimize=True)
-        print(f"fruit/{i}.png  {out.size}  {os.path.getsize(path) / 1024:.1f} KB")
+        # WebP keeps the photographic detail at a fraction of the PNG size;
+        # BitmapFactory decodes it on every API level we support (minSdk 24).
+        path = os.path.join(OUT, f"{i}.webp")
+        out.save(path, "WEBP", quality=90, method=6)
+        print(f"fruit/{i}.webp  {out.size}  {os.path.getsize(path) / 1024:.1f} KB")
 
 
 if __name__ == "__main__":
