@@ -1281,7 +1281,7 @@ object Art {
 
     /** Nine-slice insets, in bitmap pixels, for the stretchable pieces. */
     private const val INSET_FRAME = 58f
-    private const val INSET_PLAQUE = 58f
+    private const val INSET_PLAQUE = 62f
     private const val INSET_BUTTON = 52f
     private const val INSET_CAPSULE = 46f
 

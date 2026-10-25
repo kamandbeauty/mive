@@ -150,7 +150,7 @@ def main():
     sprite(img, "lemon", INNER[2] - PW * 0.105, GARDEN_TOP + GARDEN_H * 0.46, PW * 0.098)
 
     # ---------------------------------------------------------------- plaque
-    nine(img, load("plaque"), PLAQUE, 58)
+    nine(img, load("plaque"), PLAQUE, 62)
     ph = PLAQUE[3] - PLAQUE[1]
     sprite(img, "crown", (PLAQUE[0] + PLAQUE[2]) / 2, PLAQUE[1] - ph * 0.02, ph * 0.46)
     sprite(img, "flower_pink", PLAQUE[0] + ph * 0.35, (PLAQUE[1] + PLAQUE[3]) / 2, ph * 0.20)
@@ -164,8 +164,7 @@ def main():
     # ------------------------------------------------------------------ chip
     cx0, cy0, cx1, cy1 = CHIP
     ch = cy1 - cy0
-    vgrad(img, CHIP, ch / 2, [(0, (156, 98, 52, 255)), (0.55, (107, 63, 28, 255)), (1, (62, 33, 16, 255))])
-    d.rounded_rectangle(CHIP, ch / 2, outline=(255, 201, 77, 235), width=max(1, int(ch * 0.05)))
+    nine(img, load("pill_dark"), CHIP, 46)
     text(img, ((cx0 + cx1) / 2, (cy0 + cy1) / 2 + ch * 0.14), "سطح ۱۲ • باغ بهار", ch * 0.38,
          (255, 246, 226, 255), stroke=1, stroke_fill=(52, 26, 6, 255))
 
@@ -178,9 +177,7 @@ def main():
 
     # ----------------------------------------------------------- score plate
     sh = SCORE[3] - SCORE[1]
-    vgrad(img, SCORE, sh * 0.30, [(0, (46, 156, 99, 255)), (0.35, (23, 116, 79, 255)),
-                                  (1, (3, 32, 15, 255))])
-    d.rounded_rectangle(SCORE, sh * 0.30, outline=(255, 217, 138, 230), width=3)
+    nine(img, load("plate_emerald"), SCORE, 52)
     text(img, ((SCORE[0] + SCORE[2]) / 2, SCORE[1] + sh * 0.28), "امتیاز", sh * 0.19, (207, 238, 220, 255))
     text(img, ((SCORE[0] + SCORE[2]) / 2, SCORE[3] - sh * 0.16), "۱۴۵۷", sh * 0.42,
          (255, 252, 242, 255), stroke=int(sh * 0.05), stroke_fill=(3, 32, 15, 255))

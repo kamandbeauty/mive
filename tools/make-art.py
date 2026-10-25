@@ -101,9 +101,9 @@ def bevel(img, box, radius, t, top=90, bottom=120):
     for i in range(steps):
         k = i / (steps - 1)
         if k < 0.22:
-            col = (42, 18, 0, int(top * (1 - k / 0.22)))
-        elif k > 0.78:
-            col = (255, 255, 255, int(bottom * ((k - 0.78) / 0.22)))
+            col = (52, 22, 2, int(top * 0.9 * (1 - k / 0.22)))
+        elif k > 0.82:
+            col = (255, 238, 208, int(bottom * 0.62 * ((k - 0.82) / 0.18)))
         else:
             continue
         y = box[1] + (box[3] - box[1]) * k
@@ -236,22 +236,31 @@ def make_frame():
 
 
 def make_plaque():
-    img = Image.new("RGBA", (420, 170), (0, 0, 0, 0))
-    box = (6, 6, 414, 164)
+    img = Image.new("RGBA", (452, 202), (0, 0, 0, 0))
+    box = (16, 18, 436, 184)
     rad = 44
     # gold aura
-    shape(img, (box[0] - 10, box[1] - 10, box[2] + 10, box[3] + 10), int(rad * 1.16),
+    shape(img, (box[0] - 12, box[1] - 12, box[2] + 12, box[3] + 12), int(rad * 1.16),
           [(0, (255, 244, 196, 255)), (0.5, (232, 178, 82, 255)), (1, (150, 96, 14, 255))])
-    drop_shadow(img, box, rad, dy=10, blur=14, strength=140)
-    shape(img, box, rad, [(0, (140, 90, 50, 255)), (0.30, (104, 60, 28, 255)),
-                          (0.72, (78, 42, 18, 255)), (1, (52, 26, 10, 255))])
-    # three soft grain bands, drawn wide so stretching never turns them into stripes
-    d = ImageDraw.Draw(img)
-    for k in range(3):
-        gy = box[1] + 30 + k * (box[3] - box[1] - 60) / 2.0
-        d.line([(box[0] + 26, gy), (box[2] - 26, gy)], fill=(46, 22, 8, 26), width=5)
+    drop_shadow(img, box, rad, dy=10, blur=14, strength=150)
+    shape(img, box, rad, [(0, (162, 106, 62, 255)), (0.26, (126, 74, 36, 255)),
+                          (0.62, (98, 54, 24, 255)), (1, (62, 32, 12, 255))])
+    # one wide soft highlight: the middle nine-slice band stretches horizontally,
+    # so only horizontal features survive without turning into stripes
+    hi = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    ImageDraw.Draw(hi).rounded_rectangle(
+        (box[0] + 18, box[1] + 14, box[2] - 18, box[1] + (box[3] - box[1]) * 0.42), rad,
+        fill=(255, 236, 200, 34))
+    hi = hi.filter(ImageFilter.GaussianBlur(6))
+    img.alpha_composite(hi)
+    shade = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    ImageDraw.Draw(shade).rounded_rectangle(
+        (box[0] + 18, box[3] - (box[3] - box[1]) * 0.30, box[2] - 18, box[3] - 10), rad,
+        fill=(38, 16, 4, 46))
+    shade = shade.filter(ImageFilter.GaussianBlur(7))
+    img.alpha_composite(shade)
     bevel(img, box, rad, 8, 120, 140)
-    gloss(img, box, rad, top=0.30, strength=64)
+    d = ImageDraw.Draw(img)
     for sx in (box[0] + 30, box[2] - 30):
         cy = (box[1] + box[3]) // 2
         d.ellipse((sx - 13, cy - 13, sx + 13, cy + 13), fill=(154, 106, 12, 255))
