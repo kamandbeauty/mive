@@ -1796,7 +1796,7 @@ object Art {
             if (done) intArrayOf(0xFF3E9C6B.toInt(), 0xFF1F6B45.toInt(), 0xFF0E3E2A.toInt())
             else intArrayOf(0xFF2A5A44.toInt(), 0xFF123A2A.toInt(), 0xFF081F16.toInt()))
         gloss(c, rect, rad, 0.48f, 0.16f)
-        panel(c, rect, rad, 0x00000000, 1.4f, if (done) 0x88B6F08A else 0x44FFF0DC)
+        panel(c, rect, rad, 0x00000000, 1.4f, if (done) 0x88B6F08A.toInt() else 0x44FFF0DC)
         if (type >= 0) produce(c, type, rect.right - rect.height() * 0.54f, rect.centerY(), rect.height() * 0.92f)
         val size = fit("$have/$need", rect.height() * 0.40f, rect.width() - rect.height() * 1.05f, black)
         text(c, "${fa(have)}/${fa(need)}", rect.left + rect.height() * 0.34f, rect.centerY() + size * 0.36f, size,
