@@ -20,8 +20,13 @@
 > Task :app:javaPreCompileDebugUnitTest
 > Task :app:processDebugResources
 > Task :app:compileDebugKotlin FAILED
-e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:456:13 Unresolved reference: chevronRight
-e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:1849:65 Unresolved reference: chevronRight
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Art.kt:1499:65 Unresolved reference: alpha
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Art.kt:1503:46 Unresolved reference: alpha
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Art.kt:1509:56 Unresolved reference: alpha
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Art.kt:1509:80 Unresolved reference: alpha
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Art.kt:1509:119 Unresolved reference: alpha
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Art.kt:1517:65 Unresolved reference: alpha
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:1621:24 Too many arguments for public final fun text3d(c: Canvas, s: String, x: Float, y: Float, size: Float, fill: Int, outline: Int, typeface: Typeface = ...): Unit defined in ir.mivehchin.game.Art
 FAILURE: Build failed with an exception.
 * What went wrong:
 Execution failed for task ':app:compileDebugKotlin'.
@@ -64,8 +69,13 @@ Daemon will be stopped at the end of the build
 > Task :app:processDebugResources
 
 > Task :app:compileDebugKotlin FAILED
-e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:456:13 Unresolved reference: chevronRight
-e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:1849:65 Unresolved reference: chevronRight
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Art.kt:1499:65 Unresolved reference: alpha
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Art.kt:1503:46 Unresolved reference: alpha
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Art.kt:1509:56 Unresolved reference: alpha
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Art.kt:1509:80 Unresolved reference: alpha
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Art.kt:1509:119 Unresolved reference: alpha
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Art.kt:1517:65 Unresolved reference: alpha
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:1621:24 Too many arguments for public final fun text3d(c: Canvas, s: String, x: Float, y: Float, size: Float, fill: Int, outline: Int, typeface: Typeface = ...): Unit defined in ir.mivehchin.game.Art
 
 FAILURE: Build failed with an exception.
 
@@ -80,6 +90,6 @@ Execution failed for task ':app:compileDebugKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 35s
+BUILD FAILED in 1m 13s
 18 actionable tasks: 17 executed, 1 up-to-date
 === apk outputs ===
