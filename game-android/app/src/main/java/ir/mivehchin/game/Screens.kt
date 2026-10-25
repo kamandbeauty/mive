@@ -1138,13 +1138,13 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     }
 
     /* ---------------------------------------------------------- ribbon */
-    val ribH = h * 0.086f
-    val ribbon = RectF(panel.centerX() - w * 0.335f, panel.top + h * 0.004f,
-        panel.centerX() + w * 0.335f, panel.top + h * 0.004f + ribH)
+    val ribH = h * 0.080f
+    val ribbon = RectF(panel.centerX() - w * 0.305f, panel.top + h * 0.004f,
+        panel.centerX() + w * 0.305f, panel.top + h * 0.004f + ribH)
     Art.panel(c, RectF(ribbon.left + w * 0.006f, ribbon.top + h * 0.008f, ribbon.right + w * 0.006f, ribbon.bottom + h * 0.008f),
         ribH * 0.34f, 0x66000000)
     Art.plaque(c, ribbon, ribH * 0.34f)
-    val titleSize = if (win) ribH * 0.50f else ribH * 0.34f
+    val titleSize = if (win) ribH * 0.46f else ribH * 0.32f
     Art.title(c, if (win) "آفرین!" else "حرکات تمام شد", ribbon.centerX(), ribbon.centerY() + ribH * 0.18f,
         titleSize, Palette.CREAM, if (win) 0xFF6B4300.toInt() else 0xFF5A0A18.toInt())
     // moving highlight across the ribbon
@@ -1249,6 +1249,13 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     }
 
     /* ------------------------------------------------------------ score */
+    val plate = RectF(panel.left + w * 0.100f, panel.top + h * 0.274f,
+        panel.right - w * 0.100f, panel.top + h * 0.468f)
+    Art.panel(c, RectF(plate.left, plate.top + h * 0.004f, plate.right, plate.bottom + h * 0.004f), w * 0.045f, 0x33000000)
+    Art.panel(c, plate, w * 0.045f, 0x2A000000, 1.4f, 0x3DFFE9C8)
+    Art.panel(c, RectF(plate.left + 5f, plate.top + 5f, plate.right - 5f, plate.bottom - 5f), w * 0.040f,
+        0x00000000, 1f, 0x1AFFFFFF)
+
     val scoreK = easeOutCubic(((age - 1420f) / 720f).coerceIn(0f, 1f))
     val scoreY = panel.top + h * 0.318f
     Art.text(c, "امتیاز", panel.centerX(), scoreY - h * 0.030f, w * 0.030f, Palette.MUTED,
@@ -1314,7 +1321,7 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     if (win) {
         for (i in 0 until 3) {
             val px = inner.left + w * (0.22f + 0.28f * i)
-            val py = inner.bottom - h * 0.062f + sin(t * 2.2f + i * 1.7f) * h * 0.003f
+            val py = inner.bottom - h * 0.052f + sin(t * 2.2f + i * 1.7f) * h * 0.003f
             Art.produceHalo(c, i * 2, px, py, w * 0.105f)
             Art.produce(c, i * 2, px, py, w * 0.108f)
         }
