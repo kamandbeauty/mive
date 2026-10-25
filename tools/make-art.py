@@ -236,13 +236,13 @@ def make_frame():
 
 
 def make_plaque():
-    img = Image.new("RGBA", (452, 202), (0, 0, 0, 0))
-    box = (16, 18, 436, 184)
-    rad = 44
-    # gold aura
-    shape(img, (box[0] - 12, box[1] - 12, box[2] + 12, box[3] + 12), int(rad * 1.16),
-          [(0, (255, 244, 196, 255)), (0.5, (232, 178, 82, 255)), (1, (150, 96, 14, 255))])
-    drop_shadow(img, box, rad, dy=10, blur=14, strength=150)
+    img = Image.new("RGBA", (430, 176), (0, 0, 0, 0))
+    box = (7, 7, 423, 169)
+    rad = 46
+    # thin gold rim: wide enough to survive the nine-slice stretch without
+    # ballooning into a halo at the ends
+    shape(img, (box[0] - 5, box[1] - 5, box[2] + 5, box[3] + 5), int(rad * 0.98),
+          [(0, (255, 236, 176, 255)), (0.55, (226, 168, 70, 255)), (1, (146, 92, 12, 255))])
     shape(img, box, rad, [(0, (162, 106, 62, 255)), (0.26, (126, 74, 36, 255)),
                           (0.62, (98, 54, 24, 255)), (1, (62, 32, 12, 255))])
     # one wide soft highlight: the middle nine-slice band stretches horizontally,
@@ -410,13 +410,16 @@ def make_plates():
     img.save(os.path.join(OUT, "card_glass.png"))
 
     # dark wood level pill
-    img = Image.new("RGBA", (360, 110), (0, 0, 0, 0))
-    box = (10, 6, 350, 96)
-    rad = 44
-    drop_shadow(img, box, rad, dy=8, blur=10, strength=110)
-    shape(img, box, rad, [(0, (156, 98, 52, 255)), (0.45, (107, 63, 28, 255)), (1, (56, 28, 12, 255))])
-    bevel(img, box, rad, 6, 110, 110)
-    gloss(img, box, rad, top=0.46, strength=70)
+    # drawn at the aspect the game actually uses (a 196x34 pill), so the
+    # nine-slice only ever stretches horizontally
+    img = Image.new("RGBA", (420, 96), (0, 0, 0, 0))
+    box = (12, 8, 408, 80)
+    rad = 36
+    drop_shadow(img, box, rad, dy=7, blur=8, strength=110)
+    shape(img, box, rad, [(0, (150, 96, 52, 255)), (0.42, (110, 66, 30, 255)),
+                          (0.74, (82, 46, 20, 255)), (1, (54, 26, 10, 255))])
+    bevel(img, box, rad, 5, 110, 90)
+    gloss(img, box, rad, top=0.46, strength=60)
     d = ImageDraw.Draw(img)
     d.rounded_rectangle(box, rad, outline=(255, 201, 77, 225), width=4)
     img.save(os.path.join(OUT, "pill_dark.png"))
@@ -457,7 +460,7 @@ def icon_masks(name):
             t = _rot([(88, 22), (104, 22), (104, 46), (88, 46)], 96, 96, a)
             d.polygon(t, fill=255)
         d.ellipse((46, 46, 146, 146), fill=255)
-        dd.ellipse((76, 76, 116, 116), fill=255)
+        d.ellipse((78, 78, 114, 114), fill=0)
     elif name == "ic_hammer":
         d.polygon(_rot([(58, 60), (128, 26), (150, 78), (80, 112)], 96, 96, 0), fill=255)
         d.polygon(_rot([(92, 96), (112, 88), (150, 168), (128, 176)], 96, 96, 0), fill=255)
@@ -471,14 +474,13 @@ def icon_masks(name):
         d.ellipse((64, 138, 96, 170), fill=255)
         d.ellipse((128, 138, 160, 170), fill=255)
     elif name == "ic_wheel":
-        d.ellipse((20, 20, 172, 172), fill=255)
-        dd.ellipse((34, 34, 158, 158), fill=255)          # carve the inner disc
-        d.ellipse((44, 44, 148, 148), fill=255)          # ...then put the hub disc back
-        for i in range(6):
-            a = math.radians(i * 60)
-            d.line([(96, 96), (96 + math.cos(a) * 52, 96 + math.sin(a) * 52)], fill=255, width=12)
-        d.ellipse((80, 80, 112, 112), fill=255)
-        dd.ellipse((34, 34, 158, 158), fill=128)
+        d.ellipse((18, 18, 174, 174), fill=255)          # outer disc
+        d.ellipse((42, 42, 150, 150), fill=0)            # punch it hollow -> rim
+        for i in range(8):
+            a = math.radians(i * 45 + 22.5)
+            d.line([(96, 96), (96 + math.cos(a) * 60, 96 + math.sin(a) * 60)], fill=255, width=13)
+        d.ellipse((72, 72, 120, 120), fill=255)          # hub
+        d.ellipse((90, 90, 102, 102), fill=0)            # hub pin
     elif name == "ic_home":
         d.polygon([(96, 26), (176, 98), (146, 98), (146, 168), (46, 168), (46, 98), (16, 98)], fill=255)
         dd.rounded_rectangle((80, 118, 112, 168), 8, fill=255)

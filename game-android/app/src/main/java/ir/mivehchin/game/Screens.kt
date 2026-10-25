@@ -1569,10 +1569,10 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     val cornerR = pw * 0.062f
     val leafD = Palette.LEAF_DARK
     val leafL = Palette.LEAF_LIGHT
-    if (!Art.sprite(c, "sprig", inner.left + pw * 0.048f, inner.top + pw * 0.062f, cornerR * 1.9f, -24f)) {
+    if (!Art.sprite(c, "sprig", inner.left + pw * 0.060f, inner.top + pw * 0.070f, pw * 0.115f, -18f)) {
         Art.sprout(c, inner.left + pw * 0.034f, inner.top + pw * 0.046f, cornerR, 148f, leafD, leafL)
     }
-    if (!Art.sprite(c, "sprig", inner.right - pw * 0.048f, inner.top + pw * 0.062f, cornerR * 1.9f, 24f)) {
+    if (!Art.sprite(c, "sprig", inner.right - pw * 0.060f, inner.top + pw * 0.070f, pw * 0.115f, 18f)) {
         Art.sprout(c, inner.right - pw * 0.034f, inner.top + pw * 0.046f, cornerR, 32f, leafD, leafL)
     }
     if (!Art.sprite(c, "sprig", inner.left + pw * 0.044f, inner.bottom - pw * 0.042f, cornerR * 1.7f, -156f)) {
@@ -1592,8 +1592,9 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
             Art.flower(c, fx, fy, pr, col, 0xFFFFF3C4.toInt())
         }
     }
-    Art.berries(c, inner.right - pw * 0.088f, inner.top + pw * 0.070f, pw * 0.012f)
-    Art.strawberry(c, inner.left + pw * 0.092f, inner.top + pw * 0.072f, pw * 0.044f)
+    // fruit tucked against the bottom hedge instead of the title corners
+    Art.strawberry(c, inner.left + pw * 0.140f, inner.bottom - pw * 0.020f, pw * 0.070f)
+    Art.berries(c, inner.right - pw * 0.150f, inner.bottom - pw * 0.026f, pw * 0.016f)
 
     /* ------------------------------------------------- garden along the base */
     Art.bush(c, inner.left + pw * 0.14f, inner.bottom + avail * 0.010f, pw * 0.38f, avail * 0.085f,
@@ -1638,12 +1639,12 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     val titleA = k(170f, 300f)
     if (titleA > 0.04f) {
         val text = if (win) "آفرین!" else "حرکات تمام شد"
-        val maxW = plaque.width() * 0.60f
-        var size = plaqueH * (if (win) 0.50f else 0.34f)
+        val maxW = plaque.width() * 0.58f
+        var size = plaqueH * (if (win) 0.42f else 0.30f)
         val need = Art.measure(text, size, Art.black)
         if (need > maxW) size *= (maxW / need).coerceIn(0.5f, 1f)
         Art.text3d(
-            c, text, plaque.centerX(), plaque.centerY() + size * 0.36f, size,
+            c, text, plaque.centerX(), plaque.centerY() + size * 0.30f, size,
             if (win) 0xFFFFD24A.toInt() else Palette.CREAM,
             if (win) inkBrown else 0xFF5A0A18.toInt(),
             Art.black, titleA
@@ -1663,7 +1664,7 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     if (chipA > 0.03f) {
         c.save()
         c.scale(0.92f + 0.08f * chipA, 0.92f + 0.08f * chipA, chip.centerX(), chip.centerY())
-        if (!Art.skinPanel(c, chip, "pill_dark", 46f)) {
+        if (!Art.skinPanel(c, chip, "pill_dark", 38f)) {
             Art.gradRR(c, chip, chipH / 2f,
                 intArrayOf(0xFF9C6234.toInt(), 0xFF6B3F1C.toInt(), 0xFF3E2110.toInt()))
             Art.bevel(c, chip, chipH / 2f, chipH * 0.07f, 0.20f, 0.26f)

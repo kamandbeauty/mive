@@ -54,8 +54,8 @@ def nine(img, src, rect, inset):
     bw, bh = src.size
     i = min(inset, bw * 0.45, bh * 0.45)
     x0, y0, x1, y1 = rect
-    iw = min(i, (x1 - x0) / 2.05)
-    ih = min(i, (y1 - y0) / 2.05)
+    iw = min(i * (x1 - x0) / bw, (x1 - x0) / 2.05)
+    ih = min(i * (y1 - y0) / bh, (y1 - y0) / 2.05)
     xs = [0, i, bw - i, bw]
     ys = [0, i, bh - i, bh]
     dxs = [x0, x0 + iw, x1 - iw, x1]
@@ -67,8 +67,10 @@ def nine(img, src, rect, inset):
             if sw < 1 or sh < 1 or dw < 1 or dh < 1:
                 continue
             piece = src.crop((int(xs[col]), int(ys[r]), int(xs[col + 1]), int(ys[r + 1])))
-            piece = piece.resize((max(1, int(round(dw))), max(1, int(round(dh)))), Image.LANCZOS)
-            img.alpha_composite(piece, (int(round(dxs[col])), int(round(dys[r]))))
+            # one extra pixel of overlap kills the 1px seams between slices
+            pw, ph2 = max(1, int(math.ceil(dw)) + 1), max(1, int(math.ceil(dh)) + 1)
+            piece = piece.resize((pw, ph2), Image.LANCZOS)
+            img.alpha_composite(piece, (int(math.floor(dxs[col])), int(math.floor(dys[r]))))
 
 
 def sprite(img, name, cx, cy, size, rot=0.0):
@@ -128,12 +130,10 @@ def main():
     nine(img, load("frame"), PANEL, 58)
 
     # corner ornaments
-    sprite(img, "sprig", INNER[0] + PW * 0.048, INNER[1] + PW * 0.062, PW * 0.062 * 1.9, -24)
-    sprite(img, "sprig", INNER[2] - PW * 0.048, INNER[1] + PW * 0.062, PW * 0.062 * 1.9, 24)
-    sprite(img, "flower_pink", INNER[0] + PW * 0.052, INNER[1] + PW * 0.086, PW * 0.060)
-    sprite(img, "flower_violet", INNER[2] - PW * 0.052, INNER[1] + PW * 0.086, PW * 0.060)
-    sprite(img, "strawberry", INNER[0] + PW * 0.086, INNER[1] + PW * 0.080, PW * 0.052)
-    sprite(img, "berries", INNER[2] - PW * 0.085, INNER[1] + PW * 0.078, PW * 0.045)
+    sprite(img, "sprig", INNER[0] + PW * 0.060, INNER[1] + PW * 0.070, PW * 0.115, -18)
+    sprite(img, "sprig", INNER[2] - PW * 0.060, INNER[1] + PW * 0.070, PW * 0.115, 18)
+    sprite(img, "flower_pink", INNER[0] + PW * 0.055, INNER[1] + PW * 0.098, PW * 0.052)
+    sprite(img, "flower_violet", INNER[2] - PW * 0.055, INNER[1] + PW * 0.098, PW * 0.052)
 
     # hedge
     d = ImageDraw.Draw(img)
@@ -150,21 +150,24 @@ def main():
     sprite(img, "lemon", INNER[2] - PW * 0.105, GARDEN_TOP + GARDEN_H * 0.46, PW * 0.098)
 
     # ---------------------------------------------------------------- plaque
-    nine(img, load("plaque"), PLAQUE, 62)
+    nine(img, load("plaque"), PLAQUE, 46)
     ph = PLAQUE[3] - PLAQUE[1]
     sprite(img, "crown", (PLAQUE[0] + PLAQUE[2]) / 2, PLAQUE[1] - ph * 0.02, ph * 0.46)
     sprite(img, "flower_pink", PLAQUE[0] + ph * 0.35, (PLAQUE[1] + PLAQUE[3]) / 2, ph * 0.20)
     sprite(img, "flower_violet", PLAQUE[2] - ph * 0.35, (PLAQUE[1] + PLAQUE[3]) / 2, ph * 0.20)
-    tsize = ph * 0.50
-    text(img, ((PLAQUE[0] + PLAQUE[2]) / 2 + ph * 0.012, (PLAQUE[1] + PLAQUE[3]) / 2 + ph * 0.40),
-         "آفرین!", tsize, (255, 250, 226, 255), stroke=int(tsize * 0.15), stroke_fill=(74, 38, 10, 255))
-    text(img, ((PLAQUE[0] + PLAQUE[2]) / 2, (PLAQUE[1] + PLAQUE[3]) / 2 + ph * 0.36),
-         "آفرین!", tsize, (255, 212, 74, 255), stroke=int(tsize * 0.09), stroke_fill=(78, 42, 8, 255))
+    tsize = ph * 0.42
+    ty = (PLAQUE[1] + PLAQUE[3]) / 2 + tsize * 0.30
+    text(img, ((PLAQUE[0] + PLAQUE[2]) / 2 + tsize * 0.012, ty + tsize * 0.10),
+         "آفرین!", tsize, (255, 250, 226, 255), anchor="ms",
+         stroke=int(tsize * 0.15), stroke_fill=(74, 38, 10, 255))
+    text(img, ((PLAQUE[0] + PLAQUE[2]) / 2, ty),
+         "آفرین!", tsize, (255, 212, 74, 255), anchor="ms",
+         stroke=int(tsize * 0.09), stroke_fill=(78, 42, 8, 255))
 
     # ------------------------------------------------------------------ chip
     cx0, cy0, cx1, cy1 = CHIP
     ch = cy1 - cy0
-    nine(img, load("pill_dark"), CHIP, 46)
+    nine(img, load("pill_dark"), CHIP, 38)
     text(img, ((cx0 + cx1) / 2, (cy0 + cy1) / 2 + ch * 0.14), "سطح ۱۲ • باغ بهار", ch * 0.38,
          (255, 246, 226, 255), stroke=1, stroke_fill=(52, 26, 6, 255))
 

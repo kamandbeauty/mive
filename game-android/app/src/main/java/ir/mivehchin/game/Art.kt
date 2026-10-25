@@ -1281,7 +1281,7 @@ object Art {
 
     /** Nine-slice insets, in bitmap pixels, for the stretchable pieces. */
     private const val INSET_FRAME = 58f
-    private const val INSET_PLAQUE = 62f
+    private const val INSET_PLAQUE = 46f
     private const val INSET_BUTTON = 52f
     private const val INSET_CAPSULE = 46f
 
@@ -1318,8 +1318,10 @@ object Art {
         val bw = bmp.width.toFloat()
         val bh = bmp.height.toFloat()
         val i = inset.coerceAtMost(bw * 0.45f).coerceAtMost(bh * 0.45f)
-        val iw = Math.min(i, rect.width() / 2.05f)
-        val ih = Math.min(i, rect.height() / 2.05f)
+        // Corner size follows the asset's own proportions on each axis, so a
+        // wide pill keeps round caps instead of being squashed into a lens.
+        val iw = Math.min(i * rect.width() / bw, rect.width() / 2.05f)
+        val ih = Math.min(i * rect.height() / bh, rect.height() / 2.05f)
         val xs = floatArrayOf(0f, i, bw - i, bw)
         val ys = floatArrayOf(0f, i, bh - i, bh)
         val dxs = floatArrayOf(rect.left, rect.left + iw, rect.right - iw, rect.right)
@@ -1864,6 +1866,8 @@ object Art {
     fun woodBody(c: Canvas, rect: RectF, t: Float, shineStrength: Float = 0.28f) {
         val bmp = skinBitmaps["plaque"]
         if (bmp != null) {
+            val rad = rect.height() * 0.30f
+            dropShadow(c, rect, rad, rect.height() * 0.16f, rect.height() * 0.06f, 0.55f)
             nineSlice(c, bmp, rect, INSET_PLAQUE)
             return
         }
