@@ -1279,17 +1279,19 @@ class GameView(context: Context) : View(context) {
             toastText = null
             return
         }
-        val w = min(widthPx * 0.86f, Art.measure(text, widthPx * 0.042f, Art.bold) + widthPx * 0.12f)
+        val room = widthPx * 0.86f
+        val size = Art.fit(text, widthPx * 0.040f, room - widthPx * 0.10f, Art.bold)
+        val w = min(room, Art.measure(text, size, Art.bold) + widthPx * 0.12f)
         val rect = RectF(
             (widthPx - w) / 2f,
-            heightPx * 0.78f,
+            heightPx * 0.700f,
             (widthPx + w) / 2f,
-            heightPx * 0.78f + heightPx * 0.07f
+            heightPx * 0.700f + heightPx * 0.062f
         )
         Art.panel(c, rect, rect.height() / 2f, 0xEE10331F.toInt(), 1.4f, 0x33C6F36B)
         Art.text(
-            c, text, rect.centerX(), rect.centerY() + rect.height() * 0.16f,
-            widthPx * 0.042f, Palette.CREAM, Paint.Align.CENTER, Art.bold
+            c, text, rect.centerX(), rect.centerY() + size * 0.36f,
+            size, Palette.CREAM, Paint.Align.CENTER, Art.bold, true
         )
     }
 }

@@ -1345,9 +1345,9 @@ internal fun GameView.drawOverlays(c: Canvas) {
         else -> null
     }
     if (hint != null) {
-        val size = Design.label(w)
+        val size = Art.fit(hint, Design.label(w), w * 0.80f, Art.bold)
         val tw = Art.measure(hint, size, Art.bold) + w * 0.10f
-        val rect = RectF((w - tw) / 2f, h * 0.905f, (w + tw) / 2f, h * 0.905f + h * 0.046f)
+        val rect = RectF((w - tw) / 2f, h * 0.786f, (w + tw) / 2f, h * 0.786f + h * 0.046f)
         Art.panel(c, rect, rect.height() / 2f, 0xD90A2418.toInt(), 1.4f, 0x66C6F36B)
         Art.text(c, hint, rect.centerX(), rect.centerY() + size * 0.36f, size, Palette.LIME,
             Paint.Align.CENTER, Art.bold, true)
@@ -1842,8 +1842,8 @@ private fun GameView.header(c: Canvas, title: String) {
         Art.woodTitle(c, plaque, title, plaque.height() * 0.46f, if (reduceMotion) 0.1f else t)
     }
 
-    val backH = h * 0.066f
-    val back = RectF(w - margin - backH, h * 0.030f, w - margin, h * 0.030f + backH)
+    val backH = h * 0.072f
+    val back = RectF(w - margin - backH, h * 0.027f, w - margin, h * 0.027f + backH)
     c.enterGroup(enterK(now, 40f), back.centerX(), back.centerY(), h * 0.02f) {
         val pressed = pressActive && back.contains(pressX, pressY)
         Art.iconButton(c, back, pressed) { cc, cx, cy, r -> Art.chevronRight(cc, cx, cy, r, Palette.CREAM) }

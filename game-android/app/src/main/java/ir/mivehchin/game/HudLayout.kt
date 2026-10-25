@@ -27,8 +27,8 @@ internal class HudGeometry(width: Float, height: Float, val hasGoals: Boolean) {
         val h = height
         val margin = Design.margin(w)
 
-        val chromeH = h * 0.062f
-        val chromeTop = h * 0.026f
+        val chromeH = h * 0.068f
+        val chromeTop = h * 0.024f
         // RTL: back sits on the trailing (right) edge, the balance on the leading (left)
         back = Box(w - margin - chromeH, chromeTop, w - margin, chromeTop + chromeH)
         title = Box(w * 0.235f, chromeTop, w * 0.765f, chromeTop + chromeH)

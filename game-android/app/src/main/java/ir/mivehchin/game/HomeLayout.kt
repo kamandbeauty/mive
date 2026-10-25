@@ -29,7 +29,8 @@ internal class HomeLayout(width: Float, height: Float) {
         val chipH = height * 0.056f
         val chipTop = height * 0.028f
         // RTL: settings on the trailing (right) edge, balances on the leading (left) edge
-        settings = Box(width - margin - chipH, chipTop, width - margin, chipTop + chipH)
+        val gearH = chipH * 1.18f
+        settings = Box(width - margin - gearH, chipTop - chipH * 0.09f, width - margin, chipTop - chipH * 0.09f + gearH)
 
         val coinW = width * 0.285f
         coin = Box(margin, chipTop, margin + coinW, chipTop + chipH)
