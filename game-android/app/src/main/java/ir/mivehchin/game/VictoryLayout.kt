@@ -88,13 +88,15 @@ internal class VictoryGeometry(
             g5 *= f
             g6 *= f
         } else {
+            // spread the leftover space evenly so no single void appears
             val slack = avail - stack
-            scoreH += slack * 0.20f
-            g2 += slack * 0.24f
-            g3 += slack * 0.22f
-            g5 += slack * 0.26f
-            g4 += slack * 0.04f
-            plaqueH += slack * 0.04f
+            scoreH += slack * 0.26f
+            g2 += slack * 0.18f
+            g3 += slack * 0.18f
+            g5 += slack * 0.14f
+            g4 += slack * 0.10f
+            g6 += slack * 0.06f
+            plaqueH += slack * 0.08f
         }
         stack = stackOf()
 
