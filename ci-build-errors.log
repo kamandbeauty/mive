@@ -80,6 +80,6 @@ Execution failed for task ':app:compileDebugKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 34s
+BUILD FAILED in 1m 35s
 18 actionable tasks: 17 executed, 1 up-to-date
 === apk outputs ===
