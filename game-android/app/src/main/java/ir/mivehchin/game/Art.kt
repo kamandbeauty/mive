@@ -1485,8 +1485,10 @@ object Art {
         size: Float,
         fill: Int,
         outline: Int,
-        typeface: Typeface = black
+        typeface: Typeface = black,
+        alpha: Float = 1f
     ) {
+        if (alpha <= 0.02f) return
         textPaint.reset()
         textPaint.isAntiAlias = true
         textPaint.textSize = size
