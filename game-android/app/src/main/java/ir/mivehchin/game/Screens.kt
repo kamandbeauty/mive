@@ -416,7 +416,10 @@ internal fun GameView.drawMap(c: Canvas) {
             Art.panel(c, RectF(rect.left, rect.top + size * 0.08f, rect.right, rect.bottom + size * 0.08f),
                 size * 0.30f, 0x55000000)
             if (current) {
-                Art.gradientPanel(c, rect, size * 0.30f, 0xFF3FA25E.toInt(), 0xFF12502F.toInt())
+                Art.gradRR(c, rect, size * 0.30f,
+                    intArrayOf(0xFF6ED08D.toInt(), 0xFF3FA25E.toInt(), 0xFF12502F.toInt()))
+                Art.bevel(c, rect, size * 0.30f, size * 0.035f, 0.16f, 0.30f)
+                Art.gloss(c, rect, size * 0.30f, 0.48f, 0.26f)
                 Art.panel(c, rect, size * 0.30f, 0x00000000, 3f, Palette.LIME)
             } else {
                 Art.plaque(c, rect, size * 0.30f)
@@ -488,8 +491,11 @@ internal fun GameView.drawGame(c: Canvas) {
     val rad = scoreRect.height() * 0.32f
     Art.panel(c, RectF(scoreRect.left + 2f, scoreRect.top + scoreRect.height() * 0.10f,
         scoreRect.right + 2f, scoreRect.bottom + scoreRect.height() * 0.10f), rad, 0x55000000)
-    Art.gradientPanel(c, scoreRect, rad, Design.GLASS_TOP, Design.GLASS_BOTTOM)
-    Art.panel(c, scoreRect, rad, 0x00000000, 1.6f, Art.withAlpha(Palette.GOLD, 0.45f))
+    Art.gradRR(c, scoreRect, rad,
+        intArrayOf(Art.lighten(Design.GLASS_TOP, 0.10f), Design.GLASS_TOP, Design.GLASS_BOTTOM))
+    Art.bevel(c, scoreRect, rad, scoreRect.height() * 0.05f, 0.18f, 0.22f)
+    Art.gloss(c, scoreRect, rad, 0.46f, 0.20f)
+    Art.panel(c, scoreRect, rad, 0x00000000, 1.6f, Art.withAlpha(Palette.GOLD, 0.55f))
 
     val bar = RectF(
         scoreRect.left + scoreRect.width() * 0.045f,
@@ -742,11 +748,14 @@ private fun GameView.drawBoosters(c: Canvas, g: Game) {
             Art.panel(c, RectF(rect.left, rect.top + rect.height() * 0.08f, rect.right, rect.bottom + rect.height() * 0.08f),
                 rect.width() * 0.26f, 0x55000000)
         }
-        Art.gradientPanel(c, body, rect.width() * 0.26f,
-            if (armed) 0xFF2E6B48.toInt() else Design.GLASS_TOP,
-            if (armed) 0xFF12331F.toInt() else Design.GLASS_BOTTOM)
-        Art.panel(c, body, rect.width() * 0.26f, 0x00000000, 1.8f,
-            if (armed) Palette.LIME else 0x44FFE9C8)
+        val bodyRad = rect.width() * 0.26f
+        Art.gradRR(c, body, bodyRad,
+            if (armed) intArrayOf(0xFF54A876.toInt(), 0xFF2E6B48.toInt(), 0xFF12331F.toInt())
+            else intArrayOf(Art.lighten(Design.GLASS_TOP, 0.10f), Design.GLASS_TOP, Design.GLASS_BOTTOM))
+        Art.bevel(c, body, bodyRad, rect.width() * 0.022f, 0.18f, 0.24f)
+        Art.gloss(c, body, bodyRad, 0.48f, if (armed) 0.26f else 0.18f)
+        Art.panel(c, body, bodyRad, 0x00000000, 1.8f,
+            if (armed) Palette.LIME else Art.withAlpha(Palette.GOLD, 0.45f))
 
         val plateR = rect.width() * 0.24f
         val cx = body.centerX()
@@ -1640,8 +1649,11 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     if (chipA > 0.03f) {
         c.save()
         c.scale(0.92f + 0.08f * chipA, 0.92f + 0.08f * chipA, chip.centerX(), chip.centerY())
-        Art.gradientPanel(c, chip, chipH / 2f, 0xFF9C6234.toInt(), 0xFF6B3F1C.toInt())
-        Art.panel(c, chip, chipH / 2f, 0x00000000, 1.5f, 0x88FFE0B8.toInt())
+        Art.gradRR(c, chip, chipH / 2f,
+            intArrayOf(0xFF9C6234.toInt(), 0xFF6B3F1C.toInt(), 0xFF3E2110.toInt()))
+        Art.bevel(c, chip, chipH / 2f, chipH * 0.07f, 0.20f, 0.26f)
+        Art.gloss(c, chip, chipH / 2f, 0.48f, 0.22f)
+        Art.panel(c, chip, chipH / 2f, 0x00000000, Math.max(1.4f, chipH * 0.05f), Art.withAlpha(Palette.GOLD, 0.80f))
         val lvlName = levels.getOrNull(res.levelId - 1)?.name ?: ""
         val label = if (lvlName.isBlank()) "سطح ${fa(res.levelId)}" else "سطح ${fa(res.levelId)} • $lvlName"
         var csize = chipH * 0.44f
@@ -1730,7 +1742,10 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
         c.scale(0.95f + 0.05f * scoreA, 0.95f + 0.05f * scoreA, score.centerX(), score.centerY())
         Art.panel(c, RectF(score.left + 3f, score.top + 8f, score.right + 3f, score.bottom + 8f),
             scoreH * 0.30f, 0x44031409)
-        Art.gradientPanel(c, score, scoreH * 0.30f, deepTop, deepBot)
+        Art.gradRR(c, score, scoreH * 0.30f,
+            intArrayOf(0xFF2E9C63.toInt(), deepTop, deepBot, 0xFF03200F.toInt()))
+        Art.bevel(c, score, scoreH * 0.30f, scoreH * 0.05f, 0.22f, 0.20f)
+        Art.gloss(c, score, scoreH * 0.30f, 0.42f, 0.16f)
         Art.panel(c, score, scoreH * 0.30f, 0x00000000, 2.4f, 0xCCFFD98A.toInt())
         Art.panel(c, RectF(score.left + 7f, score.top + 7f, score.right - 7f, score.bottom - 7f),
             scoreH * 0.24f, 0x00000000, 1.1f, 0x3CFFE9C8)
