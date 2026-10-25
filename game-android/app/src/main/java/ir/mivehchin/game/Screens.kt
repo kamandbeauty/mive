@@ -155,7 +155,10 @@ internal fun GameView.drawHome(c: Canvas) {
     c.enterGroup(enterK(now, 40f), coinRect.centerX(), coinRect.centerY(), h * 0.03f) {
         Art.panel(c, RectF(coinRect.left + 2f, coinRect.top + chipH * 0.10f, coinRect.right + 2f, coinRect.bottom + chipH * 0.10f),
             chipH * 0.42f, 0x55000000)
-        Art.gradientPanel(c, coinRect, chipH * 0.42f, 0xFF2B6B45.toInt(), 0xFF0B2C1F.toInt())
+        Art.gradRR(c, coinRect, chipH * 0.42f,
+            intArrayOf(0xFF63AC7C.toInt(), 0xFF2B6B45.toInt(), 0xFF0B2C1F.toInt()))
+        Art.bevel(c, coinRect, chipH * 0.42f, chipH * 0.06f, 0.18f, 0.28f)
+        Art.gloss(c, coinRect, chipH * 0.42f, 0.50f, 0.24f)
         Art.panel(c, coinRect, chipH * 0.42f, 0x00000000, 1.6f, Art.withAlpha(Palette.GOLD, 0.75f))
         Art.coin(c, coinRect.left + chipH * 0.44f, coinRect.centerY(), chipH * 0.34f)
         val value = fmtCoins(save.coins)
@@ -170,7 +173,10 @@ internal fun GameView.drawHome(c: Canvas) {
     c.enterGroup(enterK(now, 70f), heartRect.centerX(), heartRect.centerY(), h * 0.03f) {
         Art.panel(c, RectF(heartRect.left + 2f, heartRect.top + chipH * 0.10f, heartRect.right + 2f, heartRect.bottom + chipH * 0.10f),
             chipH * 0.42f, 0x55000000)
-        Art.gradientPanel(c, heartRect, chipH * 0.42f, 0xFFB93A50.toInt(), 0xFF6E1424.toInt())
+        Art.gradRR(c, heartRect, chipH * 0.42f,
+            intArrayOf(0xFFE2667C.toInt(), 0xFFB93A50.toInt(), 0xFF6E1424.toInt()))
+        Art.bevel(c, heartRect, chipH * 0.42f, chipH * 0.06f, 0.18f, 0.28f)
+        Art.gloss(c, heartRect, chipH * 0.42f, 0.50f, 0.24f)
         Art.panel(c, heartRect, chipH * 0.42f, 0x00000000, 1.6f, 0x66FF9DAE)
         Art.heart(c, heartRect.left + chipH * 0.44f, heartRect.centerY(), chipH * 0.30f, true, 0xFFFF8FA0.toInt())
         val value = "${fa(save.lives)}/${fa(eco.maxLives)}"
@@ -184,32 +190,26 @@ internal fun GameView.drawHome(c: Canvas) {
     val bob = if (reduce) 0f else sin(t * 1.15f) * h * 0.004f
     val logo = RectF(L.logo.left, L.logo.top + bob, L.logo.right, L.logo.bottom + bob)
     c.enterGroup(enterK(now, 120f), w * 0.5f, logo.centerY(), h * 0.05f) {
-        val tailPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-        tailPaint.color = 0xFF6E4220.toInt()
-        val tailL = Path()
-        tailL.moveTo(logo.left, logo.top + logo.height() * 0.18f)
-        tailL.lineTo(logo.left - w * 0.045f, logo.top + logo.height() * 0.36f)
-        tailL.lineTo(logo.left, logo.top + logo.height() * 0.54f)
-        tailL.close()
-        val tailR = Path()
-        tailR.moveTo(logo.right, logo.top + logo.height() * 0.18f)
-        tailR.lineTo(logo.right + w * 0.045f, logo.top + logo.height() * 0.36f)
-        tailR.lineTo(logo.right, logo.top + logo.height() * 0.54f)
-        tailR.close()
-        c.drawPath(tailL, tailPaint)
-        c.drawPath(tailR, tailPaint)
-
-        Art.panel(c, RectF(logo.left + 4f, logo.top + h * 0.010f, logo.right + 4f, logo.bottom + h * 0.010f),
-            logo.height() * 0.30f, 0x66000000)
-        Art.gradientPanel(c, logo, logo.height() * 0.30f, 0xFFF7D06A.toInt(), 0xFFC98413.toInt())
-        val inner = RectF(logo.left + 4f, logo.top + 4f, logo.right - 4f, logo.bottom - 4f)
-        Art.panel(c, inner, inner.height() * 0.28f, 0x00000000, 2.2f, 0x88FFF6DC.toInt())
-        val titleSize = Art.fit("میوه‌چین", w * 0.112f, logo.width() * 0.66f, Art.black)
-        Art.title(c, "میوه‌چین", logo.centerX(), logo.centerY() + titleSize * 0.36f, titleSize,
-            Palette.CREAM, 0xFF4A2508.toInt())
-        Art.leaf(c, logo.left + w * 0.045f, logo.centerY(), w * 0.062f, Palette.LEAF_DARK, Palette.LEAF, -20f)
-        Art.leaf(c, logo.right - w * 0.045f, logo.centerY(), w * 0.062f, Palette.LEAF_DARK, Palette.LEAF, 20f)
-        c.shine(logo, logo.height() * 0.30f, t, 0.34f, 0.1f, 0.42f)
+        // wooden signboard with a gold crown, drawn like the level plaques
+        Art.woodBody(c, logo, if (reduce) 0.1f else t, 0.34f)
+        Art.sprout(c, logo.left + logo.height() * 0.30f, logo.bottom - logo.height() * 0.10f,
+            logo.height() * 0.46f, 210f, Palette.LEAF_DARK, Palette.LEAF_LIGHT)
+        Art.sprout(c, logo.right - logo.height() * 0.30f, logo.bottom - logo.height() * 0.10f,
+            logo.height() * 0.46f, 330f, Palette.LEAF_DARK, Palette.LEAF_LIGHT)
+        val titleSize = Art.fit("میوه‌چین", w * 0.112f, logo.width() * 0.60f, Art.black)
+        Art.text3d(c, "میوه‌چین", logo.centerX(), logo.centerY() + titleSize * 0.36f, titleSize,
+            0xFFFFD24A.toInt(), 0xFF4A2508.toInt(), Art.black)
+        if (!reduce) {
+            c.save()
+            c.scale(1f + 0.02f * sin(t * 1.6f), 1f + 0.02f * sin(t * 1.6f),
+                logo.centerX(), logo.top)
+            c.crown(logo.centerX(), logo.top - logo.height() * 0.06f,
+                logo.height() * 0.54f, logo.height() * 0.40f)
+            c.restore()
+        } else {
+            c.crown(logo.centerX(), logo.top - logo.height() * 0.06f,
+                logo.height() * 0.54f, logo.height() * 0.40f)
+        }
     }
 
     c.enterGroup(enterK(now, 180f), w * 0.5f, L.taglineY, h * 0.03f) {
@@ -282,12 +282,17 @@ internal fun GameView.drawHome(c: Canvas) {
                 Art.panel(c, RectF(rect.left, rect.top + rect.height() * 0.07f, rect.right, rect.bottom + rect.height() * 0.07f),
                     rad, 0x55000000)
             }
-            Art.gradientPanel(c, body, rad, Design.GLASS_TOP, Design.GLASS_BOTTOM)
-            Art.panel(c, body, rad, 0x00000000, 1.6f, 0x44FFE9C8)
+            Art.gradRR(c, body, rad, intArrayOf(Design.GLASS_TOP, Design.GLASS_BOTTOM, 0xFF0A2A1E.toInt()))
+            Art.bevel(c, body, rad, rect.width() * 0.022f, 0.20f, 0.26f)
+            Art.gloss(c, body, rad, 0.48f, 0.20f)
+            Art.panel(c, body, rad, 0x00000000, 1.8f, Art.withAlpha(Palette.GOLD, 0.55f))
             val plateR = rect.width() * 0.27f
             val cy = body.top + rect.height() * 0.40f
             Art.circle(c, body.centerX(), cy, plateR, 0x5532A05C)
-            Art.circle(c, body.centerX(), cy - plateR * 0.06f, plateR * 0.85f, 0xFF2F7A4E.toInt())
+            Art.gradRR(c, RectF(body.centerX() - plateR, cy - plateR, body.centerX() + plateR, cy + plateR),
+                plateR, intArrayOf(0xFF63C08A.toInt(), 0xFF2F7A4E.toInt(), 0xFF14523A.toInt()))
+            Art.panel(c, RectF(body.centerX() - plateR, cy - plateR, body.centerX() + plateR, cy + plateR),
+                plateR, 0x00000000, Math.max(1.2f, plateR * 0.10f), 0x88FFE0A8.toInt())
             icons[i](c, body.centerX(), cy, plateR * 0.62f)
             val label = labels[i]
             val size = Art.fit(label, w * 0.030f, rect.width() * 0.80f, Art.bold)

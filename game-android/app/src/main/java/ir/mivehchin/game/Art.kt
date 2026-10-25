@@ -696,6 +696,20 @@ object Art {
             flower(cv, fx, fy, fw * 0.018f, if (k % 3 == 0) 0xFFFFC2D0.toInt() else 0xFFFFF0C0.toInt(), Palette.GOLD)
         }
 
+        // bokeh orbs: out-of-focus petals and pollen behind the UI
+        for (k in 0 until 16) {
+            val bx = fw * (0.04f + ((k * 37) % 100) / 100f * 0.92f)
+            val by = fh * (0.05f + ((k * 61) % 100) / 100f * 0.62f)
+            val br = fw * (0.014f + ((k * 29) % 30) / 900f)
+            val warm = k % 3 == 0
+            glow(
+                cv, bx, by, br * 3.4f,
+                if (warm) 0xFFFFE9A8.toInt() else 0xFFD8F3C2.toInt(),
+                0.10f + 0.05f * (k % 4) / 3f
+            )
+            circle(cv, bx, by, br * 0.62f, if (warm) 0x1AFFF3D0 else 0x14E6FFDA)
+        }
+
         // vignette
         shapePaint.reset()
         shapePaint.isAntiAlias = true
@@ -1778,8 +1792,11 @@ object Art {
     /** Objective chip: fruit + progress, used by the in-game HUD. */
     fun goalChip(c: Canvas, rect: RectF, type: Int, have: Int, need: Int, done: Boolean) {
         val rad = rect.height() * 0.46f
-        panel(c, rect, rad, if (done) 0xCC1F6B45.toInt() else 0xB30A2418.toInt())
-        panel(c, rect, rad, 0x00000000, 1.4f, if (done) 0x66B6F08A else 0x33FFF0DC)
+        gradRR(c, rect, rad,
+            if (done) intArrayOf(0xFF3E9C6B.toInt(), 0xFF1F6B45.toInt(), 0xFF0E3E2A.toInt())
+            else intArrayOf(0xFF2A5A44.toInt(), 0xFF123A2A.toInt(), 0xFF081F16.toInt()))
+        gloss(c, rect, rad, 0.48f, 0.16f)
+        panel(c, rect, rad, 0x00000000, 1.4f, if (done) 0x88B6F08A else 0x44FFF0DC)
         if (type >= 0) produce(c, type, rect.right - rect.height() * 0.54f, rect.centerY(), rect.height() * 0.92f)
         val size = fit("$have/$need", rect.height() * 0.40f, rect.width() - rect.height() * 1.05f, black)
         text(c, "${fa(have)}/${fa(need)}", rect.left + rect.height() * 0.34f, rect.centerY() + size * 0.36f, size,
@@ -1841,8 +1858,11 @@ object Art {
             RectF(rect.left + 2f, rect.top + rect.height() * 0.10f, rect.right + 2f, rect.bottom + rect.height() * 0.10f),
             rad, 0x55000000
         )
-        gradientPanel(c, rect, rad, Design.GLASS_TOP, Design.GLASS_BOTTOM)
-        panel(c, rect, rad, 0x00000000, 1.6f, withAlpha(accent, 0.55f))
+        gradRR(c, rect, rad,
+            intArrayOf(lighten(Design.GLASS_TOP, 0.10f), Design.GLASS_TOP, Design.GLASS_BOTTOM, darken(Design.GLASS_BOTTOM, 0.30f)))
+        bevel(c, rect, rad, rect.height() * 0.05f, 0.18f, 0.24f)
+        gloss(c, rect, rad, 0.46f, 0.20f)
+        panel(c, rect, rad, 0x00000000, Math.max(1.4f, rect.height() * 0.035f), withAlpha(accent, 0.70f))
         val cap = fit(caption, rect.height() * 0.22f, rect.width() * 0.8f, bold)
         text(c, caption, rect.centerX(), rect.top + rect.height() * 0.32f, cap, Palette.MUTED, Paint.Align.CENTER, regular)
         val val_ = fit(value, rect.height() * 0.42f, rect.width() * 0.74f, black)
