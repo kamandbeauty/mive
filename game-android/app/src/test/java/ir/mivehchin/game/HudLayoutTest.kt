@@ -85,6 +85,9 @@ class HudLayoutTest {
     fun goalChipsOnlyReserveSpaceWhenTheLevelHasGoals() {
         val withGoals = HudGeometry(360f, 800f, true)
         val without = HudGeometry(360f, 800f, false)
-        assertTrue("goal levels need more room", without.boardSpace(800f) < withGoals.boardSpace(800f))
+        assertTrue(
+            "goal chips eat board space, they must not add any",
+            withGoals.boardSpace(800f) < without.boardSpace(800f)
+        )
     }
 }
