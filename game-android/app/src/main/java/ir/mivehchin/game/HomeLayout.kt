@@ -40,7 +40,7 @@ internal class HomeLayout(width: Float, height: Float) {
         val logoH = height * 0.086f
         val logoTop = height * 0.100f
         logo = Box(width * 0.055f, logoTop, width * 0.945f, logoTop + logoH)
-        taglineY = logo.bottom + height * 0.030f
+        taglineY = logo.bottom + height * 0.042f
 
         val dockH = height * 0.112f
         dock = Box(margin, height * 0.918f - dockH, width - margin, height * 0.918f)

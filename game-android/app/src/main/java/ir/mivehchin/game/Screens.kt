@@ -214,8 +214,8 @@ internal fun GameView.drawHome(c: Canvas) {
 
     c.enterGroup(enterK(now, 180f), w * 0.5f, L.taglineY, h * 0.03f) {
         val tag = "سه‌تا کنار هم بچین، باغ را پر کن!"
-        val size = Art.fit(tag, w * 0.034f, w * 0.78f, Art.regular)
-        Art.text(c, tag, w * 0.5f, L.taglineY, size, Palette.CREAM_DIM, Paint.Align.CENTER, Art.regular, true)
+        val size = Art.fit(tag, w * 0.032f, w * 0.78f, Art.bold)
+        Art.text(c, tag, w * 0.5f, L.taglineY, size, 0xFFF4E9D2.toInt(), Paint.Align.CENTER, Art.bold, true)
     }
 
     /* ------------------------------------------------------------- helper */
