@@ -2,8 +2,8 @@
 > Task :app:checkKotlinGradlePluginConfigurationErrors
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
-> Task :app:generateDebugResValues
 > Task :app:checkDebugAarMetadata
+> Task :app:generateDebugResValues
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
@@ -13,13 +13,12 @@
 > Task :app:parseDebugLocalResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
-> Task :app:javaPreCompileDebug
-> Task :app:processDebugManifestForPackage
 > Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:processDebugManifestForPackage
 > Task :app:javaPreCompileDebugUnitTest
+> Task :app:javaPreCompileDebug
 > Task :app:processDebugResources
 > Task :app:compileDebugKotlin FAILED
-e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:1618:32 Unresolved reference: secH
 e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/VictoryLayout.kt:36:5 Property must be initialized or be abstract
 FAILURE: Build failed with an exception.
 * What went wrong:
@@ -44,8 +43,8 @@ Daemon will be stopped at the end of the build
 > Task :app:checkKotlinGradlePluginConfigurationErrors
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
-> Task :app:generateDebugResValues
 > Task :app:checkDebugAarMetadata
+> Task :app:generateDebugResValues
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
@@ -55,14 +54,13 @@ Daemon will be stopped at the end of the build
 > Task :app:parseDebugLocalResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
-> Task :app:javaPreCompileDebug
-> Task :app:processDebugManifestForPackage
 > Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:processDebugManifestForPackage
 > Task :app:javaPreCompileDebugUnitTest
+> Task :app:javaPreCompileDebug
 > Task :app:processDebugResources
 
 > Task :app:compileDebugKotlin FAILED
-e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:1618:32 Unresolved reference: secH
 e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/VictoryLayout.kt:36:5 Property must be initialized or be abstract
 
 FAILURE: Build failed with an exception.
@@ -78,6 +76,6 @@ Execution failed for task ':app:compileDebugKotlin'.
 > Run with --scan to get full insights.
 > Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 28s
+BUILD FAILED in 1m 45s
 17 actionable tasks: 17 executed
 === apk outputs ===
