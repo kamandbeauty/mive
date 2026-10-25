@@ -114,6 +114,8 @@ class GameView(context: Context) : View(context) {
     internal var boosterMode: String? = null
     internal var result: Result? = null
     internal var resultAt = 0L
+    internal var resultStarSfx = 0
+    internal var resultCoinSfx = false
     internal var paused = false
     internal var busy = false
 
@@ -710,6 +712,8 @@ class GameView(context: Context) : View(context) {
         save.persist()
         result = Result(true, stars, g.score, coins, g.level.id)
         resultAt = System.currentTimeMillis()
+        resultStarSfx = 0
+        resultCoinSfx = false
         confetti()
         sound(R.raw.sfx_win)
     }
@@ -718,6 +722,8 @@ class GameView(context: Context) : View(context) {
         if (result != null) return
         result = Result(false, 0, g.score, 0, g.level.id)
         resultAt = System.currentTimeMillis()
+        resultStarSfx = 0
+        resultCoinSfx = false
         sound(R.raw.sfx_lose)
     }
 
