@@ -14,26 +14,22 @@
 > Task :app:parseDebugLocalResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
-> Task :app:processDebugManifestForPackage
-> Task :app:javaPreCompileDebug
 > Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:javaPreCompileDebug
+> Task :app:processDebugManifestForPackage
 > Task :app:javaPreCompileDebugUnitTest
 > Task :app:processDebugResources
-> Task :app:compileDebugKotlin
-> Task :app:compileDebugJavaWithJavac NO-SOURCE
-> Task :app:processDebugJavaRes
-> Task :app:bundleDebugClassesToRuntimeJar
-> Task :app:bundleDebugClassesToCompileJar
-> Task :app:compileDebugUnitTestKotlin
-> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
-> Task :app:processDebugUnitTestJavaRes
-> Task :app:testDebugUnitTest
-> Task :app:testDebugUnitTest FAILED
+> Task :app:compileDebugKotlin FAILED
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:456:13 Unresolved reference: chevronRight
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:1849:65 Unresolved reference: chevronRight
 FAILURE: Build failed with an exception.
 * What went wrong:
-Execution failed for task ':app:testDebugUnitTest'.
-> There were failing tests. See the report at: file:///home/runner/work/mive/mive/game-android/app/build/reports/tests/testDebugUnitTest/index.html
+Execution failed for task ':app:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
 > Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
 
 Welcome to Gradle 8.9!
 
@@ -61,47 +57,29 @@ Daemon will be stopped at the end of the build
 > Task :app:parseDebugLocalResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
-> Task :app:processDebugManifestForPackage
-> Task :app:javaPreCompileDebug
 > Task :app:preDebugUnitTestBuild UP-TO-DATE
+> Task :app:javaPreCompileDebug
+> Task :app:processDebugManifestForPackage
 > Task :app:javaPreCompileDebugUnitTest
 > Task :app:processDebugResources
-> Task :app:compileDebugKotlin
-w: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Art.kt:1458:55 Parameter 't' is never used
-w: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Core.kt:242:32 Elvis operator (?:) always returns the left operand of non-nullable type Game.Group?
-w: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Core.kt:551:21 Parameter 'force' is never used
-w: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/HudLayout.kt:64:20 Parameter 'height' is never used
-w: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:1484:9 Variable 'royalTop' is never used
-w: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:1485:9 Variable 'royalBot' is never used
-w: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:1519:9 Variable 'capH' is never used
-w: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/VictoryLayout.kt:101:9 The value 'stackOf()' assigned to 'var stack: Float defined in ir.mivehchin.game.VictoryGeometry.`<init>`' is never used
 
-> Task :app:compileDebugJavaWithJavac NO-SOURCE
-> Task :app:processDebugJavaRes
-> Task :app:bundleDebugClassesToRuntimeJar
-> Task :app:bundleDebugClassesToCompileJar
-> Task :app:compileDebugUnitTestKotlin
-> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
-> Task :app:processDebugUnitTestJavaRes
-
-> Task :app:testDebugUnitTest
-
-HudLayoutTest > goalChipsOnlyReserveSpaceWhenTheLevelHasGoals FAILED
-    java.lang.AssertionError at HudLayoutTest.kt:77
-
-18 tests completed, 1 failed
-
-> Task :app:testDebugUnitTest FAILED
+> Task :app:compileDebugKotlin FAILED
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:456:13 Unresolved reference: chevronRight
+e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:1849:65 Unresolved reference: chevronRight
 
 FAILURE: Build failed with an exception.
 
 * What went wrong:
-Execution failed for task ':app:testDebugUnitTest'.
-> There were failing tests. See the report at: file:///home/runner/work/mive/mive/game-android/app/build/reports/tests/testDebugUnitTest/index.html
+Execution failed for task ':app:compileDebugKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
 
 * Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
 > Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 46s
-24 actionable tasks: 23 executed, 1 up-to-date
+BUILD FAILED in 1m 34s
+18 actionable tasks: 17 executed, 1 up-to-date
 === apk outputs ===
