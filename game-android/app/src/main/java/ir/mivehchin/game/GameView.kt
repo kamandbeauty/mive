@@ -122,6 +122,7 @@ class GameView(context: Context) : View(context) {
     internal var boardRect = RectF()
     internal var cellSize = 1f
     internal var framePath: android.graphics.Path? = null
+    internal val frameBounds = RectF()
     private var frameLevel = -1
     private var frameCell = 0f
 
@@ -148,6 +149,8 @@ class GameView(context: Context) : View(context) {
     internal val floats = ArrayList<FloatText>()
 
     internal var introAt = 0L
+    internal var comboAt = 0L
+    internal var comboValue = 0
     internal var flashAt = 0L
     internal var flashColor = 0
     internal var shakeUntil = 0L
@@ -241,31 +244,72 @@ class GameView(context: Context) : View(context) {
 
     internal fun ensureBoardLayout() {
         if (widthPx <= 0f || heightPx <= 0f) return
-        val rowsN = game?.rows ?: 9
-        val colsN = game?.cols ?: 8
-        val pad = widthPx * 0.035f
-        val top = heightPx * 0.250f
-        val bottom = heightPx * 0.228f
+        val g = game
+
+        // The level mask rarely fills the whole grid (the diamond never uses
+        // column 0), so centre on the *playable* box, not on rows x cols.
+        var minR = 0
+        var maxR = (g?.rows ?: 9) - 1
+        var minC = 0
+        var maxC = (g?.cols ?: 8) - 1
+        if (g != null) {
+            var r0 = g.rows
+            var r1 = -1
+            var c0 = g.cols
+            var c1 = -1
+            for (r in 0 until g.rows) {
+                for (c in 0 until g.cols) {
+                    if (!g.playable(r, c)) continue
+                    if (r < r0) r0 = r
+                    if (r > r1) r1 = r
+                    if (c < c0) c0 = c
+                    if (c > c1) c1 = c
+                }
+            }
+            if (r1 >= 0) {
+                minR = r0
+                maxR = r1
+                minC = c0
+                maxC = c1
+            }
+        }
+        val spanR = maxR - minR + 1
+        val spanC = maxC - minC + 1
+
+        val sidePad = widthPx * 0.05f
+        val hasGoals = g != null && g.level.collect.isNotEmpty()
+        val top = heightPx * (if (hasGoals) 0.235f else 0.200f)
+        val bottom = heightPx * 0.190f
         val availH = heightPx - top - bottom
-        val cellW = (widthPx - 2 * pad) / colsN
-        val cellH = availH / rowsN
+
+        // 0.34 of a cell is the wooden rim that hangs around the shape
+        val cellW = (widthPx - 2 * sidePad) / (spanC + 0.30f)
+        val cellH = availH / (spanR + 0.30f)
         val newCell = min(cellW, cellH)
-        val bw = newCell * colsN
-        val bh = newCell * rowsN
-        val left = (widthPx - bw) / 2f
-        val boardTop = top + (availH - bh) / 2f
-        boardRect.set(left, boardTop, left + bw, boardTop + bh)
+
+        val bw = newCell * spanC
+        val bh = newCell * spanR
+        val gridLeft = (widthPx - bw) / 2f - minC * newCell
+        val gridTop = top + (availH - bh) / 2f - minR * newCell
+        boardRect.set(gridLeft, gridTop, gridLeft + newCell * (g?.cols ?: 8), gridTop + newCell * (g?.rows ?: 9))
+
         if (abs(newCell - cellSize) > 0.5f) {
             cellSize = newCell
             snapSprites()
             framePath = null
         }
-        val g = game
         if (g != null && (framePath == null || frameLevel != g.level.id || abs(frameCell - cellSize) > 0.5f)) {
-            framePath = Art.boardShape(g, boardRect.left, boardRect.top, cellSize, cellSize * 0.17f)
+            framePath = Art.boardShape(g, boardRect.left, boardRect.top, cellSize, cellSize * 0.15f)
+            framePath?.let { frameBoundsOf(it) }
             frameLevel = g.level.id
             frameCell = cellSize
         }
+    }
+
+    private fun frameBoundsOf(path: android.graphics.Path) {
+        val r = RectF()
+        path.computeBounds(r, true)
+        frameBounds.set(r)
     }
 
     private fun snapSprites() {
@@ -576,16 +620,8 @@ class GameView(context: Context) : View(context) {
                 )
             }
             if (step.combo >= 2) {
-                floats.add(
-                    FloatText(
-                        "کمبو ×${step.combo}",
-                        boardRect.centerX(),
-                        boardRect.centerY(),
-                        now,
-                        Palette.CORAL,
-                        cellSize * 0.78f
-                    )
-                )
+                comboAt = now
+                comboValue = step.combo
                 shake(cellSize * 0.045f * step.combo.coerceAtMost(4), 170L)
             }
             // audio: one voice per clear, picked by what actually happened
