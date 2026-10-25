@@ -22,6 +22,8 @@ class GameView(context: Context) : View(context) {
         const val SHARD = 1
         const val RING = 2
         const val FLASH = 3
+        const val BEAM = 4
+        const val SHOCK = 5
     }
 
     enum class Style { PRIMARY, SECONDARY, GHOST, DANGER }
@@ -132,6 +134,7 @@ class GameView(context: Context) : View(context) {
     private var wheelSpinFrom = 0f
     private var wheelSpinTo = 0f
     internal var wheelSpinDur = 0L
+    private var lastWheelTick = 0
     internal var wheelPrize: WheelSlice? = null
     internal var wheelAwarded = true
 
@@ -145,6 +148,8 @@ class GameView(context: Context) : View(context) {
     internal val floats = ArrayList<FloatText>()
 
     internal var introAt = 0L
+    internal var flashAt = 0L
+    internal var flashColor = 0
     internal var shakeUntil = 0L
     internal var shakeMag = 0f
     internal var boardGlow = 0f
@@ -166,13 +171,11 @@ class GameView(context: Context) : View(context) {
         Art.init(context)
         save.initDefaults(eco)
         save.tickLives(System.currentTimeMillis(), eco)
-        loadSound(R.raw.sfx_swap)
-        loadSound(R.raw.sfx_pop)
-        loadSound(R.raw.sfx_special)
-        loadSound(R.raw.sfx_coin)
-        loadSound(R.raw.sfx_win)
-        loadSound(R.raw.sfx_lose)
-        loadSound(R.raw.sfx_click)
+        for (id in intArrayOf(
+            R.raw.sfx_click, R.raw.sfx_swap, R.raw.sfx_pop, R.raw.sfx_match, R.raw.sfx_special,
+            R.raw.sfx_explode, R.raw.sfx_ice, R.raw.sfx_coin, R.raw.sfx_star, R.raw.sfx_wheel,
+            R.raw.sfx_booster, R.raw.sfx_win, R.raw.sfx_lose
+        )) loadSound(id)
         isFocusable = true
     }
 
@@ -181,9 +184,13 @@ class GameView(context: Context) : View(context) {
     }
 
     internal fun sound(id: Int) {
+        sound(id, 1f)
+    }
+
+    internal fun sound(id: Int, rate: Float) {
         if (!save.sound) return
         val s = soundIds[id] ?: return
-        soundPool.play(s, 0.9f, 0.9f, 1, 0, 1f)
+        soundPool.play(s, 0.85f, 0.85f, 1, 0, rate.coerceIn(0.5f, 2f))
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -237,8 +244,8 @@ class GameView(context: Context) : View(context) {
         val rowsN = game?.rows ?: 9
         val colsN = game?.cols ?: 8
         val pad = widthPx * 0.035f
-        val top = heightPx * 0.185f
-        val bottom = heightPx * 0.205f
+        val top = heightPx * 0.262f
+        val bottom = heightPx * 0.238f
         val availH = heightPx - top - bottom
         val cellW = (widthPx - 2 * pad) / colsN
         val cellH = availH / rowsN
@@ -360,7 +367,7 @@ class GameView(context: Context) : View(context) {
 
         val res = g.trySwap(a, b)
         if (!res.valid) {
-            sound(R.raw.sfx_swap)
+            sound(R.raw.sfx_click)
             val now = System.currentTimeMillis()
             if (sa != null) sa.move(sa.x + (b.c - a.c) * cellSize * 0.16f, sa.y + (b.r - a.r) * cellSize * 0.16f, now, 70, false)
             if (sb != null) sb.move(sb.x + (a.c - b.c) * cellSize * 0.16f, sb.y + (a.r - b.r) * cellSize * 0.16f, now, 70, false)
@@ -412,6 +419,7 @@ class GameView(context: Context) : View(context) {
             return
         }
         boosterMode = if (kind == "hammer") "hammer" else null
+        sound(R.raw.sfx_booster)
         when (kind) {
             "hammer" -> toast("یک میوه را انتخاب کن")
             "shuffle" -> useShuffle()
@@ -506,18 +514,37 @@ class GameView(context: Context) : View(context) {
 
     private fun applyStep(step: Step, now: Long): Long = when (step) {
         is Step.Clear -> {
-            var biggest = 0f
+            var bombs = 0
+            var stripes = 0
             for (cell in step.cells) {
                 val sp = spriteAt(cell.r, cell.c) ?: continue
-                sp.popStart = now
                 val x = boardRect.left + sp.x + cellSize / 2f
                 val y = boardRect.top + sp.y + cellSize / 2f
                 val color = Art.produceColor(sp.tile.type)
-                sparkBurst(x, y, color, 8)
-                shardBurst(x, y, color, 4)
-                ring(x, y, 0xFFFFFFFF.toInt(), cellSize * 0.75f, 300L)
-                flash(x, y, color, cellSize * 0.85f, 260L)
-                biggest = kotlin.math.max(biggest, cellSize)
+                when (sp.tile.special) {
+                    "stripeH" -> {
+                        stripes++
+                        beam(x, y, cellSize * 3.2f, false, 0xFFFFF5D0.toInt())
+                        sparkBurst(x, y, color, 9)
+                    }
+                    "stripeV" -> {
+                        stripes++
+                        beam(x, y, cellSize * 3.2f, true, 0xFFFFF5D0.toInt())
+                        sparkBurst(x, y, color, 9)
+                    }
+                    "bomb" -> {
+                        bombs++
+                        shock(x, y, cellSize * 2.4f, 0xFFFFA15C.toInt())
+                        shardBurst(x, y, color, 10)
+                        flash(x, y, 0xFFFFD08A.toInt(), cellSize * 1.6f, 380L)
+                    }
+                    else -> {
+                        sparkBurst(x, y, color, 8)
+                        shardBurst(x, y, color, 4)
+                    }
+                }
+                ring(x, y, 0xFFFFFFFF.toInt(), cellSize * 0.8f, 300L)
+                flash(x, y, color, cellSize * 0.9f, 260L)
             }
             for (tr in step.transforms) {
                 val sp = spriteAt(tr.r, tr.c) ?: continue
@@ -525,16 +552,16 @@ class GameView(context: Context) : View(context) {
                 if (tr.special == "rainbow") sp.tile.type = -1
                 val x = boardRect.left + sp.x + cellSize / 2f
                 val y = boardRect.top + sp.y + cellSize / 2f
-                sparkBurst(x, y, Palette.GOLD, 6)
-                ring(x, y, Palette.GOLD, cellSize * 1.1f, 420L)
-                flash(x, y, 0xFFFFE9A8.toInt(), cellSize * 1.0f, 320L)
-                if (tr.special == "bomb" || tr.special == "rainbow") shake(cellSize * 0.16f, 220L)
+                sparkBurst(x, y, Palette.GOLD, 8)
+                ring(x, y, Palette.GOLD, cellSize * 1.15f, 430L)
+                flash(x, y, 0xFFFFE9A8.toInt(), cellSize * 1.05f, 330L)
+                if (tr.special == "bomb" || tr.special == "rainbow") shake(cellSize * 0.16f, 230L)
             }
             for (cell in step.ice) {
                 val x = boardRect.left + cell.c * cellSize + cellSize / 2f
                 val y = boardRect.top + cell.r * cellSize + cellSize / 2f
-                shardBurst(x, y, 0xFFB9E7F7.toInt(), 6)
-                ring(x, y, 0xFFE3F6FF.toInt(), cellSize * 0.9f, 360L)
+                shardBurst(x, y, 0xFFB9E7F7.toInt(), 8)
+                ring(x, y, 0xFFE3F6FF.toInt(), cellSize * 0.95f, 380L)
             }
             if (step.gained > 0) {
                 floats.add(
@@ -544,7 +571,7 @@ class GameView(context: Context) : View(context) {
                         boardRect.top + cellSize * (1.2f + Random.nextFloat()),
                         now,
                         if (step.combo >= 3) Palette.GOLD else Palette.LIME,
-                        cellSize * 0.5f
+                        cellSize * 0.52f
                     )
                 )
             }
@@ -556,14 +583,25 @@ class GameView(context: Context) : View(context) {
                         boardRect.centerY(),
                         now,
                         Palette.CORAL,
-                        cellSize * 0.72f
+                        cellSize * 0.78f
                     )
                 )
-                shake(cellSize * 0.05f * step.combo.coerceAtMost(4), 160L)
+                shake(cellSize * 0.045f * step.combo.coerceAtMost(4), 170L)
+            }
+            // audio: one voice per clear, picked by what actually happened
+            val pitch = 1f + 0.055f * (step.combo - 1).coerceIn(0, 7)
+            when {
+                bombs > 0 -> {
+                    sound(R.raw.sfx_explode)
+                    shake(cellSize * 0.3f, 300L)
+                    screenFlash(0xFFFFC98A.toInt())
+                }
+                stripes > 0 -> sound(R.raw.sfx_special, 1f + 0.03f * stripes)
+                step.ice.isNotEmpty() -> sound(R.raw.sfx_ice)
+                step.combo >= 2 -> sound(R.raw.sfx_match, pitch)
+                else -> sound(R.raw.sfx_pop, 1f + 0.02f * (step.combo - 1).coerceAtLeast(0))
             }
             popCells = step.cells
-            val specialSound = step.combo >= 2 || step.transforms.isNotEmpty() || step.ice.isNotEmpty()
-            sound(if (specialSound) R.raw.sfx_special else R.raw.sfx_pop)
             200L
         }
         is Step.Settle -> {
@@ -687,7 +725,8 @@ class GameView(context: Context) : View(context) {
         wheelSpinFrom = wheelAngle
         wheelSpinTo = target
         wheelSpinStart = now
-        wheelSpinDur = 2600L
+        wheelSpinDur = 3400L
+        lastWheelTick = Int.MIN_VALUE
         sound(R.raw.sfx_click)
     }
 
@@ -696,11 +735,18 @@ class GameView(context: Context) : View(context) {
         val k = ((now - wheelSpinStart).toFloat() / wheelSpinDur).coerceIn(0f, 1f)
         val eased = 1f - (1f - k) * (1f - k) * (1f - k)
         wheelAngle = wheelSpinFrom + (wheelSpinTo - wheelSpinFrom) * eased
+        val slices = eco.wheel.size.coerceAtLeast(1)
+        val tick = ((wheelAngle / (360f / slices)).toInt())
+        if (tick != lastWheelTick) {
+            lastWheelTick = tick
+            if (k < 0.96f) sound(R.raw.sfx_wheel, 0.9f + 0.3f * (1f - k))
+        }
         if (k >= 1f) {
             wheelSpinDur = 0L
             if (!wheelAwarded) {
                 wheelAwarded = true
                 wheelPrize?.let { award(it) }
+                sound(R.raw.sfx_star)
             }
         }
     }
@@ -713,6 +759,7 @@ class GameView(context: Context) : View(context) {
         }
         save.persist()
         sound(R.raw.sfx_coin)
+        screenFlash(0xFFFFE9A8.toInt())
     }
 
     internal fun wheelReadyIn(): Long {
@@ -861,6 +908,21 @@ class GameView(context: Context) : View(context) {
         }
     }
 
+    internal fun beam(x: Float, y: Float, length: Float, vertical: Boolean, color: Int) {
+        particles.add(
+            Particle(
+                x, y, 0f, 0f, color, System.currentTimeMillis(), 320L, length,
+                BEAM, if (vertical) 1f else 0f, 0f, 0f
+            )
+        )
+    }
+
+    internal fun shock(x: Float, y: Float, radius: Float, color: Int) {
+        particles.add(
+            Particle(x, y, 0f, 0f, color, System.currentTimeMillis(), 420L, radius, SHOCK, 0f, 0f, 0f)
+        )
+    }
+
     internal fun ring(x: Float, y: Float, color: Int, radius: Float, life: Long) {
         particles.add(Particle(x, y, 0f, 0f, color, System.currentTimeMillis(), life, radius, RING, 0f, 0f, 0f))
     }
@@ -893,6 +955,11 @@ class GameView(context: Context) : View(context) {
                 )
             )
         }
+    }
+
+    internal fun screenFlash(color: Int) {
+        flashAt = System.currentTimeMillis()
+        flashColor = color
     }
 
     internal fun shake(mag: Float, duration: Long) {

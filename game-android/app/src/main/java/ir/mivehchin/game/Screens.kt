@@ -2,6 +2,7 @@ package ir.mivehchin.game
 
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.RectF
 import ir.mivehchin.game.GameView.Hotspot
 import ir.mivehchin.game.GameView.Style
@@ -23,87 +24,170 @@ private fun fmtTime(ms: Long): String {
 
 private fun rrect(x: Float, y: Float, w: Float, h: Float) = RectF(x, y, x + w, y + h)
 
+private fun iconFor(kind: String, c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+    when {
+        kind.startsWith("hammer") -> Art.hammer(c, cx, cy, r, color)
+        kind.startsWith("shuffle") -> Art.shuffleIcon(c, cx, cy, r, color)
+        kind.startsWith("moves") -> Art.plusMoves(c, cx, cy, r, color)
+        kind.startsWith("life") || kind == "hearts" -> Art.heart(c, cx, cy, r, true, color)
+        kind.startsWith("coin") -> Art.coin(c, cx, cy, r)
+        else -> Art.star(c, cx, cy, r, true, color)
+    }
+}
+
 /* ------------------------------------------------------------------ home */
 
 internal fun GameView.drawHome(c: Canvas) {
     val w = widthPx
     val h = heightPx
+    val now = System.currentTimeMillis()
 
-    // top status pills
-    val pillH = h * 0.055f
-    pill(c, rrect(w * 0.05f, h * 0.035f, w * 0.36f, pillH), { cc, cx, cy, r -> Art.coin(cc, cx, cy, r) }, fmtCoins(save.coins))
-    pill(
-        c, rrect(w * 0.59f, h * 0.035f, w * 0.36f, pillH),
-        { cc, cx, cy, r -> Art.heart(cc, cx, cy, r * 0.9f, true) }, "${save.lives}/${eco.maxLives}"
-    )
+    // --- resource pills -------------------------------------------------
+    val pillH = h * 0.05f
+    val coinRect = rrect(w * 0.05f, h * 0.028f, w * 0.4f, pillH)
+    Art.card(c, coinRect, pillH * 0.44f)
+    Art.badge(c, coinRect.left + pillH * 0.52f, coinRect.centerY(), pillH * 0.34f,
+        Palette.GOLD, Palette.GOLD_DARK, Palette.GOLD_DEEP) { cc, cx, cy, r -> Art.coin(cc, cx, cy, r * 0.95f) }
+    Art.text(c, fmtCoins(save.coins), coinRect.right - w * 0.06f, coinRect.centerY() + pillH * 0.14f,
+        pillH * 0.46f, Palette.CREAM, Paint.Align.RIGHT, Art.black, true)
+    hotspots.add(Hotspot(RectF(coinRect), { screen = Screen.SHOP }))
 
-    // wooden sign behind the title
-    val sign = RectF(w * 0.08f, h * 0.165f, w * 0.92f, h * 0.275f)
-    Art.panel(c, RectF(sign.left + 3f, sign.top + 8f, sign.right + 3f, sign.bottom + 8f), w * 0.05f, 0x55000000)
-    Art.buttonSkin(c, sign, w * 0.05f, 0xFFA9713F.toInt(), 0xFF6E4220.toInt())
-    Art.text(c, "میوه‌چین", w * 0.5f, h * 0.243f, w * 0.125f, Palette.CREAM, Paint.Align.CENTER, Art.black, true)
-    Art.text(c, "سه‌تا کنار هم بچین، باغ را پر کن!", w * 0.5f, h * 0.305f, w * 0.043f, Palette.MUTED)
+    val heartRect = rrect(w * 0.55f, h * 0.028f, w * 0.4f, pillH)
+    Art.card(c, heartRect, pillH * 0.44f, Palette.DANGER)
+    Art.badge(c, heartRect.left + pillH * 0.52f, heartRect.centerY(), pillH * 0.34f,
+        0xFFFF7D8F.toInt(), 0xFFC22B44.toInt(), 0xFF7A1226) { cc, cx, cy, r -> Art.heart(cc, cx, cy, r, true) }
+    val lifeText = "${save.lives}/${eco.maxLives}"
+    Art.text(c, lifeText, heartRect.right - w * 0.06f, heartRect.centerY() + pillH * 0.14f,
+        pillH * 0.46f, Palette.CREAM, Paint.Align.RIGHT, Art.black, true)
+    hotspots.add(Hotspot(RectF(heartRect), { buyLife() }))
 
-    // produce parade, gently bobbing
-    val secs = (System.currentTimeMillis() % 100000L) / 1000f
+    // --- logo ribbon ----------------------------------------------------
+    val ribbon = RectF(w * 0.06f, h * 0.095f, w * 0.94f, h * 0.19f)
+    val tailL = Path()
+    tailL.moveTo(ribbon.left, ribbon.top + ribbon.height() * 0.18f)
+    tailL.lineTo(ribbon.left - w * 0.05f, ribbon.top + ribbon.height() * 0.36f)
+    tailL.lineTo(ribbon.left, ribbon.top + ribbon.height() * 0.54f)
+    tailL.lineTo(ribbon.left, ribbon.bottom - ribbon.height() * 0.18f)
+    tailL.close()
+    val tailR = Path()
+    tailR.moveTo(ribbon.right, ribbon.top + ribbon.height() * 0.18f)
+    tailR.lineTo(ribbon.right + w * 0.05f, ribbon.top + ribbon.height() * 0.36f)
+    tailR.lineTo(ribbon.right, ribbon.top + ribbon.height() * 0.54f)
+    tailR.lineTo(ribbon.right, ribbon.bottom - ribbon.height() * 0.18f)
+    tailR.close()
+    val tailPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    tailPaint.color = 0xFF6E4220.toInt()
+    c.drawPath(tailL, tailPaint)
+    c.drawPath(tailR, tailPaint)
+
+    Art.gradientPanel(c, ribbon, ribbon.height() * 0.3f, 0xFFF3C34A.toInt(), 0xFFCf8A16.toInt())
+    val inner = RectF(ribbon.left + 4f, ribbon.top + 4f, ribbon.right - 4f, ribbon.bottom - 4f)
+    Art.panel(c, inner, inner.height() * 0.28f, 0x00000000, 2.2f, 0x88FFF6DC.toInt())
+    Art.title(c, "میوه‌چین", ribbon.centerX(), ribbon.centerY() + ribbon.height() * 0.19f,
+        w * 0.115f, Palette.CREAM, 0xFF4A2508.toInt())
+    Art.leaf(c, ribbon.left + w * 0.045f, ribbon.centerY(), w * 0.06f, Palette.LEAF_DARK, Palette.LEAF, -20f)
+    Art.leaf(c, ribbon.right - w * 0.045f, ribbon.centerY(), w * 0.06f, Palette.LEAF_DARK, Palette.LEAF, 20f)
+
+    Art.text(c, "سه‌تا کنار هم بچین، باغ را پر کن!", w * 0.5f, h * 0.222f, w * 0.043f, Palette.CREAM_DIM, Art.regular, true)
+
+    // --- produce parade on a shelf --------------------------------------
+    val secs = (now % 100000L) / 1000f
     val types = intArrayOf(0, 1, 2, 4, 6)
     for (i in types.indices) {
         val x = w * (0.16f + 0.17f * i)
-        val bob = sin(secs * 1.8f + i * 0.9f) * h * 0.008f
-        val y = h * (0.365f + if (i % 2 == 0) 0f else 0.016f) + bob
-        Art.glow(c, x, y + w * 0.05f, w * 0.1f, Art.produceColor(types[i]), 0.16f)
-        Art.produce(c, types[i], x, y, w * 0.15f)
+        val bob = sin(secs * 1.7f + i * 0.9f) * h * 0.009f
+        val y = h * 0.268f + bob + (if (i % 2 == 0) 0f else h * 0.012f)
+        Art.glow(c, x, y + w * 0.055f, w * 0.11f, Art.produceColor(types[i]), 0.22f)
+        Art.produce(c, types[i], x, y, w * 0.165f)
     }
+    val shelf = RectF(w * 0.1f, h * 0.315f, w * 0.9f, h * 0.348f)
+    Art.plaque(c, shelf, shelf.height() * 0.35f)
+    Art.text(c, "پنج محصول تازه، یک باغ", shelf.centerX(), shelf.centerY() + shelf.height() * 0.16f,
+        shelf.height() * 0.34f, 0xFF4A2508.toInt(), Paint.Align.CENTER, Art.bold)
 
-    button(
-        c, rrect(w * 0.14f, h * 0.47f, w * 0.72f, h * 0.078f),
-        "بازی", Style.PRIMARY
-    ) {
+    // --- big play button ------------------------------------------------
+    val playRect = RectF(w * 0.12f, h * 0.375f, w * 0.88f, h * 0.458f)
+    Art.buttonSkin(c, playRect, playRect.height() * 0.36f, Palette.LIME, 0xFF6FAF30.toInt())
+    Art.badge(c, playRect.left + playRect.height() * 0.56f, playRect.centerY(), playRect.height() * 0.33f,
+        0xFFFFFFFF.toInt(), 0xFFE9FBD0.toInt(), 0xFF6FAF30) { cc, cx, cy, r -> Art.play(cc, cx + r * 0.12f, cy, r * 0.95f, 0xFF2F6B14.toInt()) }
+    Art.text(c, "بازی", playRect.centerX() + w * 0.02f, playRect.centerY() + playRect.height() * 0.17f,
+        playRect.height() * 0.44f, 0xFF17330A.toInt(), Paint.Align.CENTER, Art.black, true)
+    hotspots.add(Hotspot(RectF(playRect), {
         if (save.level - 1 < levels.size) startLevel(save.level - 1) else screen = Screen.MAP
+    }))
+    Art.text(c, "ادامه از سطح ${save.level}", w * 0.5f, h * 0.492f, w * 0.042f, Palette.CREAM_DIM, Art.regular, true)
+
+    // --- 2x2 tiles ------------------------------------------------------
+    val tiles = listOf(
+        Triple("نقشهٔ سطح‌ها", "۶۰ مرحله", Screen.MAP),
+        Triple("فروشگاه", "بوستر و جان", Screen.SHOP),
+        Triple("چرخ شانس", "هر ۴ ساعت", Screen.WHEEL),
+        Triple("مسیر ستاره", "${save.totalStars} ستاره", Screen.PASS)
+    )
+    val tw = w * 0.435f
+    val th = h * 0.108f
+    for (i in tiles.indices) {
+        val col = i % 2
+        val row = i / 2
+        val x = if (col == 0) w * 0.05f else w * 0.515f
+        val y = h * 0.525f + row * (th + h * 0.016f)
+        val rect = RectF(x, y, x + tw, y + th)
+        Art.card(c, rect, th * 0.28f)
+        val badgeR = th * 0.29f
+        val bx = x + th * 0.36f + badgeR
+        Art.badge(c, bx, rect.centerY(), badgeR, 0xFF2F7A4E.toInt(), 0xFF14402C.toInt(), Palette.LIME) { cc, cx, cy, r ->
+            when (i) {
+                0 -> Art.mapIcon(cc, cx, cy, r, Palette.CREAM)
+                1 -> Art.cart(cc, cx, cy, r, Palette.CREAM)
+                2 -> Art.wheelIcon(cc, cx, cy, r * 1.05f, Palette.CREAM)
+                else -> Art.star(cc, cx, cy, r * 1.1f, true, Palette.GOLD)
+            }
+        }
+        Art.text(c, tiles[i].first, rect.right - w * 0.03f, rect.centerY() - th * 0.08f,
+            th * 0.26f, Palette.CREAM, Paint.Align.RIGHT, Art.bold, true)
+        Art.text(c, tiles[i].second, rect.right - w * 0.03f, rect.centerY() + th * 0.22f,
+            th * 0.19f, Palette.MUTED, Paint.Align.RIGHT)
+        val target = tiles[i].third
+        hotspots.add(Hotspot(RectF(rect), { screen = target }))
     }
 
-    Art.text(c, "ادامه از سطح ${save.level}", w * 0.5f, h * 0.575f, w * 0.04f, Palette.MUTED)
+    // --- footer ---------------------------------------------------------
+    val settingsRect = RectF(w * 0.33f, h * 0.828f, w * 0.67f, h * 0.884f)
+    Art.panel(c, settingsRect, settingsRect.height() / 2f, 0x4D0A1F16, 1.4f, 0x33FFFFFF)
+    Art.gear(c, settingsRect.left + settingsRect.height() * 0.5f, settingsRect.centerY(),
+        settingsRect.height() * 0.28f, Palette.CREAM_DIM)
+    Art.text(c, "تنظیمات", settingsRect.centerX() + settingsRect.height() * 0.24f, settingsRect.centerY() + settingsRect.height() * 0.15f,
+        settingsRect.height() * 0.36f, Palette.CREAM, Paint.Align.CENTER, Art.bold)
+    hotspots.add(Hotspot(RectF(settingsRect), { screen = Screen.SETTINGS }))
 
-    // 2x2 menu
-    val bw = w * 0.42f
-    val bh = h * 0.072f
-    button(c, rrect(w * 0.05f, h * 0.615f, bw, bh), "نقشهٔ سطح‌ها", Style.SECONDARY) { screen = Screen.MAP }
-    button(c, rrect(w * 0.53f, h * 0.615f, bw, bh), "فروشگاه", Style.SECONDARY) { screen = Screen.SHOP }
-    button(c, rrect(w * 0.05f, h * 0.705f, bw, bh), "چرخ شانس", Style.SECONDARY) { screen = Screen.WHEEL }
-    button(c, rrect(w * 0.53f, h * 0.705f, bw, bh), "مسیر ستاره", Style.SECONDARY) { screen = Screen.PASS }
-
-    button(c, rrect(w * 0.30f, h * 0.815f, w * 0.40f, h * 0.058f), "تنظیمات", Style.GHOST) { screen = Screen.SETTINGS }
-
-    Art.text(
-        c, "آخرین سطح باز: ${save.level}  •  ستاره‌ها: ${save.totalStars}",
-        w * 0.5f, h * 0.945f, w * 0.036f, 0x889FC4B6.toInt()
-    )
+    Art.text(c, "ستاره‌ها: ${save.totalStars}  •  آخرین سطح: ${save.level}", w * 0.5f, h * 0.918f,
+        w * 0.036f, 0xAAFFF6E5.toInt(), Art.regular, true)
 }
-
 
 /* ------------------------------------------------------------------- map */
 
 internal fun GameView.drawMap(c: Canvas) {
     val w = widthPx
     val h = heightPx
+    val now = System.currentTimeMillis()
 
     header(c, "نقشهٔ سطح‌ها")
 
-    val top = h * 0.135f
+    val top = h * 0.15f
     val bottom = h * 0.94f
     val cols = 4
     val gap = w * 0.032f
     val size = (w - gap * (cols + 1)) / cols
     val rows = ceil(levels.size.toFloat() / cols).toInt()
-    val contentH = rows * size + gap * (rows + 1)
+    val contentH = rows * (size + gap) + gap
     val viewH = bottom - top
     val maxScroll = max(0f, contentH - viewH)
     mapScroll = mapScroll.coerceIn(0f, maxScroll)
 
     c.save()
-    c.clipRect(0f, top, w, bottom)
+    c.clipRect(0f, top - h * 0.01f, w, bottom)
 
-    // winding trail behind the nodes, like the reference level map
+    // winding trail
     if (levels.size > 1) {
         val pts = ArrayList<Float>()
         for (i in levels.indices) {
@@ -114,7 +198,7 @@ internal fun GameView.drawMap(c: Canvas) {
             pts.add(x + size / 2f)
             pts.add(y + size / 2f)
         }
-        val path = android.graphics.Path()
+        val path = Path()
         path.moveTo(pts[0], pts[1])
         var i = 2
         while (i + 3 < pts.size) {
@@ -131,12 +215,12 @@ internal fun GameView.drawMap(c: Canvas) {
         lp.style = Paint.Style.STROKE
         lp.strokeCap = Paint.Cap.ROUND
         lp.strokeJoin = Paint.Join.ROUND
-        lp.strokeWidth = size * 0.22f
-        lp.color = 0x4010311F
+        lp.strokeWidth = size * 0.26f
+        lp.color = 0x5510311F
         c.drawPath(path, lp)
-        lp.strokeWidth = size * 0.12f
-        lp.color = 0x30FFF6E5
-        lp.pathEffect = android.graphics.DashPathEffect(floatArrayOf(size * 0.14f, size * 0.16f), 0f)
+        lp.strokeWidth = size * 0.13f
+        lp.color = 0x66FFF6E5.toInt()
+        lp.pathEffect = android.graphics.DashPathEffect(floatArrayOf(size * 0.13f, size * 0.15f), 0f)
         c.drawPath(path, lp)
         lp.pathEffect = null
     }
@@ -146,52 +230,45 @@ internal fun GameView.drawMap(c: Canvas) {
         val col = i % cols
         val x = w - gap - (col + 1) * size - col * gap
         val y = top + gap + row * (size + gap) - mapScroll
-        if (y + size < top - 10f || y > bottom + 10f) continue
+        if (y + size < top - size || y > bottom + size) continue
 
         val lvl = levels[i]
         val unlocked = lvl.id <= save.level
         val stars = save.starsFor(lvl.id)
         val rect = RectF(x, y, x + size, y + size)
+        val current = lvl.id == save.level
+
+        if (current) {
+            val pulse = 0.5f + 0.5f * sin(now / 190f).toFloat()
+            Art.glow(c, rect.centerX(), rect.centerY(), size * 0.85f, Palette.LIME, 0.20f + 0.18f * pulse)
+        }
 
         if (unlocked) {
-            val current = lvl.id == save.level
+            Art.plaque(c, rect, size * 0.3f)
             if (current) {
-                val pulse = 0.5f + 0.5f * sin(System.currentTimeMillis() / 180f).toFloat()
-                Art.glow(c, rect.centerX(), rect.centerY(), size * 0.78f, Palette.LIME, 0.22f + 0.16f * pulse)
+                Art.panel(c, rect, size * 0.3f, 0x00000000, 3.5f, Palette.LIME)
             }
-            Art.panel(
-                c,
-                RectF(rect.left + 2f, rect.top + 6f, rect.right + 2f, rect.bottom + 6f),
-                size * 0.26f, 0x55000000
-            )
-            if (current) {
-                Art.buttonSkin(c, rect, size * 0.26f, Palette.LIME, 0xFF7CBE3A.toInt())
-            } else {
-                Art.buttonSkin(c, rect, size * 0.26f, 0xFFA9713F.toInt(), 0xFF6E4220.toInt())
-            }
-            Art.text(
-                c, "${lvl.id}", rect.centerX(), rect.centerY() - size * 0.02f, size * 0.36f,
-                if (current) 0xFF123A16.toInt() else Palette.CREAM, Paint.Align.CENTER, Art.black, !current
-            )
+            Art.text(c, "${lvl.id}", rect.centerX(), rect.centerY() - size * 0.04f, size * 0.38f,
+                Palette.CREAM, Paint.Align.CENTER, Art.black, true)
             for (s in 0 until 3) {
                 Art.star(
                     c,
-                    rect.centerX() + (s - 1) * size * 0.22f,
-                    rect.bottom - size * 0.18f,
-                    size * 0.085f,
-                    s < stars,
-                    Palette.GOLD
+                    rect.centerX() + (s - 1.2f) * size * 0.2f,
+                    rect.bottom - size * 0.17f,
+                    size * 0.075f,
+                    s < stars
                 )
             }
             hotspots.add(Hotspot(RectF(rect), { startLevel(i) }))
         } else {
-            Art.panel(c, rect, size * 0.26f, 0x2AFFFFFF, 1.2f, 0x22FFFFFF)
-            Art.lock(c, rect.centerX(), rect.centerY(), size * 0.2f, 0x66FFFFFF)
+            Art.panel(c, rect, size * 0.3f, 0x33103121, 1.4f, 0x33FFFFFF)
+            Art.lock(c, rect.centerX(), rect.centerY() - size * 0.03f, size * 0.2f, 0x77FFFFFF)
+            Art.text(c, "${lvl.id}", rect.centerX(), rect.bottom - size * 0.1f, size * 0.16f, 0x66FFFFFF)
         }
     }
     c.restore()
 
-    Art.text(c, "بکش تا پایین بروی", w * 0.5f, h * 0.965f, w * 0.034f, 0x669FC4B6.toInt())
+    Art.text(c, "بکش تا پایین بروی", w * 0.5f, h * 0.968f, w * 0.032f, 0x88FFF6E5.toInt(), Art.regular, true)
 }
 
 /* ------------------------------------------------------------------ game */
@@ -203,38 +280,42 @@ internal fun GameView.drawGame(c: Canvas) {
     val lvl = g.level
     val now = System.currentTimeMillis()
 
-    // top row: pause + level
-    Art.panel(c, rrect(w * 0.045f, h * 0.035f, w * 0.1f, h * 0.045f), h * 0.023f, 0x4D0A1F16)
-    Art.chevronLeft(c, w * 0.095f, h * 0.0575f, w * 0.022f, Palette.CREAM)
-    hotspots.add(Hotspot(rrect(w * 0.04f, h * 0.03f, w * 0.11f, h * 0.055f), { paused = true }))
+    // top bar
+    val back = RectF(w * 0.045f, h * 0.03f, w * 0.115f, h * 0.083f)
+    Art.card(c, back, back.height() * 0.34f)
+    Art.chevronLeft(c, back.centerX(), back.centerY(), back.height() * 0.28f, Palette.CREAM)
+    hotspots.add(Hotspot(RectF(back), { paused = true }))
 
-    Art.text(c, "سطح ${lvl.id}", w * 0.5f, h * 0.062f, w * 0.062f, Palette.CREAM, Paint.Align.CENTER, Art.black)
-    Art.text(c, lvl.name, w * 0.5f, h * 0.092f, w * 0.038f, Palette.MUTED)
+    Art.text(c, "سطح ${lvl.id}", w * 0.5f, h * 0.062f, w * 0.06f, Palette.CREAM, Paint.Align.CENTER, Art.black, true)
+    Art.text(c, lvl.name, w * 0.5f, h * 0.093f, w * 0.036f, Palette.MUTED)
 
-    // moves + score
-    val movesRect = rrect(w * 0.045f, h * 0.108f, w * 0.26f, h * 0.052f)
+    // moves badge
+    val movesRect = RectF(w * 0.045f, h * 0.108f, w * 0.25f, h * 0.178f)
     if (g.moves in 1..5 && g.status == Status.PLAYING) {
         val pulse = 0.5f + 0.5f * sin(now / 170f).toFloat()
-        Art.glow(c, movesRect.centerX(), movesRect.centerY(), movesRect.height() * (1.1f + 0.3f * pulse), Palette.CORAL, 0.22f + 0.18f * pulse)
-        Art.panel(c, movesRect, movesRect.height() / 2f, 0x4D0A1F16, 1.5f + pulse, Art.withAlpha(Palette.CORAL, 0.5f + 0.5f * pulse))
-    } else {
-        Art.panel(c, movesRect, movesRect.height() / 2f, 0x4D0A1F16)
+        Art.glow(c, movesRect.centerX(), movesRect.centerY(), movesRect.height() * (1.2f + 0.35f * pulse),
+            Palette.CORAL, 0.25f + 0.2f * pulse)
     }
-    Art.text(c, "حرکت", movesRect.left + w * 0.045f, movesRect.centerY() + w * 0.014f, w * 0.036f, Palette.MUTED)
-    Art.text(c, "${g.moves}", movesRect.right - w * 0.05f, movesRect.centerY() + w * 0.02f, w * 0.052f, if (g.moves <= 3) Palette.CORAL else Palette.CREAM, Paint.Align.RIGHT, Art.black)
+    Art.card(c, movesRect, movesRect.height() * 0.36f, if (g.moves in 1..5) Palette.CORAL else Palette.LIME)
+    Art.text(c, "حرکت", movesRect.centerX(), movesRect.top + movesRect.height() * 0.32f,
+        movesRect.height() * 0.3f, Palette.MUTED)
+    Art.text(c, "${g.moves}", movesRect.centerX(), movesRect.bottom - movesRect.height() * 0.16f,
+        movesRect.height() * 0.5f, if (g.moves <= 5) Palette.CORAL else Palette.CREAM,
+        Paint.Align.CENTER, Art.black, true)
 
-    val scoreRect = rrect(w * 0.325f, h * 0.114f, w * 0.63f, h * 0.04f)
+    // score bar
+    val scoreRect = RectF(w * 0.275f, h * 0.122f, w * 0.955f, h * 0.168f)
     val frac = if (lvl.target > 0) g.score.toFloat() / lvl.target else 0f
-    Art.progress(c, scoreRect, frac, Palette.GREEN, 0x4D0A1F16)
-    Art.text(
-        c, "${g.score} / ${lvl.target}", scoreRect.centerX(), scoreRect.bottom + h * 0.028f,
-        w * 0.036f, Palette.MUTED
-    )
+    Art.progress(c, scoreRect, frac, Palette.GREEN, 0x660A1F16)
+    Art.text(c, "${g.score}", scoreRect.left + w * 0.03f, scoreRect.centerY() + scoreRect.height() * 0.19f,
+        scoreRect.height() * 0.46f, Palette.CREAM, Paint.Align.LEFT, Art.black, true)
+    Art.text(c, "هدف ${lvl.target}", scoreRect.right - w * 0.03f, scoreRect.centerY() + scoreRect.height() * 0.19f,
+        scoreRect.height() * 0.4f, Palette.CREAM_DIM, Paint.Align.RIGHT, Art.bold)
 
-    drawObjectives(c, g, h * 0.155f)
+    drawObjectives(c, g, h * 0.196f)
 
-    // ------- wooden board with dark wells (reference look) -------
-    val pad = cellSize * 0.20f
+    // ---- board ----
+    val pad = cellSize * 0.17f
     val outer = RectF(
         boardRect.left - pad, boardRect.top - pad,
         boardRect.right + pad, boardRect.bottom + pad
@@ -255,8 +336,11 @@ internal fun GameView.drawGame(c: Canvas) {
             if (!g.playable(r, col)) continue
             val x = boardRect.left + col * cellSize
             val y = boardRect.top + r * cellSize
-            val cellRect = RectF(x + cellSize * 0.055f, y + cellSize * 0.055f, x + cellSize * 0.945f, y + cellSize * 0.945f)
-            Art.well(c, cellRect, cellSize * 0.23f)
+            val cellRect = RectF(
+                x + cellSize * 0.035f, y + cellSize * 0.035f,
+                x + cellSize * 0.965f, y + cellSize * 0.965f
+            )
+            Art.well(c, cellRect, cellSize * 0.22f)
             if (g.ice[r][col] > 0) Art.ice(c, cellRect, 1f)
         }
     }
@@ -266,9 +350,9 @@ internal fun GameView.drawGame(c: Canvas) {
         val pulse = 0.5f + 0.5f * sin(now / 130f).toFloat()
         val x = boardRect.left + sel.c * cellSize
         val y = boardRect.top + sel.r * cellSize
-        val ringRect = RectF(x + cellSize * 0.02f, y + cellSize * 0.02f, x + cellSize * 0.98f, y + cellSize * 0.98f)
-        Art.glow(c, ringRect.centerX(), ringRect.centerY(), cellSize * 0.8f, Palette.LIME, 0.18f + 0.14f * pulse)
-        Art.panel(c, ringRect, cellSize * 0.26f, 0x00000000, 2.5f + pulse * 1.5f, Art.withAlpha(Palette.LIME, 0.6f + 0.4f * pulse))
+        val ringRect = RectF(x + cellSize * 0.015f, y + cellSize * 0.015f, x + cellSize * 0.985f, y + cellSize * 0.985f)
+        Art.glow(c, ringRect.centerX(), ringRect.centerY(), cellSize * 0.85f, Palette.LIME, 0.2f + 0.15f * pulse)
+        Art.panel(c, ringRect, cellSize * 0.24f, 0x00000000, 3f + pulse * 2f, Art.withAlpha(Palette.LIME, 0.65f + 0.35f * pulse))
     }
 
     val seconds = (now % 1000000L) / 1000f
@@ -283,150 +367,111 @@ internal fun GameView.drawGame(c: Canvas) {
         var sy = 1f
 
         if (sp.popStart > 0L) {
-            val k = ((now - sp.popStart).toFloat() / 210f).coerceIn(0f, 1f)
-            scale = 1f + 0.3f * sin(k * Math.PI.toFloat())
+            val k = ((now - sp.popStart).toFloat() / 220f).coerceIn(0f, 1f)
+            scale = 1f + 0.34f * sin(k * Math.PI.toFloat())
             alpha = (255 * (1f - k * k)).toInt().coerceIn(0, 255)
         }
         if (sp.spawnAt > 0L && now - sp.spawnAt < 260L) {
             val k = ((now - sp.spawnAt).toFloat() / 260f).coerceIn(0f, 1f)
-            scale *= 0.82f + 0.18f * k
+            scale *= 0.84f + 0.16f * k
         }
-        if (sp.landAt > 0L && now - sp.landAt < 230L) {
-            val k = ((now - sp.landAt).toFloat() / 230f).coerceIn(0f, 1f)
-            val squash = sin(k * Math.PI.toFloat()) * 0.17f
-            sx = 1f + squash * 0.55f
+        if (sp.landAt > 0L && now - sp.landAt < 240L) {
+            val k = ((now - sp.landAt).toFloat() / 240f).coerceIn(0f, 1f)
+            val squash = sin(k * Math.PI.toFloat()) * 0.16f
+            sx = 1f + squash * 0.6f
             sy = 1f - squash
         }
         val idle = if (!busy && g.status == Status.PLAYING && sp.dur == 0L) {
-            sin(seconds * 2.1f + sp.phase) * 0.016f
+            sin(seconds * 2f + sp.phase) * 0.018f
         } else 0f
-        if (sel != null && sel.r == sp.r && sel.c == sp.c) scale *= 1.06f
+        if (sel != null && sel.r == sp.r && sel.c == sp.c) scale *= 1.07f
 
+        val type = sp.tile.type
         c.save()
         c.translate(cx, cy + idle * cellSize)
         c.scale(scale * sx, scale * sy)
-        Art.produce(c, sp.tile.type, 0f, 0f, cellSize * 0.9f, alpha)
+        if (type >= 0) {
+            Art.produce(c, type, 0f, 0f, cellSize * 1.02f, alpha)
+        }
         val special = sp.tile.special
         if (special != null && alpha > 30) {
-            Art.special(c, special, 0f, 0f, cellSize * 0.9f, alpha, seconds * 0.6f + sp.phase)
+            Art.special(c, special, 0f, 0f, cellSize * 0.98f, alpha, seconds * 0.6f + sp.phase)
         }
         c.restore()
     }
-    c.restore()
     drawEffects(c, now)
     c.restore()
     drawBoosters(c, g)
     drawIntro(c, now, lvl)
-}
 
-private fun GameView.drawIntro(c: Canvas, now: Long, lvl: Level) {
-    val age = now - introAt
-    if (age < 0L || age > 2100L) return
-    val w = widthPx
-    val h = heightPx
-    val k = (age / 2100f).coerceIn(0f, 1f)
-    val slide = if (k < 0.16f) (1f - k / 0.16f) * -h * 0.09f else 0f
-    val fade = when {
-        k > 0.78f -> 1f - (k - 0.78f) / 0.22f
-        k < 0.12f -> k / 0.12f
-        else -> 1f
-    }.coerceIn(0f, 1f)
-
-    val cx = w / 2f
-    val cy = h * 0.40f + slide
-    val bw = w * 0.62f
-    val bh = h * 0.085f
-    val rect = RectF(cx - bw / 2f, cy - bh / 2f, cx + bw / 2f, cy + bh / 2f)
-    val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    paint.color = Art.withAlpha(0xFF07130F.toInt(), 0.72f * fade)
-    c.drawRoundRect(RectF(rect.left + 4f, rect.top + 8f, rect.right + 4f, rect.bottom + 8f), bh * 0.3f, bh * 0.3f, paint)
-    Art.gradientPanel(
-        c,
-        rect,
-        bh * 0.3f,
-        Art.withAlpha(0xFF1F5A45.toInt(), fade),
-        Art.withAlpha(0xFF0C2A1E.toInt(), fade)
-    )
-    paint.style = Paint.Style.STROKE
-    paint.strokeWidth = 2f
-    paint.color = Art.withAlpha(Palette.LIME, 0.8f * fade)
-    c.drawRoundRect(rect, bh * 0.3f, bh * 0.3f, paint)
-    paint.style = Paint.Style.FILL
-
-    Art.text(c, "سطح ${lvl.id}", cx, cy - bh * 0.02f, bh * 0.42f, Art.withAlpha(Palette.CREAM, fade), Paint.Align.CENTER, Art.black, true)
-    Art.text(c, lvl.name, cx, cy + bh * 0.34f, bh * 0.28f, Art.withAlpha(Palette.MUTED, fade))
-    val g = game
-    if (g != null) {
-        Art.sparkle(c, rect.left + bw * 0.07f, cy, bh * 0.16f, Palette.GOLD, fade * 0.9f, age / 6f)
-        Art.sparkle(c, rect.right - bw * 0.07f, cy, bh * 0.16f, Palette.GOLD, fade * 0.9f, -age / 6f)
+    val flashAge = now - flashAt
+    if (flashAge in 0..230) {
+        val k = flashAge / 230f
+        val paint = Paint()
+        paint.color = Art.withAlpha(flashColor, 0.32f * (1f - k))
+        c.drawRect(0f, 0f, w, h, paint)
     }
-}
-
-private fun GameView.drawIce(c: Canvas, rect: RectF) {
-    Art.panel(c, rect, rect.width() * 0.22f, 0x558FD3F0)
-    val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    paint.color = 0xAAFFFFFF.toInt()
-    paint.strokeWidth = 2f
-    val cx = rect.centerX()
-    val cy = rect.centerY()
-    c.drawLine(cx - rect.width() * 0.25f, cy - rect.height() * 0.2f, cx + rect.width() * 0.1f, cy + rect.height() * 0.05f, paint)
-    c.drawLine(cx + rect.width() * 0.2f, cy - rect.height() * 0.28f, cx - rect.width() * 0.02f, cy + rect.height() * 0.22f, paint)
 }
 
 private fun GameView.drawObjectives(c: Canvas, g: Game, y: Float) {
     val w = widthPx
-    var x = w * 0.06f
-    val chipH = heightPx * 0.045f
-    val chipY = y
+    var x = w * 0.05f
+    val chipH = heightPx * 0.048f
     for (goal in g.level.collect) {
-        val chipW = w * 0.24f
-        val rect = rrect(x, chipY, chipW, chipH)
+        val chipW = w * 0.26f
+        val rect = rrect(x, y, chipW, chipH)
         val done = g.collected[goal.type] >= goal.count
-        Art.panel(c, rect, chipH / 2f, if (done) 0x5522C55E else 0x4D0A1F16)
-        Art.produce(c, goal.type, rect.left + chipH * 0.6f, rect.centerY(), chipH * 0.95f)
+        Art.card(c, rect, chipH * 0.46f, if (done) Palette.GREEN else Palette.LIME)
+        Art.produce(c, goal.type, rect.left + chipH * 0.58f, rect.centerY(), chipH * 1.08f)
         val text = "${min(g.collected[goal.type], goal.count)}/${goal.count}"
-        Art.text(c, text, rect.right - chipH * 0.35f, rect.centerY() + chipH * 0.17f, chipH * 0.42f, Palette.CREAM, Paint.Align.RIGHT, Art.bold)
-        x += chipW + w * 0.02f
+        Art.text(c, text, rect.right - chipH * 0.3f, rect.centerY() + chipH * 0.16f,
+            chipH * 0.42f, Palette.CREAM, Paint.Align.RIGHT, Art.black, true)
+        x += chipW + w * 0.018f
     }
     if (g.iceLeft > 0) {
-        val rect = rrect(x, chipY, w * 0.2f, chipH)
-        Art.panel(c, rect, chipH / 2f, 0x4D0A1F16)
-        Art.panel(c, rrect(rect.left + chipH * 0.15f, rect.centerY() - chipH * 0.28f, chipH * 0.56f, chipH * 0.56f), chipH * 0.14f, 0x558FD3F0)
-        Art.text(c, "${g.iceLeft}", rect.right - chipH * 0.3f, rect.centerY() + chipH * 0.17f, chipH * 0.44f, Palette.CREAM, Paint.Align.RIGHT, Art.bold)
+        val rect = rrect(x, y, w * 0.22f, chipH)
+        Art.card(c, rect, chipH * 0.46f, Palette.SKY)
+        val iceRect = rrect(rect.left + chipH * 0.18f, rect.centerY() - chipH * 0.32f, chipH * 0.64f, chipH * 0.64f)
+        Art.ice(c, iceRect, 1f)
+        Art.text(c, "${g.iceLeft}", rect.right - chipH * 0.28f, rect.centerY() + chipH * 0.16f,
+            chipH * 0.42f, Palette.CREAM, Paint.Align.RIGHT, Art.black, true)
     }
 }
 
 private fun GameView.drawBoosters(c: Canvas, g: Game) {
     val w = widthPx
     val h = heightPx
-    val y = h * 0.845f
-    val size = w * 0.19f
-    val gap = w * 0.045f
+    val size = w * 0.22f
+    val gap = w * 0.04f
     val total = size * 3 + gap * 2
     var x = (w - total) / 2f
+    val y = h * 0.845f
 
-    data class B(val kind: String, val label: String)
-    val items = listOf(B("hammer", "چکش"), B("shuffle", "برهم‌زن"), B("moves", "حرکت"))
-    for (b in items) {
-        val rect = RectF(x, y, x + size, y + size * 0.78f)
-        Art.panel(c, rect, size * 0.24f, if (boosterMode == b.kind) 0x55C6F36B else 0x4D0A1F16, 2f, if (boosterMode == b.kind) Palette.LIME else 0x22FFFFFF)
-        when (b.kind) {
-            "hammer" -> {
-                Art.panel(c, rrect(rect.centerX() - size * 0.06f, rect.top + size * 0.16f, size * 0.12f, size * 0.3f), size * 0.05f, Palette.CREAM)
-                Art.panel(c, rrect(rect.centerX() - size * 0.22f, rect.top + size * 0.14f, size * 0.44f, size * 0.14f), size * 0.06f, Palette.CREAM)
-            }
-            "shuffle" -> {
-                Art.shuffleIcon(c, rect.centerX(), rect.top + size * 0.34f, size * 0.2f, Palette.CREAM)
-            }
-            else -> {
-                Art.text(c, "+5", rect.centerX(), rect.top + size * 0.42f, size * 0.34f, Palette.CREAM, Paint.Align.CENTER, Art.black)
-            }
+    val kinds = listOf("hammer", "shuffle", "moves")
+    val labels = listOf("چکش", "برهم‌زن", "حرکت")
+    for (i in kinds.indices) {
+        val kind = kinds[i]
+        val rect = RectF(x, y, x + size, y + size * 0.82f)
+        val armed = boosterMode == kind
+        if (armed) {
+            Art.glow(c, rect.centerX(), rect.centerY(), size * 0.72f, Palette.LIME, 0.3f)
         }
-        Art.text(c, b.label, rect.centerX(), rect.bottom - size * 0.08f, size * 0.2f, Palette.MUTED)
-        val count = save.booster(b.kind)
-        Art.circle(c, rect.right - size * 0.13f, rect.top + size * 0.12f, size * 0.13f, if (count > 0) Palette.LIME else 0x66FFFFFF)
-        Art.text(c, "$count", rect.right - size * 0.13f, rect.top + size * 0.12f + size * 0.055f, size * 0.16f, 0xFF10331F.toInt(), Paint.Align.CENTER, Art.black)
-        hotspots.add(Hotspot(RectF(rect), { armBooster(b.kind) }))
+        Art.card(c, rect, size * 0.26f, if (armed) Palette.LIME else Palette.GOLD)
+        val r = size * 0.2f
+        val cx = rect.centerX()
+        val cy = rect.top + size * 0.34f
+        when (kind) {
+            "hammer" -> Art.hammer(c, cx, cy, r, Palette.CREAM)
+            "shuffle" -> Art.shuffleIcon(c, cx, cy, r, Palette.CREAM)
+            else -> Art.plusMoves(c, cx, cy, r, Palette.CREAM)
+        }
+        Art.text(c, labels[i], cx, rect.bottom - size * 0.1f, size * 0.17f, Palette.MUTED, Paint.Align.CENTER, Art.bold)
+        val count = save.booster(kind)
+        val bx = rect.right - size * 0.13f
+        val by = rect.top + size * 0.13f
+        Art.circle(c, bx, by, size * 0.135f, if (count > 0) Palette.LIME else 0x88FFFFFF.toInt())
+        Art.text(c, "$count", bx, by + size * 0.055f, size * 0.17f, 0xFF10331F.toInt(), Paint.Align.CENTER, Art.black)
+        hotspots.add(Hotspot(RectF(rect), { armBooster(kind) }))
         x += size + gap
     }
 }
@@ -435,6 +480,7 @@ private fun GameView.drawEffects(c: Canvas, now: Long) {
     val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     for (p in particles) {
         val age = (now - p.start).toFloat()
+        if (age < 0f) continue
         val k = (age / p.life).coerceIn(0f, 1f)
         if (k >= 1f) continue
         val t = age / 1000f
@@ -460,17 +506,62 @@ private fun GameView.drawEffects(c: Canvas, now: Long) {
             GameView.RING -> {
                 val r = p.radius * (0.25f + 0.95f * k)
                 paint.style = Paint.Style.STROKE
-                paint.strokeWidth = kotlin.math.max(1.5f, p.radius * 0.16f * (1f - k))
+                paint.strokeWidth = Math.max(1.5f, p.radius * 0.16f * (1f - k))
                 paint.color = Art.withAlpha(p.color, (1f - k) * 0.9f)
                 c.drawCircle(p.x, p.y, r, paint)
                 paint.style = Paint.Style.FILL
             }
             GameView.FLASH -> {
                 val r = p.radius * (0.5f + 1.1f * k)
-                paint.color = 0x00FFFFFF
-                Art.glow(c, p.x, p.y, r, p.color, (1f - k) * 0.55f)
-                paint.color = Art.withAlpha(0xFFFFFFFF.toInt(), (1f - k) * 0.35f)
+                Art.glow(c, p.x, p.y, r, p.color, (1f - k) * 0.6f)
+                paint.color = Art.withAlpha(0xFFFFFFFF.toInt(), (1f - k) * 0.4f)
                 c.drawCircle(p.x, p.y, r * 0.35f, paint)
+            }
+            GameView.BEAM -> {
+                val grow = 0.35f + 0.9f * k
+                val alpha = (1f - k) * 0.85f
+                paint.color = Art.withAlpha(p.color, alpha * 0.35f)
+                val half = p.radius * 0.34f * (1f - 0.4f * k)
+                if (p.rot != 0f) {
+                    c.save()
+                    c.rotate(90f, p.x, p.y)
+                    c.drawRoundRect(
+                        RectF(p.x - p.radius * grow, p.y - half, p.x + p.radius * grow, p.y + half),
+                        half, half, paint
+                    )
+                    paint.color = Art.withAlpha(0xFFFFFFFF.toInt(), alpha)
+                    c.drawRoundRect(
+                        RectF(p.x - p.radius * grow, p.y - half * 0.3f, p.x + p.radius * grow, p.y + half * 0.3f),
+                        half * 0.3f, half * 0.3f, paint
+                    )
+                    c.restore()
+                } else {
+                    c.drawRoundRect(
+                        RectF(p.x - p.radius * grow, p.y - half, p.x + p.radius * grow, p.y + half),
+                        half, half, paint
+                    )
+                    paint.color = Art.withAlpha(0xFFFFFFFF.toInt(), alpha)
+                    c.drawRoundRect(
+                        RectF(p.x - p.radius * grow, p.y - half * 0.3f, p.x + p.radius * grow, p.y + half * 0.3f),
+                        half * 0.3f, half * 0.3f, paint
+                    )
+                }
+            }
+            else -> {
+                val r = p.radius * (0.12f + 1.05f * k)
+                paint.style = Paint.Style.STROKE
+                paint.strokeWidth = Math.max(2f, p.radius * 0.34f * (1f - k) * (1f - k))
+                paint.color = Art.withAlpha(p.color, (1f - k) * 0.85f)
+                c.drawCircle(p.x, p.y, r, paint)
+                paint.style = Paint.Style.FILL
+                Art.glow(c, p.x, p.y, r * 1.1f, p.color, (1f - k) * 0.45f)
+                for (i in 0 until 8) {
+                    val a = i * 0.785f + p.start * 0.001f
+                    Art.sparkle(
+                        c, p.x + cos(a) * r, p.y + sin(a) * r,
+                        p.radius * 0.12f * (1f - k) + 2f, p.color, (1f - k) * 0.8f, a * 57f
+                    )
+                }
             }
         }
     }
@@ -482,12 +573,39 @@ private fun GameView.drawEffects(c: Canvas, now: Long) {
         val y = f.y - k * heightPx * 0.055f
         c.save()
         c.scale(pop, pop, f.x, y)
-        Art.text(
-            c, f.text, f.x, y, f.size,
-            Art.withAlpha(f.color, alpha), Paint.Align.CENTER, Art.black, true
-        )
+        Art.text(c, f.text, f.x, y, f.size, Art.withAlpha(f.color, alpha), Paint.Align.CENTER, Art.black, true)
         c.restore()
     }
+}
+
+private fun GameView.drawIntro(c: Canvas, now: Long, lvl: Level) {
+    val age = now - introAt
+    if (age < 0L || age > 2200L) return
+    val w = widthPx
+    val h = heightPx
+    val k = (age / 2200f).coerceIn(0f, 1f)
+    val slide = if (k < 0.16f) (1f - k / 0.16f) * -h * 0.1f else 0f
+    val fade = when {
+        k > 0.78f -> 1f - (k - 0.78f) / 0.22f
+        k < 0.12f -> k / 0.12f
+        else -> 1f
+    }.coerceIn(0f, 1f)
+
+    val cx = w / 2f
+    val cy = h * 0.40f + slide
+    val bh = h * 0.11f
+    val bw = w * 0.7f
+    val rect = RectF(cx - bw / 2f, cy - bh / 2f, cx + bw / 2f, cy + bh / 2f)
+    c.save()
+    c.scale(0.85f + 0.15f * min(1f, k * 5f), 0.85f + 0.15f * min(1f, k * 5f), cx, cy)
+    Art.plaque(c, rect, bh * 0.3f)
+    Art.text(c, "سطح ${lvl.id}", cx, cy - bh * 0.02f, bh * 0.42f,
+        Art.withAlpha(Palette.CREAM, fade), Paint.Align.CENTER, Art.black, true)
+    Art.text(c, lvl.name, cx, cy + bh * 0.32f, bh * 0.26f,
+        Art.withAlpha(0xFFFFE9C8.toInt(), fade), Paint.Align.CENTER, Art.bold)
+    Art.sparkle(c, rect.left + bw * 0.08f, cy, bh * 0.16f, Palette.GOLD, fade * 0.9f, age / 6f)
+    Art.sparkle(c, rect.right - bw * 0.08f, cy, bh * 0.16f, Palette.GOLD, fade * 0.9f, -age / 6f)
+    c.restore()
 }
 
 /* ------------------------------------------------------------------ shop */
@@ -496,34 +614,53 @@ internal fun GameView.drawShop(c: Canvas) {
     val w = widthPx
     val h = heightPx
     header(c, "فروشگاه")
-    Art.text(c, "سکه‌ها: ${save.coins}", w * 0.5f, h * 0.13f, w * 0.045f, Palette.GOLD, Paint.Align.CENTER, Art.bold)
 
-    val top = h * 0.16f
-    val cardH = h * 0.115f
-    val gap = h * 0.018f
+    val balance = RectF(w * 0.28f, h * 0.118f, w * 0.72f, h * 0.168f)
+    Art.card(c, balance, balance.height() * 0.46f)
+    Art.coin(c, balance.left + balance.height() * 0.52f, balance.centerY(), balance.height() * 0.32f)
+    Art.text(c, "${save.coins}", balance.centerX() + balance.height() * 0.2f, balance.centerY() + balance.height() * 0.17f,
+        balance.height() * 0.5f, Palette.CREAM, Paint.Align.CENTER, Art.black, true)
+
+    val top = h * 0.185f
+    val cardH = h * 0.1f
+    val gap = h * 0.014f
     for (i in eco.shop.indices) {
         val item = eco.shop[i]
         val y = top + i * (cardH + gap)
-        val rect = RectF(w * 0.05f, y, w * 0.95f, y + cardH)
-        Art.panel(c, rect, cardH * 0.24f, Palette.PANEL)
-        Art.text(c, item.title, rect.right - w * 0.04f, rect.top + cardH * 0.4f, w * 0.046f, Palette.CREAM, Paint.Align.RIGHT, Art.bold)
-        Art.text(c, item.desc, rect.right - w * 0.04f, rect.top + cardH * 0.72f, w * 0.034f, Palette.MUTED, Paint.Align.RIGHT)
-        val buy = RectF(rect.left + w * 0.03f, rect.top + cardH * 0.24f, rect.left + w * 0.3f, rect.bottom - cardH * 0.24f)
-        Art.gradientPanel(c, buy, buy.height() * 0.34f, Palette.LIME, 0xFF8ACB4A.toInt())
-        Art.text(c, "${item.price}", buy.centerX() + w * 0.02f, buy.centerY() + buy.height() * 0.16f, buy.height() * 0.4f, 0xFF10331F.toInt(), Paint.Align.CENTER, Art.black)
-        Art.coin(c, buy.left + w * 0.035f, buy.centerY(), buy.height() * 0.22f)
+        val rect = RectF(w * 0.045f, y, w * 0.955f, y + cardH)
+        Art.card(c, rect, cardH * 0.26f)
+        val badgeR = cardH * 0.3f
+        Art.badge(c, rect.left + cardH * 0.34f + badgeR, rect.centerY(), badgeR,
+            0xFF2F7A4E.toInt(), 0xFF14402C.toInt(), Palette.GOLD) { cc, cx, cy, r ->
+            iconFor(item.kind, cc, cx, cy, r, Palette.CREAM)
+        }
+        Art.text(c, item.title, rect.right - cardH * 0.28f, rect.centerY() - cardH * 0.1f,
+            cardH * 0.24f, Palette.CREAM, Paint.Align.RIGHT, Art.bold, true)
+        Art.text(c, item.desc, rect.right - cardH * 0.28f, rect.centerY() + cardH * 0.17f,
+            cardH * 0.17f, Palette.MUTED, Paint.Align.RIGHT)
+        val buy = RectF(rect.left + cardH * 1.11f, rect.top + cardH * 0.2f, rect.left + cardH * 2.1f, rect.bottom - cardH * 0.2f)
+        Art.buttonSkin(c, buy, buy.height() * 0.34f, Palette.LIME, 0xFF6FAF30.toInt())
+        Art.coin(c, buy.left + buy.height() * 0.34f, buy.centerY(), buy.height() * 0.22f)
+        Art.text(c, "${item.price}", buy.centerX() + buy.height() * 0.22f, buy.centerY() + buy.height() * 0.16f,
+            buy.height() * 0.4f, 0xFF17330A.toInt(), Paint.Align.CENTER, Art.black)
         hotspots.add(Hotspot(RectF(buy), { buyItem(item) }))
     }
 
     val y = top + eco.shop.size * (cardH + gap)
-    val rect = RectF(w * 0.05f, y, w * 0.95f, y + cardH)
-    Art.panel(c, rect, cardH * 0.24f, Palette.PANEL)
-    Art.text(c, "یک جان", rect.right - w * 0.04f, rect.top + cardH * 0.4f, w * 0.046f, Palette.CREAM, Paint.Align.RIGHT, Art.bold)
-    Art.text(c, "برای وقتی که جان کم آوردی", rect.right - w * 0.04f, rect.top + cardH * 0.72f, w * 0.034f, Palette.MUTED, Paint.Align.RIGHT)
-    val buy = RectF(rect.left + w * 0.03f, rect.top + cardH * 0.24f, rect.left + w * 0.3f, rect.bottom - cardH * 0.24f)
-    Art.gradientPanel(c, buy, buy.height() * 0.34f, Palette.LIME, 0xFF8ACB4A.toInt())
-    Art.text(c, "${eco.lifePrice}", buy.centerX() + w * 0.02f, buy.centerY() + buy.height() * 0.16f, buy.height() * 0.4f, 0xFF10331F.toInt(), Paint.Align.CENTER, Art.black)
-    Art.coin(c, buy.left + w * 0.035f, buy.centerY(), buy.height() * 0.22f)
+    val rect = RectF(w * 0.045f, y, w * 0.955f, y + cardH)
+    Art.card(c, rect, cardH * 0.26f, Palette.DANGER)
+    val badgeR = cardH * 0.3f
+    Art.badge(c, rect.left + cardH * 0.34f + badgeR, rect.centerY(), badgeR,
+        0xFFFF7D8F.toInt(), 0xFFC22B44.toInt(), 0xFF7A1226) { cc, cx, cy, r -> Art.heart(cc, cx, cy, r, true) }
+    Art.text(c, "یک جان", rect.right - cardH * 0.28f, rect.centerY() - cardH * 0.1f,
+        cardH * 0.24f, Palette.CREAM, Paint.Align.RIGHT, Art.bold, true)
+    Art.text(c, "برای وقتی که جان کم آوردی", rect.right - cardH * 0.28f, rect.centerY() + cardH * 0.17f,
+        cardH * 0.17f, Palette.MUTED, Paint.Align.RIGHT)
+    val buy = RectF(rect.left + cardH * 1.11f, rect.top + cardH * 0.2f, rect.left + cardH * 2.1f, rect.bottom - cardH * 0.2f)
+    Art.buttonSkin(c, buy, buy.height() * 0.34f, Palette.LIME, 0xFF6FAF30.toInt())
+    Art.coin(c, buy.left + buy.height() * 0.34f, buy.centerY(), buy.height() * 0.22f)
+    Art.text(c, "${eco.lifePrice}", buy.centerX() + buy.height() * 0.22f, buy.centerY() + buy.height() * 0.16f,
+        buy.height() * 0.4f, 0xFF17330A.toInt(), Paint.Align.CENTER, Art.black)
     hotspots.add(Hotspot(RectF(buy), { buyLife() }))
 }
 
@@ -535,82 +672,125 @@ internal fun GameView.drawWheel(c: Canvas) {
     header(c, "چرخ شانس")
 
     val cx = w / 2f
-    val cy = h * 0.42f
-    val radius = min(w * 0.4f, h * 0.24f)
-
-    val colors = intArrayOf(
-        0xFFF43F5E.toInt(), 0xFFFF9F1C.toInt(), 0xFFFFE04D.toInt(), 0xFF7ED957.toInt(),
-        0xFF34C759.toInt(), 0xFF7DD3FC.toInt(), 0xFF8B5CF6.toInt(), 0xFFA78BFA.toInt()
-    )
+    val cy = h * 0.415f
+    val radius = min(w * 0.41f, h * 0.225f)
     val slices = eco.wheel
     if (slices.isEmpty()) return
     val seg = 360f / slices.size
 
+    val sliceColors = intArrayOf(
+        0xFFF2545B.toInt(), 0xFFFF9F1C.toInt(), 0xFFFFD93D.toInt(), 0xFF7ED957.toInt(),
+        0xFF34C759.toInt(), 0xFF41B8E0.toInt(), 0xFF8B5CF6.toInt(), 0xFFD96BD0.toInt()
+    )
+
+    // outer wooden rim
+    Art.circle(c, cx, cy, radius * 1.1f, 0xFF5E3818.toInt())
+    Art.circle(c, cx, cy, radius * 1.06f, 0xFFC08A52.toInt())
+
     c.save()
     c.rotate(wheelAngle, cx, cy)
     val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    val arc = RectF(cx - radius, cy - radius, cx + radius, cy + radius)
     for (i in slices.indices) {
-        paint.color = colors[i % colors.size]
-        c.drawArc(RectF(cx - radius, cy - radius, cx + radius, cy + radius), i * seg, seg, true, paint)
+        paint.color = sliceColors[i % sliceColors.size]
+        c.drawArc(arc, i * seg, seg, true, paint)
+        paint.color = 0x1A000000
+        c.drawArc(arc, i * seg + seg * 0.92f, seg * 0.08f, true, paint)
+        paint.color = 0x22FFFFFF
+        c.drawArc(arc, i * seg, seg * 0.08f, true, paint)
     }
-    // labels
     for (i in slices.indices) {
         c.save()
         c.rotate(i * seg + seg / 2f, cx, cy)
-        Art.text(c, slices[i].label, cx, cy - radius * 0.62f, radius * 0.12f, 0xFFFFFFFF.toInt(), Paint.Align.CENTER, Art.bold)
+        val ir = radius * 0.16f
+        val iy = cy - radius * 0.62f
+        iconFor(slices[i].kind, c, cx, iy - ir * 0.25f, ir * 0.8f, 0xFFFFFFFF.toInt())
+        Art.text(c, slices[i].label, cx, iy + ir * 1.15f, radius * 0.105f, 0xFFFFFFFF.toInt(),
+            Paint.Align.CENTER, Art.bold, true)
         c.restore()
     }
     c.restore()
 
-    Art.circle(c, cx, cy, radius * 0.16f, Palette.PANEL)
-    Art.circle(c, cx, cy, radius * 0.1f, Palette.CREAM)
+    // studs
+    for (i in 0 until 16) {
+        val a = Math.toRadians(i * 22.5)
+        val sx = cx + (cos(a) * radius * 1.08f).toFloat()
+        val sy = cy + (sin(a) * radius * 1.08f).toFloat()
+        Art.circle(c, sx, sy, radius * 0.028f, 0xFF6E4220.toInt())
+        Art.circle(c, sx, sy - radius * 0.006f, radius * 0.02f, 0xFFFFE0A8.toInt())
+    }
+
+    // hub
+    Art.circle(c, cx, cy, radius * 0.2f, 0xFF5E3818.toInt())
+    Art.circle(c, cx, cy, radius * 0.17f, Palette.GOLD)
+    Art.text(c, "شانس", cx, cy + radius * 0.05f, radius * 0.13f, 0xFF6B4300.toInt(), Paint.Align.CENTER, Art.black)
 
     // pointer
-    val p = android.graphics.Path()
-    p.moveTo(cx, cy - radius - h * 0.012f)
-    p.lineTo(cx - w * 0.035f, cy - radius + h * 0.03f)
-    p.lineTo(cx + w * 0.035f, cy - radius + h * 0.03f)
+    val p = Path()
+    p.moveTo(cx, cy - radius * 0.98f)
+    p.lineTo(cx - w * 0.045f, cy - radius * 1.2f)
+    p.lineTo(cx + w * 0.045f, cy - radius * 1.2f)
     p.close()
-    val pp = Paint(Paint.ANTI_ALIAS_FLAG)
-    pp.color = Palette.CREAM
-    c.drawPath(p, pp)
+    paint.color = 0xFFE5455F.toInt()
+    c.drawPath(p, paint)
+    paint.color = 0x66FFFFFF
+    c.drawCircle(cx, cy - radius * 1.13f, w * 0.012f, paint)
 
     val ready = wheelReadyIn()
     val spinning = wheelSpinDur > 0L
-    val btn = RectF(w * 0.2f, h * 0.72f, w * 0.8f, h * 0.72f + h * 0.075f)
+    val btn = RectF(w * 0.18f, h * 0.705f, w * 0.82f, h * 0.782f)
     val label = when {
         spinning -> "می‌چرخد…"
         ready > 0 -> "شارژ مجدد: " + fmtTime(ready)
         else -> "بچرخان (رایگان)"
     }
-    button(c, btn, label, if (ready == 0L && !spinning) Style.PRIMARY else Style.SECONDARY) {
-        if (!spinning) spinWheel()
+    if (ready == 0L && !spinning) {
+        Art.glow(c, btn.centerX(), btn.centerY(), btn.width() * 0.5f, Palette.LIME, 0.28f)
+        Art.buttonSkin(c, btn, btn.height() * 0.36f, Palette.LIME, 0xFF6FAF30.toInt())
+    } else {
+        Art.buttonSkin(c, btn, btn.height() * 0.36f, Palette.PANEL_SOFT, 0xFF0C2C21.toInt())
     }
+    Art.text(c, label, btn.centerX(), btn.centerY() + btn.height() * 0.17f, btn.height() * 0.4f,
+        if (ready == 0L && !spinning) 0xFF17330A.toInt() else Palette.CREAM, Paint.Align.CENTER, Art.black, true)
+    hotspots.add(Hotspot(RectF(btn), { if (!spinning) spinWheel() }))
 
     val prize = wheelPrize
     if (prize != null && !spinning && wheelAwarded) {
-        Art.text(c, "جایزه: ${prize.label}", cx, h * 0.66f, w * 0.05f, Palette.LIME, Paint.Align.CENTER, Art.bold)
-        button(c, RectF(w * 0.3f, h * 0.82f, w * 0.7f, h * 0.82f + h * 0.055f), "باشه", Style.GHOST) {
-            wheelPrize = null
-        }
+        val card = RectF(w * 0.16f, h * 0.80f, w * 0.84f, h * 0.9f)
+        Art.card(c, card, card.height() * 0.26f, Palette.GOLD)
+        Art.text(c, "جایزه", card.centerX(), card.top + card.height() * 0.28f, card.height() * 0.2f, Palette.MUTED)
+        Art.text(c, prize.label, card.centerX(), card.centerY() + card.height() * 0.14f, card.height() * 0.36f,
+            Palette.GOLD, Paint.Align.CENTER, Art.black, true)
+        val ok = RectF(card.right - w * 0.24f, card.top + card.height() * 0.22f, card.right - w * 0.05f, card.bottom - card.height() * 0.22f)
+        Art.buttonSkin(c, ok, ok.height() * 0.36f, Palette.LIME, 0xFF6FAF30.toInt())
+        Art.text(c, "باشه", ok.centerX(), ok.centerY() + ok.height() * 0.17f, ok.height() * 0.38f,
+            0xFF17330A.toInt(), Paint.Align.CENTER, Art.black)
+        hotspots.add(Hotspot(RectF(ok), { wheelPrize = null }))
     } else {
-        Art.text(c, "هر ۴ ساعت یک چرخ رایگان", cx, h * 0.82f, w * 0.038f, Palette.MUTED)
+        Art.text(c, "هر ۴ ساعت یک چرخ رایگان", cx, h * 0.85f, w * 0.04f, Palette.CREAM_DIM, Art.regular, true)
     }
 }
 
 /* ------------------------------------------------------------------ pass */
 
+internal var passScroll = 0
+
 internal fun GameView.drawPass(c: Canvas) {
     val w = widthPx
     val h = heightPx
     header(c, "مسیر ستاره")
-    Art.text(c, "ستاره‌ها: ${save.totalStars}", w * 0.5f, h * 0.135f, w * 0.048f, Palette.GOLD, Paint.Align.CENTER, Art.bold)
-    Art.text(c, "با هر ۲ ستاره یک پله باز می‌شود", w * 0.5f, h * 0.165f, w * 0.036f, Palette.MUTED)
 
-    val top = h * 0.2f
+    val bar = RectF(w * 0.16f, h * 0.122f, w * 0.84f, h * 0.166f)
+    Art.progress(c, bar, save.totalStars / 60f, Palette.GOLD, 0x660A1F16)
+    Art.star(c, bar.left + bar.height() * 0.5f, bar.centerY(), bar.height() * 0.34f, true)
+    Art.text(c, "${save.totalStars}", bar.centerX(), bar.centerY() + bar.height() * 0.17f, bar.height() * 0.5f,
+        Palette.CREAM, Paint.Align.CENTER, Art.black, true)
+    Art.text(c, "با هر ۲ ستاره یک پله باز می‌شود", w * 0.5f, h * 0.196f, w * 0.038f, Palette.MUTED)
+
+    val top = h * 0.225f
     val bottom = h * 0.94f
-    val cardH = h * 0.1f
-    val gap = h * 0.016f
+    val cardH = h * 0.098f
+    val gap = h * 0.014f
     val visible = ((bottom - top) / (cardH + gap)).toInt()
     val start = max(0, min(passScroll, eco.pass.size - visible))
     for (k in 0 until visible) {
@@ -618,26 +798,46 @@ internal fun GameView.drawPass(c: Canvas) {
         if (i >= eco.pass.size) break
         val tier = eco.pass[i]
         val y = top + k * (cardH + gap)
-        val rect = RectF(w * 0.05f, y, w * 0.95f, y + cardH)
+        val rect = RectF(w * 0.045f, y, w * 0.955f, y + cardH)
         val unlocked = save.totalStars >= tier.stars
-        Art.panel(c, rect, cardH * 0.24f, if (unlocked) Palette.PANEL else 0x22000000)
-        Art.text(c, "${tier.index}", rect.right - w * 0.045f, rect.centerY() + w * 0.016f, w * 0.05f, Palette.CREAM, Paint.Align.RIGHT, Art.black)
-        Art.text(c, tier.label, rect.right - w * 0.12f, rect.centerY() + w * 0.012f, w * 0.038f, Palette.MUTED, Paint.Align.RIGHT)
         val claimed = save.claimed.contains(tier.index)
-        val btn = RectF(rect.left + w * 0.03f, rect.top + cardH * 0.22f, rect.left + w * 0.28f, rect.bottom - cardH * 0.22f)
+        Art.card(c, rect, cardH * 0.28f, when {
+            claimed -> Palette.GREEN
+            unlocked -> Palette.GOLD
+            else -> Palette.MUTED
+        })
+        val badgeR = cardH * 0.28f
+        Art.badge(c, rect.left + cardH * 0.32f + badgeR, rect.centerY(), badgeR,
+            if (unlocked) 0xFF2F7A4E.toInt() else 0xFF243B33.toInt(),
+            0xFF12271F.toInt(), if (unlocked) Palette.GOLD else 0x66FFFFFF.toInt()) { cc, cx, cy, r ->
+            iconFor(tier.kind, cc, cx, cy, r, Palette.CREAM)
+        }
+        Art.text(c, tier.label, rect.right - cardH * 0.26f, rect.centerY() - cardH * 0.08f,
+            cardH * 0.22f, Palette.CREAM, Paint.Align.RIGHT, Art.bold, true)
+        Art.text(c, "پله ${tier.index}", rect.right - cardH * 0.26f, rect.centerY() + cardH * 0.18f,
+            cardH * 0.16f, Palette.MUTED, Paint.Align.RIGHT)
+
+        val btn = RectF(rect.left + cardH * 1.0f, rect.top + cardH * 0.24f, rect.left + cardH * 1.95f, rect.bottom - cardH * 0.24f)
         val label = when {
             claimed -> "گرفته شد"
-            !unlocked -> "${tier.stars} ستاره"
+            !unlocked -> "${tier.stars} ★".replace("★", "ستاره")
             else -> "دریافت"
         }
-        button(c, btn, label, if (unlocked && !claimed) Style.PRIMARY else Style.SECONDARY) {
-            if (unlocked && !claimed) claimTier(tier)
+        if (unlocked && !claimed) {
+            Art.buttonSkin(c, btn, btn.height() * 0.36f, Palette.LIME, 0xFF6FAF30.toInt())
+            Art.text(c, label, btn.centerX(), btn.centerY() + btn.height() * 0.17f, btn.height() * 0.36f,
+                0xFF17330A.toInt(), Paint.Align.CENTER, Art.black)
+        } else {
+            Art.panel(c, btn, btn.height() * 0.36f, 0x4D0A1F16, 1.2f, 0x33FFFFFF)
+            Art.text(c, label, btn.centerX(), btn.centerY() + btn.height() * 0.17f, btn.height() * 0.32f,
+                Palette.MUTED, Paint.Align.CENTER, Art.bold)
+        }
+        if (unlocked && !claimed) {
+            hotspots.add(Hotspot(RectF(btn), { claimTier(tier) }))
         }
     }
-    Art.text(c, "بکش تا پله‌های بیشتر ببینی", w * 0.5f, h * 0.965f, w * 0.034f, 0x669FC4B6.toInt())
+    Art.text(c, "بکش تا پله‌های بیشتر ببینی", w * 0.5f, h * 0.968f, w * 0.032f, 0x88FFF6E5.toInt(), Art.regular, true)
 }
-
-internal var passScroll = 0
 
 /* -------------------------------------------------------------- settings */
 
@@ -646,29 +846,44 @@ internal fun GameView.drawSettings(c: Canvas) {
     val h = heightPx
     header(c, "تنظیمات")
 
-    val rowY = h * 0.18f
-    val rowH = h * 0.08f
-    val soundRect = RectF(w * 0.05f, rowY, w * 0.95f, rowY + rowH)
-    Art.panel(c, soundRect, rowH * 0.24f, Palette.PANEL)
-    Art.text(c, "صدا", soundRect.right - w * 0.05f, soundRect.centerY() + w * 0.016f, w * 0.048f, Palette.CREAM, Paint.Align.RIGHT, Art.bold)
-    val toggle = RectF(soundRect.left + w * 0.04f, soundRect.centerY() - rowH * 0.22f, soundRect.left + w * 0.16f, soundRect.centerY() + rowH * 0.22f)
-    Art.panel(c, toggle, toggle.height() / 2f, if (save.sound) Palette.LIME else 0x44FFFFFF)
-    Art.circle(c, if (save.sound) toggle.right - toggle.height() / 2f else toggle.left + toggle.height() / 2f, toggle.centerY(), toggle.height() * 0.38f, Palette.PANEL)
+    val rowY = h * 0.16f
+    val rowH = h * 0.088f
+    val soundRect = RectF(w * 0.045f, rowY, w * 0.955f, rowY + rowH)
+    Art.card(c, soundRect, rowH * 0.28f)
+    Art.text(c, "صدا", soundRect.right - w * 0.05f, soundRect.centerY() + w * 0.016f, w * 0.05f,
+        Palette.CREAM, Paint.Align.RIGHT, Art.bold, true)
+    val toggle = RectF(soundRect.left + w * 0.045f, soundRect.centerY() - rowH * 0.24f,
+        soundRect.left + w * 0.045f + w * 0.16f, soundRect.centerY() + rowH * 0.24f)
+    Art.panel(c, toggle, toggle.height() / 2f, if (save.sound) Palette.LIME else 0x550A1F16)
+    Art.circle(c, if (save.sound) toggle.right - toggle.height() / 2f else toggle.left + toggle.height() / 2f,
+        toggle.centerY(), toggle.height() * 0.38f, Palette.PANEL_DEEP)
     hotspots.add(Hotspot(RectF(toggle), {
         save.sound = !save.sound
         save.persist()
+        sound(R.raw.sfx_click)
     }))
 
-    val resetRect = RectF(w * 0.05f, rowY + rowH * 1.4f, w * 0.95f, rowY + rowH * 2.4f)
-    button(c, resetRect, "شروع دوباره از سطح ۱", Style.DANGER) {
+    val resetRect = RectF(w * 0.045f, rowY + rowH * 1.35f, w * 0.955f, rowY + rowH * 2.35f)
+    Art.buttonSkin(c, resetRect, resetRect.height() * 0.32f, 0xFFFF7D8F.toInt(), 0xFFC22B44.toInt())
+    Art.text(c, "شروع دوباره از سطح ۱", resetRect.centerX(), resetRect.centerY() + resetRect.height() * 0.17f,
+        resetRect.height() * 0.36f, 0xFF3D0510.toInt(), Paint.Align.CENTER, Art.black)
+    hotspots.add(Hotspot(RectF(resetRect), {
         save.reset(eco)
         levelIndex = 0
         toast("پیشرفت پاک شد")
-    }
+    }))
 
-    Art.text(c, "میوه‌چین — نسخهٔ ۱٫۰", w * 0.5f, h * 0.55f, w * 0.042f, Palette.MUTED)
-    Art.text(c, "هفت محصول، ۶۰ سطح، یک باغ.", w * 0.5f, h * 0.585f, w * 0.036f, 0x889FC4B6.toInt())
-    Art.text(c, "ساخته‌شده با الهام از اقتصاد بازی‌های Match-3", w * 0.5f, h * 0.62f, w * 0.034f, 0x669FC4B6.toInt())
+    val about = RectF(w * 0.1f, h * 0.5f, w * 0.9f, h * 0.72f)
+    Art.card(c, about, about.height() * 0.14f, Palette.GOLD)
+    var x = about.left + about.width() * 0.12f
+    for (t in intArrayOf(0, 1, 2, 3, 4)) {
+        Art.produce(c, t, x, about.top + about.height() * 0.28f, about.width() * 0.16f)
+        x += about.width() * 0.19f
+    }
+    Art.text(c, "میوه‌چین — نسخهٔ ۱٫۲", about.centerX(), about.top + about.height() * 0.62f,
+        about.width() * 0.075f, Palette.CREAM, Paint.Align.CENTER, Art.black, true)
+    Art.text(c, "هفت محصول، ۶۰ سطح، یک باغ.", about.centerX(), about.top + about.height() * 0.78f,
+        about.width() * 0.055f, Palette.MUTED)
 }
 
 /* -------------------------------------------------------------- overlays */
@@ -682,7 +897,8 @@ internal fun GameView.drawOverlays(c: Canvas) {
         paused -> drawPause(c)
     }
     if (screen == Screen.GAME && boosterMode == "hammer" && res == null && !paused) {
-        Art.text(c, "روی یک میوه بزن تا حذف شود", w * 0.5f, h * 0.925f, w * 0.038f, Palette.LIME, Paint.Align.CENTER, Art.bold)
+        Art.text(c, "روی یک میوه بزن تا حذف شود", w * 0.5f, h * 0.925f, w * 0.038f,
+            Palette.LIME, Paint.Align.CENTER, Art.bold, true)
     }
 }
 
@@ -693,19 +909,24 @@ private fun GameView.drawPause(c: Canvas) {
     dim.color = 0xB3000000.toInt()
     c.drawRect(0f, 0f, w, h, dim)
 
-    val panel = RectF(w * 0.1f, h * 0.29f, w * 0.9f, h * 0.67f)
-    Art.panel(c, panel, w * 0.06f, Palette.PANEL)
-    Art.text(c, "مکث", panel.centerX(), panel.top + h * 0.07f, w * 0.085f, Palette.CREAM, Paint.Align.CENTER, Art.black)
+    val panel = RectF(w * 0.08f, h * 0.27f, w * 0.92f, h * 0.69f)
+    Art.card(c, panel, w * 0.06f, Palette.LIME)
+    Art.text(c, "مکث", panel.centerX(), panel.top + h * 0.075f, w * 0.09f, Palette.CREAM,
+        Paint.Align.CENTER, Art.black, true)
 
-    val bh = h * 0.065f
-    button(c, RectF(panel.left + w * 0.06f, panel.top + h * 0.1f, panel.right - w * 0.06f, panel.top + h * 0.1f + bh), "ادامه", Style.PRIMARY) {
+    val bh = h * 0.068f
+    val left = panel.left + w * 0.06f
+    val right = panel.right - w * 0.06f
+    button(c, RectF(left, panel.top + h * 0.11f, right, panel.top + h * 0.11f + bh), "ادامه", Style.PRIMARY) {
         paused = false
     }
-    button(c, RectF(panel.left + w * 0.06f, panel.top + h * 0.1f + bh * 1.25f, panel.right - w * 0.06f, panel.top + h * 0.1f + bh * 2.25f), "شروع دوباره", Style.SECONDARY) {
+    button(c, RectF(left, panel.top + h * 0.11f + bh * 1.24f, right, panel.top + h * 0.11f + bh * 2.24f),
+        "شروع دوباره", Style.SECONDARY) {
         paused = false
         restartLevel()
     }
-    button(c, RectF(panel.left + w * 0.06f, panel.top + h * 0.1f + bh * 2.5f, panel.right - w * 0.06f, panel.top + h * 0.1f + bh * 3.5f), "خانه", Style.GHOST) {
+    button(c, RectF(left, panel.top + h * 0.11f + bh * 2.48f, right, panel.top + h * 0.11f + bh * 3.48f),
+        "خانه", Style.GHOST) {
         paused = false
         result = null
         screen = Screen.HOME
@@ -720,69 +941,74 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     dim.color = 0xC0000000.toInt()
     c.drawRect(0f, 0f, w, h, dim)
 
-    val panel = RectF(w * 0.08f, h * 0.24f, w * 0.92f, h * 0.76f)
-    Art.gradientPanel(c, panel, w * 0.06f, Palette.PANEL_SOFT, Palette.PANEL)
+    val panel = RectF(w * 0.07f, h * 0.19f, w * 0.93f, h * 0.81f)
+    Art.card(c, panel, w * 0.06f, if (res.win) Palette.GOLD else Palette.DANGER)
 
     if (res.win) {
-        Art.text(c, "آفرین!", panel.centerX(), panel.top + h * 0.075f, w * 0.095f, Palette.LIME, Paint.Align.CENTER, Art.black, true)
+        Art.title(c, "آفرین!", panel.centerX(), panel.top + h * 0.085f, w * 0.1f, Palette.CREAM, 0xFF6B4300.toInt())
         for (i in 0 until 3) {
-            val sx = panel.centerX() + (i - 1) * w * 0.16f
-            val sy = panel.top + h * 0.145f
-            val appeared = (now - resultAt) / 180f - i
+            val sx = panel.centerX() + (i - 1) * w * 0.17f
+            val sy = panel.top + h * 0.155f
+            val appeared = (now - resultAt) / 190f - i
             val k = appeared.coerceIn(0f, 1f)
-            val pop = if (k < 1f) 0.2f + 1.15f * k + 0.18f * sin(k * Math.PI.toFloat()) else 1f
+            val pop = if (k < 1f) 0.2f + 1.15f * k + 0.2f * sin(k * Math.PI.toFloat()) else 1f
             val idle = 1f + 0.05f * sin(now / 260f + i).toFloat()
-            if (i < res.stars && k > 0.4f) {
-                Art.glow(c, sx, sy, w * 0.13f, Palette.GOLD, 0.25f)
+            if (i < res.stars && k > 0.35f) {
+                Art.glow(c, sx, sy, w * 0.14f, Palette.GOLD, 0.28f)
             }
             c.save()
             c.scale(if (i < res.stars) pop * idle else 1f, if (i < res.stars) pop * idle else 1f, sx, sy)
-            Art.star(c, sx, sy, w * 0.06f, i < res.stars)
+            Art.star(c, sx, sy, w * 0.065f, i < res.stars)
             c.restore()
         }
-        Art.text(c, "${res.score}", panel.centerX(), panel.top + h * 0.215f, w * 0.07f, Palette.CREAM, Paint.Align.CENTER, Art.black)
-        Art.text(c, "امتیاز", panel.centerX(), panel.top + h * 0.245f, w * 0.036f, Palette.MUTED)
-        Art.coin(c, panel.centerX() - w * 0.09f, panel.top + h * 0.295f, w * 0.028f)
-        Art.text(c, "+${res.coins}", panel.centerX() + w * 0.03f, panel.top + h * 0.305f, w * 0.048f, Palette.GOLD, Paint.Align.CENTER, Art.bold)
+        Art.text(c, "${res.score}", panel.centerX(), panel.top + h * 0.235f, w * 0.075f,
+            Palette.CREAM, Paint.Align.CENTER, Art.black, true)
+        Art.text(c, "امتیاز", panel.centerX(), panel.top + h * 0.268f, w * 0.036f, Palette.MUTED)
+        val coinY = panel.top + h * 0.325f
+        Art.coin(c, panel.centerX() - w * 0.1f, coinY, w * 0.032f)
+        Art.text(c, "+${res.coins}", panel.centerX() + w * 0.035f, coinY + w * 0.012f, w * 0.05f,
+            Palette.GOLD, Paint.Align.CENTER, Art.bold, true)
 
-        val bh = h * 0.062f
-        val hasNext = res.levelId < levels.size
-        if (hasNext) {
-            button(c, RectF(panel.left + w * 0.07f, panel.bottom - h * 0.175f, panel.right - w * 0.07f, panel.bottom - h * 0.175f + bh), "سطح بعد", Style.PRIMARY) {
+        val bh = h * 0.066f
+        val left = panel.left + w * 0.07f
+        val right = panel.right - w * 0.07f
+        if (res.levelId < levels.size) {
+            button(c, RectF(left, panel.bottom - h * 0.185f, right, panel.bottom - h * 0.185f + bh),
+                "سطح بعد", Style.PRIMARY) {
                 result = null
                 nextLevel()
             }
-            button(
-                c,
-                RectF(panel.left + w * 0.07f, panel.bottom - h * 0.095f, panel.right - w * 0.07f, panel.bottom - h * 0.095f + bh),
-                "نقشه", Style.GHOST
-            ) {
+            button(c, RectF(left, panel.bottom - h * 0.1f, right, panel.bottom - h * 0.1f + bh),
+                "نقشه", Style.GHOST) {
                 result = null
                 screen = Screen.MAP
             }
         } else {
-            button(
-                c,
-                RectF(panel.left + w * 0.07f, panel.bottom - h * 0.115f, panel.right - w * 0.07f, panel.bottom - h * 0.115f + bh),
-                "نقشه", Style.PRIMARY
-            ) {
+            button(c, RectF(left, panel.bottom - h * 0.12f, right, panel.bottom - h * 0.12f + bh),
+                "نقشه", Style.PRIMARY) {
                 result = null
                 screen = Screen.MAP
             }
         }
     } else {
-        Art.text(c, "حرکات تمام شد", panel.centerX(), panel.top + h * 0.08f, w * 0.07f, Palette.CORAL, Paint.Align.CENTER, Art.black)
-        Art.text(c, "${res.score} امتیاز گرفتی", panel.centerX(), panel.top + h * 0.13f, w * 0.042f, Palette.MUTED)
-        Art.text(c, "هدف: ${levels[levelIndex].target}", panel.centerX(), panel.top + h * 0.165f, w * 0.038f, Palette.MUTED)
+        Art.title(c, "حرکات تمام شد", panel.centerX(), panel.top + h * 0.1f, w * 0.068f,
+            Palette.CREAM, 0xFF5A0A18.toInt())
+        Art.text(c, "${res.score} امتیاز گرفتی", panel.centerX(), panel.top + h * 0.155f, w * 0.043f, Palette.CREAM_DIM)
+        Art.text(c, "هدف: ${levels[levelIndex].target}", panel.centerX(), panel.top + h * 0.19f, w * 0.038f, Palette.MUTED)
 
-        val bh = h * 0.062f
-        button(c, RectF(panel.left + w * 0.07f, panel.top + h * 0.21f, panel.right - w * 0.07f, panel.top + h * 0.21f + bh), "۵ حرکت با ۸۰ سکه", Style.PRIMARY) {
+        val bh = h * 0.066f
+        val left = panel.left + w * 0.07f
+        val right = panel.right - w * 0.07f
+        button(c, RectF(left, panel.top + h * 0.235f, right, panel.top + h * 0.235f + bh),
+            "۵ حرکت با ۸۰ سکه", Style.PRIMARY) {
             buyMovesForCoins()
         }
-        button(c, RectF(panel.left + w * 0.07f, panel.top + h * 0.21f + bh * 1.2f, panel.right - w * 0.07f, panel.top + h * 0.21f + bh * 2.2f), "تلاش دوباره (یک جان)", Style.SECONDARY) {
+        button(c, RectF(left, panel.top + h * 0.235f + bh * 1.25f, right, panel.top + h * 0.235f + bh * 2.25f),
+            "تلاش دوباره (یک جان)", Style.SECONDARY) {
             restartLevel()
         }
-        button(c, RectF(panel.left + w * 0.07f, panel.bottom - h * 0.105f, panel.right - w * 0.07f, panel.bottom - h * 0.04f), "نقشه", Style.GHOST) {
+        button(c, RectF(left, panel.bottom - h * 0.11f, right, panel.bottom - h * 0.11f + bh),
+            "نقشه", Style.GHOST) {
             result = null
             screen = Screen.MAP
         }
@@ -794,9 +1020,19 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
 private fun GameView.header(c: Canvas, title: String) {
     val w = widthPx
     val h = heightPx
-    Art.text(c, title, w * 0.5f, h * 0.085f, w * 0.062f, Palette.CREAM, Paint.Align.CENTER, Art.black)
-    val back = RectF(w * 0.05f, h * 0.045f, w * 0.145f, h * 0.095f)
-    Art.panel(c, back, back.height() / 2f, 0x4D0A1F16)
-    Art.chevronLeft(c, back.centerX(), back.centerY(), w * 0.022f, Palette.CREAM)
+    val plaque = RectF(w * 0.22f, h * 0.03f, w * 0.78f, h * 0.098f)
+    Art.plaque(c, plaque, plaque.height() * 0.36f)
+    Art.text(c, title, plaque.centerX(), plaque.centerY() + plaque.height() * 0.18f, plaque.height() * 0.46f,
+        Palette.CREAM, Paint.Align.CENTER, Art.black, true)
+
+    val back = RectF(w * 0.045f, h * 0.032f, w * 0.12f, h * 0.096f)
+    Art.card(c, back, back.height() * 0.34f)
+    Art.chevronLeft(c, back.centerX(), back.centerY(), back.height() * 0.3f, Palette.CREAM)
     hotspots.add(Hotspot(RectF(back), { screen = Screen.HOME }))
+
+    val coinPill = RectF(w * 0.845f, h * 0.036f, w * 0.955f, h * 0.09f)
+    Art.panel(c, coinPill, coinPill.height() / 2f, 0x4D0A1F16, 1.2f, 0x33FFFFFF)
+    Art.coin(c, coinPill.left + coinPill.height() * 0.42f, coinPill.centerY(), coinPill.height() * 0.24f)
+    Art.text(c, "${save.coins}", coinPill.right - coinPill.height() * 0.12f, coinPill.centerY() + coinPill.height() * 0.16f,
+        coinPill.height() * 0.3f, Palette.CREAM, Paint.Align.RIGHT, Art.bold)
 }
