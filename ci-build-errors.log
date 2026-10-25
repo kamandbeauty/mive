@@ -2,8 +2,8 @@
 > Task :app:checkKotlinGradlePluginConfigurationErrors
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
-> Task :app:checkDebugAarMetadata
 > Task :app:generateDebugResValues
+> Task :app:checkDebugAarMetadata
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
@@ -14,20 +14,24 @@
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
 > Task :app:preDebugUnitTestBuild UP-TO-DATE
-> Task :app:processDebugManifestForPackage
-> Task :app:javaPreCompileDebugUnitTest
 > Task :app:javaPreCompileDebug
+> Task :app:javaPreCompileDebugUnitTest
+> Task :app:processDebugManifestForPackage
 > Task :app:processDebugResources
-> Task :app:compileDebugKotlin FAILED
-e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/VictoryLayout.kt:36:5 Property must be initialized or be abstract
+> Task :app:compileDebugKotlin
+> Task :app:compileDebugJavaWithJavac NO-SOURCE
+> Task :app:bundleDebugClassesToRuntimeJar
+> Task :app:bundleDebugClassesToCompileJar
+> Task :app:processDebugJavaRes
+> Task :app:compileDebugUnitTestKotlin
+> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processDebugUnitTestJavaRes
+> Task :app:testDebugUnitTest FAILED
 FAILURE: Build failed with an exception.
 * What went wrong:
-Execution failed for task ':app:compileDebugKotlin'.
-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
+Execution failed for task ':app:testDebugUnitTest'.
+> There were failing tests. See the report at: file:///home/runner/work/mive/mive/game-android/app/build/reports/tests/testDebugUnitTest/index.html
 > Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
 
 Welcome to Gradle 8.9!
 
@@ -43,8 +47,8 @@ Daemon will be stopped at the end of the build
 > Task :app:checkKotlinGradlePluginConfigurationErrors
 > Task :app:preBuild UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
-> Task :app:checkDebugAarMetadata
 > Task :app:generateDebugResValues
+> Task :app:checkDebugAarMetadata
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
@@ -55,27 +59,43 @@ Daemon will be stopped at the end of the build
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
 > Task :app:preDebugUnitTestBuild UP-TO-DATE
-> Task :app:processDebugManifestForPackage
-> Task :app:javaPreCompileDebugUnitTest
 > Task :app:javaPreCompileDebug
+> Task :app:javaPreCompileDebugUnitTest
+> Task :app:processDebugManifestForPackage
 > Task :app:processDebugResources
 
-> Task :app:compileDebugKotlin FAILED
-e: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/VictoryLayout.kt:36:5 Property must be initialized or be abstract
+> Task :app:compileDebugKotlin
+w: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Core.kt:242:32 Elvis operator (?:) always returns the left operand of non-nullable type Game.Group?
+w: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Core.kt:551:21 Parameter 'force' is never used
+w: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:642:46 Parameter 'g' is never used
+w: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:1315:9 Variable 'royalTop' is never used
+w: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/Screens.kt:1316:9 Variable 'royalBot' is never used
+w: file:///home/runner/work/mive/mive/game-android/app/src/main/java/ir/mivehchin/game/VictoryLayout.kt:99:9 The value 'stackOf()' assigned to 'var stack: Float defined in ir.mivehchin.game.VictoryGeometry.`<init>`' is never used
+
+> Task :app:compileDebugJavaWithJavac NO-SOURCE
+> Task :app:bundleDebugClassesToRuntimeJar
+> Task :app:bundleDebugClassesToCompileJar
+> Task :app:processDebugJavaRes
+> Task :app:compileDebugUnitTestKotlin
+> Task :app:compileDebugUnitTestJavaWithJavac NO-SOURCE
+> Task :app:processDebugUnitTestJavaRes
+
+> Task :app:testDebugUnitTest FAILED
+
+VictoryLayoutTest > shortScreenCompressesInsteadOfOverflowing FAILED
+    java.lang.AssertionError at VictoryLayoutTest.kt:52
+
+6 tests completed, 1 failed
 
 FAILURE: Build failed with an exception.
 
 * What went wrong:
-Execution failed for task ':app:compileDebugKotlin'.
-> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
-   > Compilation error. See log for more details
+Execution failed for task ':app:testDebugUnitTest'.
+> There were failing tests. See the report at: file:///home/runner/work/mive/mive/game-android/app/build/reports/tests/testDebugUnitTest/index.html
 
 * Try:
-> Run with --stacktrace option to get the stack trace.
-> Run with --info or --debug option to get more log output.
 > Run with --scan to get full insights.
-> Get more help at https://help.gradle.org.
 
-BUILD FAILED in 1m 45s
-17 actionable tasks: 17 executed
+BUILD FAILED in 1m 20s
+23 actionable tasks: 23 executed
 === apk outputs ===
