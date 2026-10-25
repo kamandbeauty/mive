@@ -1228,13 +1228,72 @@ private fun GameView.drawPause(c: Canvas) {
     }
 }
 
+/* ------------------------------------------------------- victory ornaments */
+
+/** Small golden crown used above the victory plaque. */
+private fun Canvas.crown(cx: Float, cy: Float, wd: Float, ht: Float) {
+    val fill = Paint(Paint.ANTI_ALIAS_FLAG)
+    val line = Paint(Paint.ANTI_ALIAS_FLAG)
+    line.style = Paint.Style.STROKE
+    line.strokeWidth = Math.max(2f, wd * 0.026f)
+    line.color = 0xFF7A4A05.toInt()
+
+    val body = Path()
+    body.moveTo(cx - wd * 0.50f, cy + ht * 0.34f)
+    body.lineTo(cx - wd * 0.48f, cy - ht * 0.14f)
+    body.lineTo(cx - wd * 0.24f, cy + ht * 0.12f)
+    body.lineTo(cx, cy - ht * 0.46f)
+    body.lineTo(cx + wd * 0.24f, cy + ht * 0.12f)
+    body.lineTo(cx + wd * 0.48f, cy - ht * 0.14f)
+    body.lineTo(cx + wd * 0.50f, cy + ht * 0.34f)
+    body.close()
+
+    fill.shader = android.graphics.LinearGradient(
+        cx, cy - ht * 0.5f, cx, cy + ht * 0.4f,
+        0xFFFFF3B8.toInt(), 0xFFD99A12.toInt(), android.graphics.Shader.TileMode.CLAMP
+    )
+    drawPath(body, fill)
+    drawPath(body, line)
+    fill.shader = null
+
+    fill.color = 0xFFB06E06.toInt()
+    drawRoundRect(RectF(cx - wd * 0.50f, cy + ht * 0.16f, cx + wd * 0.50f, cy + ht * 0.36f), ht * 0.08f, ht * 0.08f, fill)
+    fill.color = 0xFFE5455F.toInt()
+    drawCircle(cx, cy + ht * 0.06f, wd * 0.055f, fill)
+    fill.color = 0xFF59C3FF.toInt()
+    drawCircle(cx - wd * 0.255f, cy + ht * 0.02f, wd * 0.036f, fill)
+    drawCircle(cx + wd * 0.255f, cy + ht * 0.02f, wd * 0.036f, fill)
+    fill.color = 0x99FFFFFF.toInt()
+    drawCircle(cx - wd * 0.02f, cy - ht * 0.06f, wd * 0.018f, fill)
+}
+
+/** Three leaves fanning out of a point, used on the panel corners. */
+private fun Canvas.sprig(cx: Float, cy: Float, r: Float, rot: Float, dark: Int, light: Int) {
+    for (i in 0 until 3) {
+        val a = Math.toRadians((rot - 34f + i * 34f).toDouble())
+        Art.leaf(
+            this,
+            cx + (cos(a) * r * 0.55f).toFloat(),
+            cy + (sin(a) * r * 0.55f).toFloat(),
+            r * (1f - 0.14f * abs(i - 1)),
+            dark, light, rot - 34f + i * 34f
+        )
+    }
+}
+
 private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     val w = widthPx
     val h = heightPx
     val now = System.currentTimeMillis()
-    val age = (now - resultAt).coerceAtLeast(0L)
+    // reduced-motion: skip straight to the resting state
+    val age = if (reduceMotion) 7000L else (now - resultAt).coerceAtLeast(0L)
     val t = age / 1000f
     val win = res.win
+
+    fun easeOutCubic(k: Float): Float {
+        val u = 1f - k
+        return 1f - u * u * u
+    }
 
     fun easeOutBack(k: Float): Float {
         val c1 = 1.70158f
@@ -1243,317 +1302,352 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
         return 1f + c3 * u * u * u + c1 * u * u
     }
 
-    fun easeOutCubic(k: Float): Float {
-        val u = 1f - k
-        return 1f - u * u * u
+    fun k(delay: Float, dur: Float = 340f): Float = easeOutCubic(((age - delay) / dur).coerceIn(0f, 1f))
+
+    /* ---------------------------------------------------------- palette */
+    val creamTop = 0xFFFFFCF3.toInt()
+    val creamBot = 0xFFFFE6BE.toInt()
+    val goldTop = 0xFFFFECB4.toInt()
+    val goldBot = 0xFFB8740C.toInt()
+    val inkBrown = 0xFF5A2E05.toInt()
+    val deepTop = 0xFF17744F.toInt()
+    val deepBot = 0xFF052C1C.toInt()
+    val royalTop = 0xFF2E6BE6.toInt()
+    val royalBot = 0xFF14307F.toInt()
+
+    /* ------------------------------------------------------------ scrim */
+    val scrim = Paint()
+    scrim.color = Art.withAlpha(0xFF04150D.toInt(), 0.70f * k(0f, 240f))
+    c.drawRect(0f, 0f, w, h, scrim)
+    Art.glow(c, w * 0.5f, h * 0.36f, w * 0.95f, 0xFFFFD98A.toInt(), 0.14f * k(0f, 240f))
+
+    /* ------------------------------------------------ responsive geometry */
+    // All placement lives in VictoryLayout so it can be unit tested on the JVM.
+    val geo = VictoryGeometry(w, h, win)
+    fun rect(b: Box) = RectF(b.left, b.top, b.right, b.bottom)
+
+    val panel = rect(geo.panel)
+    val inner = rect(geo.inner)
+    val plaque = rect(geo.plaque)
+    val chip = rect(geo.chip)
+    val score = rect(geo.score)
+    val capsule = rect(geo.capsule)
+    val primary = rect(geo.primary)
+    val secondary = rect(geo.secondary)
+
+    val pw = panel.width()
+    val radius = w * 0.060f
+    val rim = w * 0.013f
+    val gardenH = geo.gardenH
+    val gardenTop = geo.gardenTop
+    val avail = inner.height() - gardenH
+    val plaqueH = plaque.height()
+    val chipH = chip.height()
+    val starR = geo.starR
+    val socketR = geo.socketR
+    val starCy = geo.starCy
+    val scoreH = score.height()
+    val capH = capsule.height()
+
+    val openScale = 0.90f + 0.10f * easeOutBack(((age - 20f) / 420f).coerceIn(0f, 1f))
+    val rise = (1f - k(20f, 420f)) * h * 0.018f
+
+    c.save()
+    c.translate(0f, rise)
+    c.scale(openScale, openScale, panel.centerX(), panel.centerY())
+
+    /* -------------------------------------------------------------- panel */
+    Art.panel(c, RectF(panel.left + w * 0.004f, panel.top + h * 0.013f, panel.right + w * 0.004f, panel.bottom + h * 0.013f),
+        radius, 0x7703140C)
+    Art.gradientPanel(c, panel, radius, goldTop, goldBot)
+    Art.gradientPanel(c, inner, radius * 0.88f, creamTop, creamBot)
+    Art.panel(c, inner, radius * 0.88f, 0x00000000, 2f, 0x55B8740C)
+    Art.panel(c, RectF(inner.left + rim, gardenTop - avail * 0.02f, inner.right - rim, inner.bottom - rim * 0.4f),
+        radius * 0.62f, 0x10000000)
+
+    /* ------------------------------------------------- corner decorations */
+    val cornerR = pw * 0.060f
+    c.sprig(inner.left + pw * 0.030f, inner.top + pw * 0.042f, cornerR, 155f, Palette.LEAF_DARK, Palette.LEAF_LIGHT)
+    c.sprig(inner.right - pw * 0.030f, inner.top + pw * 0.042f, cornerR, 25f, Palette.LEAF_DARK, Palette.LEAF_LIGHT)
+    c.sprig(inner.left + pw * 0.030f, inner.bottom - pw * 0.026f, cornerR * 0.86f, 205f, Palette.LEAF_DARK, Palette.LEAF_LIGHT)
+    c.sprig(inner.right - pw * 0.030f, inner.bottom - pw * 0.026f, cornerR * 0.86f, 335f, Palette.LEAF_DARK, Palette.LEAF_LIGHT)
+
+    /* ------------------------------------------------- garden along the base */
+    Art.bush(c, inner.left + pw * 0.14f, inner.bottom + avail * 0.010f, pw * 0.38f, avail * 0.085f,
+        Palette.LEAF_DARK, Palette.LEAF, 0.32f)
+    Art.bush(c, inner.right - pw * 0.14f, inner.bottom + avail * 0.010f, pw * 0.38f, avail * 0.088f,
+        Palette.LEAF_DARK, Palette.LEAF, 0.32f)
+    Art.bush(c, inner.centerX(), inner.bottom + avail * 0.014f, pw * 0.46f, avail * 0.070f,
+        Palette.LEAF_DARK, Palette.LEAF, 0.42f)
+
+    val flowerCols = intArrayOf(0xFFFF8FA3.toInt(), 0xFFFFD166.toInt(), 0xFFB9A6FF.toInt(), 0xFFFFB4E1.toInt())
+    for (i in 0 until 9) {
+        val fx = inner.left + pw * (0.09f + 0.82f * i / 8f)
+        val fy = gardenTop + gardenH * (0.34f + 0.22f * (i % 3))
+        val sway = if (reduceMotion) 0f else sin(t * 1.7f + i) * pw * 0.004f
+        Art.flower(c, fx + sway, fy, pw * 0.016f, flowerCols[i % flowerCols.size], 0xFFFFF3C4.toInt())
     }
 
-    val gold = Palette.GOLD
-    val accent = if (win) gold else 0xFFFF7D8F.toInt()
+    // fruit resting on the hedge, outside the button column
+    val fruitY = gardenTop + gardenH * 0.46f
+    val bob = if (reduceMotion) 0f else sin(t * 2.1f) * avail * 0.004f
+    val fs = pw * 0.135f
+    Art.produceHalo(c, 0, inner.left + pw * 0.105f, fruitY + bob, fs * 0.95f)
+    Art.produce(c, 0, inner.left + pw * 0.105f, fruitY + bob, fs)
+    Art.produceHalo(c, 2, inner.right - pw * 0.105f, fruitY + bob, fs * 0.92f)
+    Art.produce(c, 2, inner.right - pw * 0.105f, fruitY + bob, fs * 0.96f)
+    Art.produceHalo(c, 4, inner.right - pw * 0.235f, fruitY + gardenH * 0.30f + bob, fs * 0.70f)
+    Art.produce(c, 4, inner.right - pw * 0.235f, fruitY + gardenH * 0.30f + bob, fs * 0.74f)
 
-    /* ------------------------------------------------------- backdrop */
-    val dimK = (age / 240f).coerceIn(0f, 1f)
-    val dim = Paint()
-    dim.color = Art.withAlpha(0xFF03100A.toInt(), 0.84f * dimK)
-    c.drawRect(0f, 0f, w, h, dim)
-
-    val rayCx = w / 2f
-    val rayCy = h * 0.30f
+    /* ------------------------------------------------------------- plaque */
+    val plaqueK = easeOutBack(((age - 120f) / 400f).coerceIn(0f, 1f))
     c.save()
-    c.rotate(t * 7f, rayCx, rayCy)
-    val rayPaint = Paint(Paint.ANTI_ALIAS_FLAG)
-    rayPaint.color = Art.withAlpha(accent, 0.075f * dimK)
-    for (i in 0 until 16) {
-        val a0 = Math.toRadians(i * 22.5)
-        val a1 = Math.toRadians(i * 22.5 + 9.0)
-        val ray = Path()
-        ray.moveTo(rayCx, rayCy)
-        ray.lineTo(rayCx + (cos(a0) * w * 1.5f).toFloat(), rayCy + (sin(a0) * w * 1.5f).toFloat())
-        ray.lineTo(rayCx + (cos(a1) * w * 1.5f).toFloat(), rayCy + (sin(a1) * w * 1.5f).toFloat())
-        ray.close()
-        c.drawPath(ray, rayPaint)
+    c.translate(0f, (1f - plaqueK) * -h * 0.028f)
+    if (plaqueK > 0.02f) {
+        Art.panel(c, RectF(plaque.left + 4f, plaque.top + h * 0.010f, plaque.right + 4f, plaque.bottom + h * 0.010f),
+            plaqueH * 0.34f, 0x66000000)
+        Art.plaque(c, plaque, plaqueH * 0.34f)
+        c.shine(plaque, plaqueH * 0.34f, if (reduceMotion) 0.1f else t, 0.34f, 0.15f, 0.30f)
+        Art.flower(c, plaque.left + plaqueH * 0.34f, plaque.centerY(), plaqueH * 0.085f,
+            0xFFFF8FA3.toInt(), 0xFFFFF3C4.toInt())
+        Art.flower(c, plaque.right - plaqueH * 0.34f, plaque.centerY(), plaqueH * 0.085f,
+            0xFFB9A6FF.toInt(), 0xFFFFF3C4.toInt())
     }
     c.restore()
 
-    if (win) {
-        val conf = Paint(Paint.ANTI_ALIAS_FLAG)
-        for (i in 0 until 24) {
-            val phase = (i * 0.377f) % 1f
-            val speed = 0.14f + 0.09f * ((i * 7) % 5) / 4f
-            val y = ((phase + t * speed) % 1.18f - 0.09f) * h
-            val x = (0.05f + 0.90f * ((i * 0.618f) % 1f)) * w + sin(t * 1.6f + i) * w * 0.018f
-            val col = when (i % 4) {
-                0 -> Palette.LIME
-                1 -> Palette.GOLD
-                2 -> Palette.CORAL
-                else -> 0xFF9FE6FF.toInt()
-            }
-            conf.color = Art.withAlpha(col, 0.8f * dimK)
-            c.save()
-            c.rotate(t * 130f + i * 37f, x, y)
-            c.drawRect(x - w * 0.007f, y - w * 0.013f, x + w * 0.007f, y + w * 0.013f, conf)
-            c.restore()
+    val titleA = k(170f, 300f)
+    if (titleA > 0.04f) {
+        val text = if (win) "آفرین!" else "حرکات تمام شد"
+        val maxW = plaque.width() * 0.66f
+        var size = plaqueH * (if (win) 0.50f else 0.36f)
+        val need = Art.measure(text, size, Art.black)
+        if (need > maxW) size *= (maxW / need).coerceIn(0.5f, 1f)
+        if (win) {
+            Art.title(c, text, plaque.centerX(), plaque.centerY() + size * 0.36f, size,
+                Art.withAlpha(0xFFFFD24A.toInt(), titleA), Art.withAlpha(inkBrown, titleA))
+        } else {
+            Art.title(c, text, plaque.centerX(), plaque.centerY() + size * 0.34f, size,
+                Art.withAlpha(Palette.CREAM, titleA), Art.withAlpha(0xFF5A0A18.toInt(), titleA))
         }
     }
 
-    /* ----------------------------------------------------------- frame */
-    val open = easeOutBack(((age - 80f) / 430f).coerceIn(0f, 1f))
-    val panel = RectF(w * 0.055f, h * 0.112f, w * 0.945f, h * 0.888f)
-    val pulse = 0.5f + 0.5f * sin(t * 2.1f)
-    Art.glow(c, panel.centerX(), panel.centerY(), panel.width() * 0.58f, accent, (0.14f + 0.07f * pulse) * open)
-
-    c.save()
-    val panelScale = 0.84f + 0.16f * open
-    c.scale(panelScale, panelScale, panel.centerX(), panel.centerY())
-
-    val frameTop = if (win) 0xFFF0C070.toInt() else 0xFFE4707F.toInt()
-    val frameBot = if (win) 0xFF8F5E18.toInt() else 0xFF8C1F30.toInt()
-    val feltTop = if (win) 0xFF1B4A34.toInt() else 0xFF3A1220.toInt()
-    val feltBot = if (win) 0xFF071E16.toInt() else 0xFF170509.toInt()
-
-    Art.gradientPanel(c, panel, w * 0.078f, frameTop, frameBot)
-    val inner = RectF(panel.left + w * 0.024f, panel.top + w * 0.024f, panel.right - w * 0.024f, panel.bottom - w * 0.024f)
-    Art.gradientPanel(c, inner, w * 0.058f, feltTop, feltBot)
-    Art.panel(c, inner, w * 0.058f, 0x00000000, 2.5f, 0xB3FFE9C8.toInt())
-    val hair = RectF(inner.left + w * 0.014f, inner.top + w * 0.014f, inner.right - w * 0.014f, inner.bottom - w * 0.014f)
-    Art.panel(c, hair, w * 0.05f, 0x00000000, 1.2f, 0x40FFE9C8)
-    for (i in 0 until 4) {
-        val sx = if (i % 2 == 0) inner.left + w * 0.030f else inner.right - w * 0.030f
-        val sy = if (i < 2) inner.top + w * 0.030f else inner.bottom - w * 0.030f
-        Art.circle(c, sx, sy, w * 0.010f, Art.withAlpha(accent, 0.9f))
-        Art.circle(c, sx - w * 0.002f, sy - w * 0.002f, w * 0.004f, 0x99FFFFFF.toInt())
-    }
-
-    /* ---------------------------------------------------------- ribbon */
-    val ribH = h * 0.080f
-    val ribbon = RectF(panel.centerX() - w * 0.305f, panel.top + h * 0.004f,
-        panel.centerX() + w * 0.305f, panel.top + h * 0.004f + ribH)
-    Art.panel(c, RectF(ribbon.left + w * 0.006f, ribbon.top + h * 0.008f, ribbon.right + w * 0.006f, ribbon.bottom + h * 0.008f),
-        ribH * 0.34f, 0x66000000)
-    Art.plaque(c, ribbon, ribH * 0.34f)
-    val titleSize = if (win) ribH * 0.46f else ribH * 0.32f
-    Art.title(c, if (win) "آفرین!" else "حرکات تمام شد", ribbon.centerX(), ribbon.centerY() + ribH * 0.18f,
-        titleSize, Palette.CREAM, if (win) 0xFF6B4300.toInt() else 0xFF5A0A18.toInt())
-    // moving highlight across the ribbon
-    c.save()
-    val ribClip = Path()
-    ribClip.addRoundRect(ribbon, ribH * 0.34f, ribH * 0.34f, Path.Direction.CW)
-    c.clipPath(ribClip)
-    val sweepX = ribbon.left + ((t * 0.55f) % 1.4f) * ribbon.width()
-    val sweep = Paint(Paint.ANTI_ALIAS_FLAG)
-    sweep.color = 0x33FFFFFF
-    val sweepPath = Path()
-    sweepPath.moveTo(sweepX, ribbon.top)
-    sweepPath.lineTo(sweepX + w * 0.05f, ribbon.top)
-    sweepPath.lineTo(sweepX - w * 0.04f, ribbon.bottom)
-    sweepPath.lineTo(sweepX - w * 0.09f, ribbon.bottom)
-    sweepPath.close()
-    c.drawPath(sweepPath, sweep)
-    c.restore()
-
-    /* ------------------------------------------------------- level chip */
-    val chipTop = ribbon.bottom + h * 0.010f
-    val chip = RectF(panel.centerX() - w * 0.30f, chipTop, panel.centerX() + w * 0.30f, chipTop + h * 0.040f)
-    Art.panel(c, chip, chip.height() / 2f, 0x4D000000, 1.4f, 0x40FFE9C8)
-    val lvlName = levels.getOrNull(res.levelId - 1)?.name ?: ""
-    val chipLabel = if (lvlName.isBlank()) "سطح ${fa(res.levelId)}" else "سطح ${fa(res.levelId)}  •  $lvlName"
-    Art.text(c, chipLabel, chip.centerX(), chip.centerY() + chip.height() * 0.20f, chip.height() * 0.44f,
-        Palette.CREAM_DIM, Paint.Align.CENTER, Art.bold)
-
-    /* ------------------------------------------------------------ stars */
-    val starY = panel.top + h * 0.205f
-    val gap = w * 0.205f
-    val bigR = w * 0.075f
-    var landed = 0
-    for (i in 0 until 3) {
-        val sx = panel.centerX() + (i - 1) * gap
-        val socket = RectF(sx - bigR * 1.22f, starY - bigR * 1.22f, sx + bigR * 1.22f, starY + bigR * 1.22f)
-        Art.panel(c, socket, bigR * 0.62f, 0x66000000, 2f, 0x33FFE9C8)
-        Art.panel(c, RectF(socket.left + 4f, socket.top + 4f, socket.right - 4f, socket.bottom - 4f),
-            bigR * 0.58f, 0x1AFFFFFF, 1.2f, 0x22FFFFFF)
-        if (i >= res.stars) {
-            Art.star(c, sx, starY, bigR * 0.72f, false, 0x40FFE9C8)
-            continue
-        }
-
-        val land = 520f + i * 260f
-        val fly = ((age - (land - 320f)) / 320f).coerceIn(0f, 1f)
-        if (fly <= 0f) {
-            Art.star(c, sx, starY, bigR * 0.72f, false, 0x40FFE9C8)
-            if (age >= land) landed++
-            continue
-        }
-        if (age >= land) landed++
-
-        val fall = fly * fly
-        val cy = starY - h * 0.16f + h * 0.16f * fall
-        val sc = 1.85f - 0.85f * fly
-
-        // motion trail
-        for (j in 1..3) {
-            val trailY = cy - h * 0.048f * j * (1f - fly * 0.55f)
-            Art.star(c, sx, trailY, bigR * sc * (1f - 0.14f * j), false,
-                Art.withAlpha(gold, 0.24f * (1f - fly * 0.6f) / j))
-        }
+    if (win && plaqueK > 0.45f) {
+        val crownA = ((plaqueK - 0.45f) / 0.55f).coerceIn(0f, 1f)
         c.save()
-        c.scale(sc, sc, sx, cy)
-        Art.star(c, sx, cy, bigR, true)
+        c.scale(crownA, crownA, plaque.centerX(), plaque.top)
+        c.crown(plaque.centerX(), plaque.top - plaqueH * 0.02f, plaqueH * 0.62f, plaqueH * 0.34f)
         c.restore()
-
-        val hit = (age - land).toInt()
-        if (hit in 0..340) {
-            val hk = hit / 340f
-            val ringR = bigR * (1.05f + 1.5f * hk)
-            Art.panel(c, RectF(sx - ringR, cy - ringR, sx + ringR, cy + ringR), ringR, 0x00000000,
-                3f * (1f - hk) + 1f, Art.withAlpha(gold, 0.75f * (1f - hk)))
-            Art.glow(c, sx, cy, bigR * (1.2f + 1.4f * hk), gold, 0.42f * (1f - hk))
-            for (j in 0 until 8) {
-                val a = j * (Math.PI / 4) + hk * 1.2f
-                val d = bigR * (0.9f + 1.7f * hk)
-                Art.sparkle(c, sx + (cos(a) * d).toFloat(), cy + (sin(a) * d).toFloat(),
-                    bigR * 0.22f * (1f - hk), 0xFFFFFFFF.toInt(), 0.9f * (1f - hk), hk * 220f)
-            }
-        }
-        if (hit > 340) {
-            val idle = 1f + 0.045f * sin(t * 3.4f + i * 1.3f)
-            Art.glow(c, sx, cy, bigR * 1.5f, gold, 0.16f + 0.06f * sin(t * 2.4f + i))
-            c.save()
-            c.scale(idle, idle, sx, cy)
-            Art.star(c, sx, cy, bigR, true)
-            c.restore()
-            Art.sparkle(c, sx + bigR * 1.05f, cy - bigR * 0.9f, bigR * 0.20f, 0xFFFFFFFF.toInt(),
-                0.45f + 0.4f * sin(t * 3f + i), t * 90f)
-        }
     }
 
+    /* --------------------------------------------------------- level chip */
+    val chipA = k(300f, 300f)
+    if (chipA > 0.03f) {
+        c.save()
+        c.scale(0.92f + 0.08f * chipA, 0.92f + 0.08f * chipA, chip.centerX(), chip.centerY())
+        Art.gradientPanel(c, chip, chipH / 2f, 0xFF9C6234.toInt(), 0xFF6B3F1C.toInt())
+        Art.panel(c, chip, chipH / 2f, 0x00000000, 1.5f, 0x88FFE0B8.toInt())
+        val lvlName = levels.getOrNull(res.levelId - 1)?.name ?: ""
+        val label = if (lvlName.isBlank()) "سطح ${fa(res.levelId)}" else "سطح ${fa(res.levelId)} • $lvlName"
+        var csize = chipH * 0.44f
+        val cneed = Art.measure(label, csize, Art.bold)
+        val croom = chip.width() * 0.86f
+        if (cneed > croom) csize *= (croom / cneed).coerceIn(0.55f, 1f)
+        Art.text(c, label, chip.centerX(), chip.centerY() + csize * 0.36f, csize,
+            Art.withAlpha(Palette.CREAM, chipA), Paint.Align.CENTER, Art.bold, true)
+        c.restore()
+    }
+
+    /* -------------------------------------------------------------- stars */
+    var landed = 0
     if (win) {
-        if (landed > resultStarSfx) {
+        for (i in 0 until 3) {
+            val sx = inner.centerX() + (i - 1) * pw * 0.205f
+            val socket = RectF(sx - socketR, starCy - socketR, sx + socketR, starCy + socketR)
+            val socketA = k(330f + i * 60f, 300f)
+            if (socketA <= 0.03f) continue
+            Art.panel(c, socket, starR * 0.74f, Art.withAlpha(0xFFFDEFD2.toInt(), socketA))
+            Art.panel(c, socket, starR * 0.74f, 0x00000000, 2.2f, Art.withAlpha(0xFFD9A93F.toInt(), socketA))
+            Art.panel(c, RectF(socket.left + 5f, socket.top + 5f, socket.right - 5f, socket.bottom - 5f),
+                starR * 0.68f, 0x00000000, 1.1f, Art.withAlpha(0xFFFFFFFF.toInt(), 0.55f * socketA))
+
+            if (i >= res.stars) {
+                Art.star(c, sx, starCy, starR * 0.95f, false, Art.withAlpha(0xFFC9AE7C.toInt(), socketA))
+                continue
+            }
+
+            val land = 520f + i * 250f
+            val fly = ((age - (land - 320f)) / 320f).coerceIn(0f, 1f)
+            if (fly <= 0f) {
+                Art.star(c, sx, starCy, starR * 0.95f, false, 0x40C9AE7C)
+                continue
+            }
+            if (age >= land) landed++
+
+            val fall = fly * fly
+            val cy = starCy - avail * 0.16f + avail * 0.16f * fall
+            val sc = 1.65f - 0.65f * fly
+            for (j in 1..3) {
+                Art.star(c, sx, cy - starR * 0.75f * j * (1f - fly * 0.5f), starR * sc * (1f - 0.15f * j), true,
+                    Art.withAlpha(Palette.GOLD, 0.22f * (1f - fly * 0.6f) / j))
+            }
+            c.save()
+            c.scale(sc, sc, sx, cy)
+            Art.star(c, sx, cy, starR, true)
+            c.restore()
+
+            val hit = (age - land).toInt()
+            if (hit in 0..360) {
+                val hk = hit / 360f
+                val ringR = starR * (1.15f + 1.5f * hk)
+                Art.panel(c, RectF(sx - ringR, cy - ringR, sx + ringR, cy + ringR), ringR, 0x00000000,
+                    3f * (1f - hk) + 1f, Art.withAlpha(Palette.GOLD, 0.8f * (1f - hk)))
+                Art.glow(c, sx, cy, starR * (1.3f + 1.4f * hk), Palette.GOLD, 0.45f * (1f - hk))
+                for (j in 0 until 8) {
+                    val a = j * (Math.PI / 4) + hk * 1.2f
+                    val d = starR * (0.95f + 1.7f * hk)
+                    Art.sparkle(c, sx + (cos(a) * d).toFloat(), cy + (sin(a) * d).toFloat(),
+                        starR * 0.30f * (1f - hk), 0xFFFFFFFF.toInt(), 0.95f * (1f - hk), hk * 220f)
+                }
+            }
+            if (hit > 360) {
+                val idle = if (reduceMotion) 1f else 1f + 0.04f * sin(t * 3.4f + i * 1.3f)
+                Art.glow(c, sx, cy, starR * 1.75f, Palette.GOLD, 0.20f + 0.06f * sin(t * 2.4f + i))
+                c.save()
+                c.scale(idle, idle, sx, cy)
+                Art.star(c, sx, cy, starR, true)
+                c.restore()
+                Art.sparkle(c, sx + starR * 1.15f, cy - starR * 0.95f, starR * 0.24f, 0xFFFFFFFF.toInt(),
+                    0.40f + 0.40f * sin(t * 3f + i), t * 90f)
+            }
+        }
+        if (!reduceMotion && landed > resultStarSfx) {
             sound(R.raw.sfx_star, 1f + 0.07f * (landed - 1))
             flashAt = System.currentTimeMillis()
-            flashColor = gold
+            flashColor = Palette.GOLD
             resultStarSfx = landed
         }
+    } else {
+        Art.text(c, "${fa(res.score)} امتیاز گرفتی", inner.centerX(), starCy, scoreH * 0.20f,
+            Art.withAlpha(0xFF6B4A20.toInt(), k(320f, 300f)), Paint.Align.CENTER, Art.bold)
     }
 
-    /* ------------------------------------------------------------ score */
-    val plate = RectF(panel.left + w * 0.100f, panel.top + h * 0.274f,
-        panel.right - w * 0.100f, panel.top + h * 0.468f)
-    Art.panel(c, RectF(plate.left, plate.top + h * 0.004f, plate.right, plate.bottom + h * 0.004f), w * 0.045f, 0x33000000)
-    Art.panel(c, plate, w * 0.045f, 0x2A000000, 1.4f, 0x3DFFE9C8)
-    Art.panel(c, RectF(plate.left + 5f, plate.top + 5f, plate.right - 5f, plate.bottom - 5f), w * 0.040f,
-        0x00000000, 1f, 0x1AFFFFFF)
-
-    val scoreK = easeOutCubic(((age - 1420f) / 720f).coerceIn(0f, 1f))
-    val scoreY = panel.top + h * 0.318f
-    Art.text(c, "امتیاز", panel.centerX(), scoreY - h * 0.030f, w * 0.030f, Palette.MUTED,
-        Paint.Align.CENTER, Art.bold)
-    val bump = 1f + 0.06f * sin(((age - 1420f) / 720f).coerceIn(0f, 1f) * Math.PI.toFloat())
-    c.save()
-    c.scale(bump, bump, panel.centerX(), scoreY)
-    Art.text(c, fa((res.score * scoreK).toInt()), panel.centerX(), scoreY + h * 0.018f, w * 0.072f,
-        Palette.CREAM, Paint.Align.CENTER, Art.black, true)
-    c.restore()
-
-    val divY = panel.top + h * 0.372f
-    Art.panel(c, RectF(panel.left + w * 0.13f, divY, panel.centerX() - w * 0.065f, divY + 2.5f), 2f, 0x40FFE9C8)
-    Art.panel(c, RectF(panel.centerX() + w * 0.065f, divY, panel.right - w * 0.13f, divY + 2.5f), 2f, 0x40FFE9C8)
-    Art.leaf(c, panel.centerX(), divY + 2f, w * 0.030f, Palette.LEAF_DARK, Palette.LEAF, 0f)
-
-    /* ----------------------------------------------------------- reward */
-    val pillH = h * 0.056f
-    val pill = RectF(panel.centerX() - w * 0.215f, panel.top + h * 0.400f,
-        panel.centerX() + w * 0.215f, panel.top + h * 0.400f + pillH)
-    val pillK = easeOutBack(((age - 1850f) / 420f).coerceIn(0f, 1f))
-    if (pillK > 0.02f) {
+    /* -------------------------------------------------------- score panel */
+    val scoreA = k(1080f, 340f)
+    if (scoreA > 0.03f) {
         c.save()
-        c.scale(pillK, pillK, pill.centerX(), pill.centerY())
-        Art.glow(c, pill.centerX(), pill.centerY(), pill.width() * 0.55f, gold, 0.14f * pillK)
-        Art.panel(c, pill, pill.height() / 2f, 0x66000000, 1.8f, 0xB3FFE9C8.toInt())
-        val coinR = pill.height() * 0.34f
+        c.scale(0.95f + 0.05f * scoreA, 0.95f + 0.05f * scoreA, score.centerX(), score.centerY())
+        Art.panel(c, RectF(score.left + 3f, score.top + 8f, score.right + 3f, score.bottom + 8f),
+            scoreH * 0.30f, 0x44031409)
+        Art.gradientPanel(c, score, scoreH * 0.30f, deepTop, deepBot)
+        Art.panel(c, score, scoreH * 0.30f, 0x00000000, 2.4f, 0xCCFFD98A.toInt())
+        Art.panel(c, RectF(score.left + 7f, score.top + 7f, score.right - 7f, score.bottom - 7f),
+            scoreH * 0.24f, 0x00000000, 1.1f, 0x3CFFE9C8)
+
+        val labelY = score.top + scoreH * 0.28f
+        Art.text(c, "امتیاز", score.centerX(), labelY, scoreH * 0.19f,
+            Art.withAlpha(0xFFCFEEDC.toInt(), scoreA), Paint.Align.CENTER, Art.bold)
+        Art.leaf(c, score.centerX() - pw * 0.115f, labelY - scoreH * 0.06f, pw * 0.026f,
+            Palette.LEAF_DARK, Palette.LEAF_LIGHT, -60f)
+        Art.leaf(c, score.centerX() + pw * 0.115f, labelY - scoreH * 0.06f, pw * 0.026f,
+            Palette.LEAF_DARK, Palette.LEAF_LIGHT, 60f)
+
+        val countK = easeOutCubic(((age - 1200f) / 700f).coerceIn(0f, 1f))
+        val shown = if (reduceMotion) res.score else (res.score * countK).toInt()
+        val bump = if (reduceMotion) 1f else 1f + 0.05f * sin(countK * Math.PI.toFloat())
+        var numSize = scoreH * 0.42f
+        val num = fa(shown)
+        val nneed = Art.measure(num, numSize, Art.black)
+        if (nneed > score.width() * 0.62f) numSize *= (score.width() * 0.62f / nneed)
         c.save()
-        c.scale(1f, Math.abs(cos(t * 2.2f)) * 0.75f + 0.25f, pill.left + pill.height() * 0.62f, pill.centerY())
-        Art.coin(c, pill.left + pill.height() * 0.62f, pill.centerY(), coinR)
+        c.scale(bump, bump, score.centerX(), score.bottom - scoreH * 0.26f)
+        Art.text(c, num, score.centerX(), score.bottom - scoreH * 0.16f, numSize,
+            Art.withAlpha(0xFFFFFCF2.toInt(), scoreA), Paint.Align.CENTER, Art.black, true)
         c.restore()
-        Art.text(c, if (win) "+${fa(res.coins)} سکه" else "بدون جایزه", pill.centerX() + pill.height() * 0.20f,
-            pill.centerY() + pill.height() * 0.17f, pill.height() * 0.42f,
-            if (win) Palette.GOLD else Palette.MUTED, Paint.Align.CENTER, Art.black, true)
         c.restore()
-        if (win && !resultCoinSfx && age >= 1850f) {
+    }
+
+    /* ------------------------------------------------------- coin capsule */
+    val capK = easeOutBack(((age - 1720f) / 420f).coerceIn(0f, 1f))
+    if (capK > 0.03f) {
+        c.save()
+        c.scale(capK, capK, capsule.centerX(), capsule.centerY())
+        Art.panel(c, capsule, capH / 2f, 0xFFFFF6DF.toInt())
+        Art.panel(c, capsule, capH / 2f, 0x00000000, 2.2f, 0xCCE0A63A.toInt())
+        Art.panel(c, RectF(capsule.left + 6f, capsule.top + 5f, capsule.right - 6f, capsule.centerY() - 2f),
+            capH * 0.46f, 0x33FFFFFF)
+        val coinCx = capsule.right - capH * 0.66f
+        c.save()
+        val flip = if (reduceMotion) 1f else Math.abs(cos(t * 2.4f)) * 0.72f + 0.28f
+        c.scale(flip, 1f, coinCx, capsule.centerY())
+        Art.coin(c, coinCx, capsule.centerY(), capH * 0.34f)
+        c.restore()
+        val label = if (win) "+${fa(res.coins)} سکه" else "بدون جایزه"
+        var csize = capH * 0.46f
+        val cneed = Art.measure(label, csize, Art.black)
+        val croom = capsule.width() - capH * 1.30f
+        if (cneed > croom) csize *= (croom / cneed).coerceIn(0.5f, 1f)
+        Art.text(c, label, capsule.centerX() - capH * 0.28f, capsule.centerY() + csize * 0.36f, csize,
+            if (win) 0xFF8A5A05.toInt() else 0xFF9C8A6A.toInt(), Paint.Align.CENTER, Art.black, true)
+        c.restore()
+
+        if (win && !reduceMotion && !resultCoinSfx && age >= 1720f) {
             sound(R.raw.sfx_coin)
             resultCoinSfx = true
         }
     }
 
-    /* ---------------------------------------------------- garden vignette */
-    val gardenTop = panel.top + h * (if (win) 0.638f else 0.700f)
-    c.save()
-    val clip = Path()
-    clip.addRoundRect(inner, w * 0.064f, w * 0.064f, Path.Direction.CW)
-    c.clipPath(clip)
-    Art.gradientPanel(c, RectF(inner.left, gardenTop, inner.right, inner.bottom), 0f,
-        0x00000000, if (win) 0xFF061B13.toInt() else 0xFF120408.toInt())
-    Art.bush(c, inner.left + w * 0.16f, inner.bottom + h * 0.004f, w * 0.34f, h * 0.075f,
-        Palette.LEAF_DARK, Palette.LEAF, 0.35f)
-    Art.bush(c, inner.right - w * 0.15f, inner.bottom + h * 0.006f, w * 0.36f, h * 0.080f,
-        Palette.LEAF_DARK, Palette.LEAF, 0.35f)
-    Art.bush(c, inner.centerX(), inner.bottom + h * 0.008f, w * 0.30f, h * 0.065f,
-        Palette.LEAF_DARK, Palette.LEAF, 0.5f)
-    val flowerCols = intArrayOf(0xFFFF8FA3.toInt(), 0xFFFFD166.toInt(), 0xFFB9A6FF.toInt(), 0xFFFFB4E1.toInt())
-    for (i in 0 until 7) {
-        val fx = inner.left + w * (0.10f + 0.80f * i / 6f)
-        val fy = inner.bottom - h * 0.010f - h * 0.012f * (i % 3)
-        val sway = sin(t * 1.6f + i) * w * 0.004f
-        Art.flower(c, fx + sway, fy, w * 0.015f, flowerCols[i % flowerCols.size], 0xFFFFF3C4.toInt())
-    }
-    if (win) {
-        for (i in 0 until 3) {
-            val px = inner.left + w * (0.22f + 0.28f * i)
-            val py = inner.bottom - h * 0.052f + sin(t * 2.2f + i * 1.7f) * h * 0.003f
-            Art.produceHalo(c, i * 2, px, py, w * 0.105f)
-            Art.produce(c, i * 2, px, py, w * 0.108f)
-        }
-    }
-    c.restore()
-
-    /* ----------------------------------------------------------- buttons */
-    val bh = h * 0.062f
-    val left = panel.left + w * 0.075f
-    val right = panel.right - w * 0.075f
-    val btnK = easeOutCubic(((age - 2080f) / 420f).coerceIn(0f, 1f))
-    val slide = (1f - btnK) * h * 0.02f
-
-    if (win) {
-        val primary = RectF(left, panel.top + h * 0.488f + slide, right, panel.top + h * 0.488f + bh + slide)
-        val ghost = RectF(left, primary.bottom + h * 0.018f, right, primary.bottom + h * 0.018f + bh * 0.92f)
-        if (btnK > 0.05f) {
-            button(c, primary, if (res.levelId < levels.size) "سطح بعد" else "پایان مراحل", Style.PRIMARY) {
+    /* ------------------------------------------------------------ buttons */
+    val btnK = easeOutCubic(((age - 1980f) / 380f).coerceIn(0f, 1f))
+    if (btnK > 0.05f) {
+        if (win) {
+            val isLast = res.levelId >= levels.size
+            button(c, primary, if (isLast) "پایان مراحل" else "سطح بعد", Style.PRIMARY,
+                { cc, cx, cy, r -> Art.chevronLeft(cc, cx, cy, r, 0xFF14330B.toInt()) }) {
                 result = null
-                if (res.levelId < levels.size) {
-                    nextLevel()
-                } else {
+                if (isLast) {
                     screen = Screen.MAP
+                } else {
+                    nextLevel()
                 }
             }
-            button(c, ghost, "نقشه", Style.GHOST) {
+            button(c, secondary, "نقشه", Style.ROYAL,
+                { cc, cx, cy, r -> Art.homeIcon(cc, cx, cy, r, 0xFFFFFDF5.toInt()) }) {
                 result = null
                 screen = Screen.MAP
             }
-        }
-    } else {
-        val b1 = RectF(left, panel.top + h * 0.470f + slide, right, panel.top + h * 0.470f + bh + slide)
-        val b2 = RectF(left, b1.bottom + h * 0.018f, right, b1.bottom + h * 0.018f + bh)
-        val b3 = RectF(left, b2.bottom + h * 0.018f, right, b2.bottom + h * 0.018f + bh * 0.92f)
-        if (btnK > 0.05f) {
-            button(c, b1, "۵ حرکت با ۸۰ سکه", Style.PRIMARY) { buyMovesForCoins() }
-            button(c, b2, "تلاش دوباره (یک جان)", Style.SECONDARY) { restartLevel() }
-            button(c, b3, "نقشه", Style.GHOST) {
+            c.shine(secondary, secH * 0.40f, if (reduceMotion) 0.1f else t, 0.36f, 0.25f, 0.20f)
+        } else {
+            button(c, primary, "۵ حرکت با ۸۰ سکه", Style.GOLD,
+                { cc, cx, cy, r -> Art.coin(cc, cx, cy, r) }) { buyMovesForCoins() }
+            button(c, secondary, "نقشه", Style.ROYAL,
+                { cc, cx, cy, r -> Art.homeIcon(cc, cx, cy, r, 0xFFFFFDF5.toInt()) }) {
                 result = null
                 screen = Screen.MAP
             }
         }
     }
 
+    /* ------------------------------------------------- celebration sparkles */
+    if (win && !reduceMotion) {
+        for (i in 0 until 7) {
+            val kk = ((t * 0.8f + i * 0.9f) % 2.6f) / 2.6f
+            if (kk > 0.5f) continue
+            val a = 1f - kk / 0.5f
+            val px = plaque.left + plaque.width() * (0.10f + 0.80f * ((i * 0.37f) % 1f))
+            val py = plaque.bottom + avail * (0.02f + 0.30f * ((i * 0.61f) % 1f))
+            Art.sparkle(c, px, py, pw * 0.015f, 0xFFFFFFFF.toInt(), a * 0.7f, t * 70f + i * 30f)
+        }
+    }
+
     c.restore()
+
+    val flashAge = now - flashAt
+    if (!reduceMotion && flashAge in 0..240) {
+        val fk = flashAge / 240f
+        val paint = Paint()
+        paint.color = Art.withAlpha(flashColor, 0.26f * (1f - fk))
+        c.drawRect(0f, 0f, w, h, paint)
+    }
 }
 
 private fun GameView.header(c: Canvas, title: String) {

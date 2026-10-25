@@ -1149,6 +1149,25 @@ object Art {
         c.drawCircle(cx, cy, r * 0.2f, shapePaint)
     }
 
+    /** Simple gabled house — reads better than a map glyph at button size. */
+    fun homeIcon(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        shapePaint.reset()
+        shapePaint.isAntiAlias = true
+        shapePaint.color = color
+        val roof = Path()
+        roof.moveTo(cx, cy - r * 0.95f)
+        roof.lineTo(cx + r * 1.02f, cy - r * 0.05f)
+        roof.lineTo(cx + r * 0.72f, cy - r * 0.05f)
+        roof.lineTo(cx + r * 0.72f, cy + r * 0.80f)
+        roof.lineTo(cx - r * 0.72f, cy + r * 0.80f)
+        roof.lineTo(cx - r * 0.72f, cy - r * 0.05f)
+        roof.lineTo(cx - r * 1.02f, cy - r * 0.05f)
+        roof.close()
+        c.drawPath(roof, shapePaint)
+        shapePaint.color = withAlpha(Palette.WOOD_DEEP, 0.35f)
+        c.drawRoundRect(RectF(cx - r * 0.22f, cy + r * 0.24f, cx + r * 0.22f, cy + r * 0.80f), r * 0.08f, r * 0.08f, shapePaint)
+    }
+
     fun mapIcon(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
         val p = Path()
         p.moveTo(cx - r * 0.9f, cy - r * 0.62f)

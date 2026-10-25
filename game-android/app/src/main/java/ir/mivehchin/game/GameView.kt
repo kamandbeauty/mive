@@ -27,7 +27,7 @@ class GameView(context: Context) : View(context) {
         const val SHOCK = 5
     }
 
-    enum class Style { PRIMARY, SECONDARY, GHOST, DANGER, GOLD, GLASS }
+    enum class Style { PRIMARY, SECONDARY, GHOST, DANGER, GOLD, GLASS, ROYAL }
 
     class Hotspot(val rect: RectF, val action: () -> Unit)
 
@@ -119,6 +119,20 @@ class GameView(context: Context) : View(context) {
     private var lastScreen: Screen? = null
     internal var resultStarSfx = 0
     internal var resultCoinSfx = false
+
+    /** Honour the system "remove animations" accessibility setting. */
+    internal val reduceMotion: Boolean = run {
+        val scale = android.provider.Settings.Global.getFloat(
+            context.contentResolver,
+            android.provider.Settings.Global.ANIMATOR_DURATION_SCALE,
+            1f
+        )
+        scale == 0f
+    }
+
+    internal var pressActive = false
+    internal var pressX = 0f
+    internal var pressY = 0f
     internal var paused = false
     internal var busy = false
 
@@ -1051,6 +1065,9 @@ class GameView(context: Context) : View(context) {
                 downY = y
                 downCell = null
                 draggingMap = false
+                pressActive = true
+                pressX = x
+                pressY = y
                 if (screen == Screen.GAME && !paused && result == null && !busy) {
                     downCell = cellAt(x, y)
                     if (downCell != null) selected = downCell
@@ -1062,6 +1079,7 @@ class GameView(context: Context) : View(context) {
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
+                if (pressActive && (abs(x - pressX) > 40f || abs(y - pressY) > 40f)) pressActive = false
                 if (screen == Screen.GAME && downCell != null && !busy) {
                     val dx = x - downX
                     val dy = y - downY
@@ -1090,7 +1108,12 @@ class GameView(context: Context) : View(context) {
                 }
                 return true
             }
+            MotionEvent.ACTION_CANCEL -> {
+                pressActive = false
+                return true
+            }
             MotionEvent.ACTION_UP -> {
+                pressActive = false
                 if (draggingMap) {
                     draggingMap = false
                     return true
@@ -1120,21 +1143,32 @@ class GameView(context: Context) : View(context) {
         icon: ((Canvas, Float, Float, Float) -> Unit)? = null,
         action: () -> Unit
     ) {
-        val radius = rect.height() * 0.40f
         val t = System.currentTimeMillis() / 1000f
+        val pressed = pressActive && rect.contains(pressX, pressY)
+        // pressed: sink into the frame, drop the lift and the gloss
+        val body = if (pressed) {
+            RectF(rect.left + rect.width() * 0.015f, rect.top + rect.height() * 0.055f,
+                rect.right - rect.width() * 0.015f, rect.bottom)
+        } else {
+            RectF(rect)
+        }
+        val radius = body.height() * 0.40f
         val top: Int
         val bottom: Int
         val textColor: Int
         val rim: Int
         when (style) {
             Style.PRIMARY -> {
-                top = 0xFFD6FA8A.toInt(); bottom = 0xFF5FA22A.toInt(); textColor = 0xFF14330B.toInt(); rim = Palette.LIME
+                top = 0xFFD9FB90.toInt(); bottom = 0xFF57992A.toInt(); textColor = 0xFF14330B.toInt(); rim = Palette.LIME
             }
             Style.GOLD -> {
                 top = 0xFFFFE08A.toInt(); bottom = 0xFFC98814.toInt(); textColor = 0xFF43280A.toInt(); rim = Palette.GOLD
             }
             Style.DANGER -> {
                 top = 0xFFFF9AA6.toInt(); bottom = 0xFFC22B44.toInt(); textColor = 0xFF3D0510.toInt(); rim = Palette.DANGER
+            }
+            Style.ROYAL -> {
+                top = 0xFF7FC0FF.toInt(); bottom = 0xFF2A56CC.toInt(); textColor = 0xFFFFFDF5.toInt(); rim = 0xFFB7DBFF.toInt()
             }
             Style.SECONDARY -> {
                 top = 0xFF2E5C48.toInt(); bottom = 0xFF103528.toInt(); textColor = Palette.CREAM; rim = 0xFF7BD6A6.toInt()
@@ -1147,42 +1181,54 @@ class GameView(context: Context) : View(context) {
             }
         }
 
-        val drop = rect.height() * 0.12f
-        Art.panel(c, RectF(rect.left + rect.height() * 0.02f, rect.top + drop, rect.right + rect.height() * 0.02f, rect.bottom + drop),
-            radius, 0x66000000)
-        if (style == Style.PRIMARY || style == Style.GOLD || style == Style.DANGER) {
-            val pulse = 0.5f + 0.5f * sin(t * 2.4f)
-            Art.glow(c, rect.centerX(), rect.centerY(), rect.width() * 0.52f, rim, 0.10f + 0.08f * pulse)
+        if (!pressed) {
+            val drop = body.height() * 0.12f
+            Art.panel(c, RectF(body.left + body.height() * 0.02f, body.top + drop, body.right + body.height() * 0.02f, body.bottom + drop),
+                radius, 0x55000000)
+            if (style == Style.PRIMARY || style == Style.GOLD || style == Style.DANGER || style == Style.ROYAL) {
+                val pulse = 0.5f + 0.5f * sin(t * 2.4f)
+                Art.glow(c, body.centerX(), body.centerY(), body.width() * 0.52f, rim, 0.10f + 0.08f * pulse)
+            }
         }
-        Art.buttonSkin(c, rect, radius, top, bottom)
+        Art.buttonSkin(c, body, radius, top, bottom)
 
-        // glossy cap
         c.save()
         val clip = Path()
-        clip.addRoundRect(rect, radius, radius, Path.Direction.CW)
+        clip.addRoundRect(body, radius, radius, Path.Direction.CW)
         c.clipPath(clip)
         val gloss = Paint(Paint.ANTI_ALIAS_FLAG)
-        gloss.color = 0x2EFFFFFF
+        gloss.color = if (pressed) 0x18FFFFFF else 0x33FFFFFF
         c.drawRoundRect(
-            RectF(rect.left + radius * 0.30f, rect.top + radius * 0.16f, rect.right - radius * 0.30f, rect.top + rect.height() * 0.46f),
+            RectF(body.left + radius * 0.28f, body.top + radius * 0.14f, body.right - radius * 0.28f, body.top + body.height() * 0.44f),
             radius * 0.7f, radius * 0.7f, gloss
         )
         gloss.color = 0x14000000
-        c.drawRect(rect.left, rect.bottom - rect.height() * 0.16f, rect.right, rect.bottom, gloss)
+        c.drawRect(body.left, body.bottom - body.height() * 0.18f, body.right, body.bottom, gloss)
+        if (pressed) {
+            gloss.color = 0x22000000
+            c.drawRoundRect(body, radius, radius, gloss)
+        }
         c.restore()
 
-        c.shine(rect, radius, t, 0.5f, (rect.height() * 0.013f) % 1f, if (style == Style.GHOST || style == Style.GLASS) 0.12f else 0.34f)
+        if (!pressed) c.shine(body, radius, t, 0.5f, (body.height() * 0.013f) % 1f,
+            if (style == Style.GHOST || style == Style.GLASS) 0.12f else 0.32f)
 
-        Art.panel(c, rect, radius, 0x00000000, 1.6f, Art.withAlpha(rim, 0.55f))
+        Art.panel(c, body, radius, 0x00000000, 1.6f, Art.withAlpha(rim, 0.55f))
 
-        val textX = if (icon != null) rect.centerX() - rect.height() * 0.26f else rect.centerX()
+        var labelSize = body.height() * 0.36f
+        var textX = body.centerX()
         if (icon != null) {
-            icon(c, rect.left + rect.height() * 0.62f, rect.centerY(), rect.height() * 0.27f)
+            // icon sits on the leading (right) edge in RTL, label shifts away from it
+            icon(c, body.right - body.height() * 0.60f, body.centerY(), body.height() * 0.24f)
+            textX = body.centerX() - body.height() * 0.22f
+            val room = body.width() - body.height() * 1.35f
+            val need = Art.measure(label, labelSize, Art.bold)
+            if (need > room) labelSize *= (room / need).coerceIn(0.6f, 1f)
         }
         Art.text(
-            c, label, textX, rect.centerY() + rect.height() * 0.17f,
-            rect.height() * 0.36f, textColor, Paint.Align.CENTER, Art.bold,
-            style != Style.GHOST
+            c, label, textX, body.centerY() + labelSize * 0.36f,
+            labelSize, textColor, Paint.Align.CENTER, Art.bold,
+            style != Style.GHOST && !pressed
         )
         hotspots.add(Hotspot(RectF(rect), action))
     }

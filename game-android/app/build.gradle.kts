@@ -11,8 +11,8 @@ android {
         applicationId = "ir.mivehchin.game"
         minSdk = 24
         targetSdk = 34
-        versionCode = 6
-        versionName = "1.3.0"
+        versionCode = 7
+        versionName = "1.4.0"
     }
 
     buildTypes {
@@ -33,4 +33,8 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+}
+
+dependencies {
+    testImplementation("junit:junit:4.13.2")
 }
