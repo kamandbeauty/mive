@@ -161,7 +161,7 @@ internal fun GameView.drawHome(c: Canvas) {
     hotspots.add(Hotspot(RectF(settingsRect), { screen = Screen.SETTINGS }))
 
     Art.text(c, "ستاره‌ها: ${save.totalStars}  •  آخرین سطح: ${save.level}", w * 0.5f, h * 0.918f,
-        w * 0.036f, 0xAAFFF6E5.toInt(), Art.regular, true)
+        w * 0.036f, 0xAAFFF6E5.toInt(), Paint.Align.CENTER, Art.regular, true)
 }
 
 /* ------------------------------------------------------------------- map */
