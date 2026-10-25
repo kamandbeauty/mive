@@ -243,15 +243,16 @@ def make_plaque():
     shape(img, (box[0] - 10, box[1] - 10, box[2] + 10, box[3] + 10), int(rad * 1.16),
           [(0, (255, 244, 196, 255)), (0.5, (232, 178, 82, 255)), (1, (150, 96, 14, 255))])
     drop_shadow(img, box, rad, dy=10, blur=14, strength=140)
-    shape(img, box, rad, [(0, (150, 96, 58, 255)), (0.5, (116, 66, 31, 255)), (1, (70, 34, 12, 255))])
+    shape(img, box, rad, [(0, (140, 90, 50, 255)), (0.30, (104, 60, 28, 255)),
+                          (0.72, (78, 42, 18, 255)), (1, (52, 26, 10, 255))])
+    # three soft grain bands, drawn wide so stretching never turns them into stripes
     d = ImageDraw.Draw(img)
-    y = box[1] + 22
-    while y < box[3]:
-        d.line([(box[0] + 8, y), (box[2] - 8, y)], fill=(0, 0, 0, 55), width=4)
-        y += 26
-    bevel(img, box, rad, 8, 90, 120)
-    gloss(img, box, rad, top=0.40, strength=90)
-    for sx in (box[0] + 34, box[2] - 34):
+    for k in range(3):
+        gy = box[1] + 30 + k * (box[3] - box[1] - 60) / 2.0
+        d.line([(box[0] + 26, gy), (box[2] - 26, gy)], fill=(46, 22, 8, 26), width=5)
+    bevel(img, box, rad, 8, 120, 140)
+    gloss(img, box, rad, top=0.30, strength=64)
+    for sx in (box[0] + 30, box[2] - 30):
         cy = (box[1] + box[3]) // 2
         d.ellipse((sx - 13, cy - 13, sx + 13, cy + 13), fill=(154, 106, 12, 255))
         d.ellipse((sx - 9, cy - 10, sx + 9, cy + 8), fill=(255, 201, 77, 255))
@@ -263,10 +264,11 @@ def make_button(name, top, body, bottom, rim):
     box = (8, 6, 312, 112)
     rad = (box[3] - box[1]) // 2 - 8
     drop_shadow(img, box, rad, dy=12, blur=10, strength=110)
-    shape(img, box, rad, [(0, tuple(min(255, c + 26) for c in top) + (255,)), (0.34, top + (255,)),
-                          (0.74, body + (255,)), (1, tuple(int(c * 0.78) for c in bottom) + (255,))])
-    bevel(img, box, rad, 7, 70, 110)
-    gloss(img, box, rad, top=0.46, strength=120)
+    shape(img, box, rad, [(0, tuple(min(255, c + 18) for c in top) + (255,)), (0.28, top + (255,)),
+                          (0.62, body + (255,)), (0.86, tuple(int(c * 0.86) for c in bottom) + (255,)),
+                          (1, tuple(int(c * 0.70) for c in bottom) + (255,))])
+    bevel(img, box, rad, 7, 90, 120)
+    gloss(img, box, rad, top=0.40, strength=85)
     d = ImageDraw.Draw(img)
     d.rounded_rectangle(box, rad, outline=rim + (200,), width=4)
     img.save(os.path.join(OUT, name))
@@ -295,7 +297,10 @@ def make_socket():
     gloss(img, box, rad, top=0.44, strength=96)
     d = ImageDraw.Draw(img)
     d.rounded_rectangle(box, rad, outline=(255, 216, 120, 255), width=6)
-    d.rounded_rectangle((box[0] + 14, box[1] + 14, box[2] - 14, box[3] - 14), rad - 12, fill=(184, 116, 12, 45))
+    shape(img, (box[0] + 13, box[1] + 13, box[2] - 13, box[3] - 13), rad - 12,
+          [(0, (255, 240, 200, 255)), (1, (243, 213, 146, 255))])
+    inner_shadow(img, (box[0] + 13, box[1] + 13, box[2] - 13, box[3] - 13), rad - 12,
+                 (150, 100, 20), blur=8, offset=(0, 5), strength=70)
     leaf(img, box[0] + 22, box[3] - 18, 56, 42)
     leaf(img, box[2] - 22, box[3] - 18, 56, -42)
     img.save(os.path.join(OUT, "socket.png"))
@@ -314,9 +319,10 @@ def make_ornaments():
     img.save(os.path.join(OUT, "crown.png"))
 
     img = Image.new("RGBA", (260, 220), (0, 0, 0, 0))
-    for rot, dx, dy, s in ((-58, -34, 18, 108), (-18, -6, 0, 128), (22, 26, 12, 104)):
-        leaf(img, 130 + dx, 110 + dy, s, rot)
-    flower(img, 196, 58, 26)
+    for rot, dx, dy, s in ((-72, -52, 20, 96), (-34, -22, 4, 124), (6, 10, 10, 116), (44, 40, 26, 92)):
+        leaf(img, 118 + dx, 116 + dy, s, rot, (34, 104, 44), (126, 205, 92))
+    flower(img, 196, 62, 28)
+    flower(img, 62, 168, 20, petal=(185, 166, 255))
     img.save(os.path.join(OUT, "sprig.png"))
 
     img = Image.new("RGBA", (120, 120), (0, 0, 0, 0))
@@ -365,6 +371,180 @@ def make_ornaments():
     img.save(os.path.join(OUT, "coin_star.png"))
 
 
+def make_plates():
+    # emerald score plate
+    img = Image.new("RGBA", (360, 200), (0, 0, 0, 0))
+    box = (10, 8, 350, 176)
+    rad = 40
+    drop_shadow(img, box, rad, dy=10, blur=12, strength=110)
+    shape(img, box, rad, [(0, (46, 156, 99, 255)), (0.35, (23, 116, 79, 255)),
+                          (0.72, (13, 78, 52, 255)), (1, (3, 32, 15, 255))])
+    bevel(img, box, rad, 8, 110, 70)
+    gloss(img, box, rad, top=0.42, strength=52)
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle(box, rad, outline=(255, 217, 138, 230), width=5)
+    d.rounded_rectangle((box[0] + 12, box[1] + 12, box[2] - 12, box[3] - 12), rad - 10,
+                        outline=(255, 233, 200, 60), width=2)
+    img.save(os.path.join(OUT, "plate_emerald.png"))
+
+    # glass green HUD card
+    img = Image.new("RGBA", (360, 200), (0, 0, 0, 0))
+    box = (10, 6, 350, 178)
+    rad = 40
+    drop_shadow(img, box, rad, dy=9, blur=11, strength=100)
+    shape(img, box, rad, [(0, (44, 104, 74, 255)), (0.30, (28, 84, 64, 255)),
+                          (0.75, (14, 44, 33, 255)), (1, (6, 24, 18, 255))])
+    bevel(img, box, rad, 8, 110, 80)
+    gloss(img, box, rad, top=0.44, strength=64)
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle(box, rad, outline=(255, 214, 120, 170), width=4)
+    img.save(os.path.join(OUT, "card_glass.png"))
+
+    # dark wood level pill
+    img = Image.new("RGBA", (360, 110), (0, 0, 0, 0))
+    box = (10, 6, 350, 96)
+    rad = 44
+    drop_shadow(img, box, rad, dy=8, blur=10, strength=110)
+    shape(img, box, rad, [(0, (156, 98, 52, 255)), (0.45, (107, 63, 28, 255)), (1, (56, 28, 12, 255))])
+    bevel(img, box, rad, 6, 110, 110)
+    gloss(img, box, rad, top=0.46, strength=70)
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle(box, rad, outline=(255, 201, 77, 225), width=4)
+    img.save(os.path.join(OUT, "pill_dark.png"))
+
+
+# ------------------------------------------------------------------- icons
+ICON_SIZE = 192
+
+
+def _star_poly(cx, cy, r, inner=0.46, n=5):
+    pts = []
+    for i in range(n * 2):
+        rr = r if i % 2 == 0 else r * inner
+        a = math.radians(-90 + i * 180.0 / n)
+        pts.append((cx + math.cos(a) * rr, cy + math.sin(a) * rr))
+    return pts
+
+
+def _rot(pts, cx, cy, deg):
+    a = math.radians(deg)
+    return [(cx + (x - cx) * math.cos(a) - (y - cy) * math.sin(a),
+             cy + (x - cx) * math.sin(a) + (y - cy) * math.cos(a)) for x, y in pts]
+
+
+def icon_masks(name):
+    """Returns (body_mask, detail_mask) for one icon, both 192x192 'L' images."""
+    S = ICON_SIZE
+    body = Image.new("L", (S, S), 0)
+    d = ImageDraw.Draw(body)
+    detail = Image.new("L", (S, S), 0)
+    dd = ImageDraw.Draw(detail)
+
+    if name == "ic_play":
+        d.polygon([(62, 40), (154, 96), (62, 152)], fill=255)
+    elif name == "ic_gear":
+        for i in range(8):
+            a = i * 45
+            t = _rot([(88, 22), (104, 22), (104, 46), (88, 46)], 96, 96, a)
+            d.polygon(t, fill=255)
+        d.ellipse((46, 46, 146, 146), fill=255)
+        dd.ellipse((76, 76, 116, 116), fill=255)
+    elif name == "ic_hammer":
+        d.polygon(_rot([(58, 60), (128, 26), (150, 78), (80, 112)], 96, 96, 0), fill=255)
+        d.polygon(_rot([(92, 96), (112, 88), (150, 168), (128, 176)], 96, 96, 0), fill=255)
+    elif name == "ic_shuffle":
+        d.line([(36, 66), (86, 66), (128, 110), (156, 110)], fill=255, width=18, joint="curve")
+        d.line([(36, 126), (86, 126), (116, 96)], fill=255, width=18, joint="curve")
+        d.polygon([(146, 88), (176, 110), (146, 132)], fill=255)
+        d.polygon([(90, 112), (106, 130), (90, 146)], fill=255)
+    elif name == "ic_cart":
+        d.polygon([(30, 48), (60, 48), (76, 124), (150, 124), (166, 70), (66, 70)], fill=255)
+        d.ellipse((64, 138, 96, 170), fill=255)
+        d.ellipse((128, 138, 160, 170), fill=255)
+    elif name == "ic_wheel":
+        d.ellipse((20, 20, 172, 172), fill=255)
+        dd.ellipse((34, 34, 158, 158), fill=255)          # carve the inner disc
+        d.ellipse((44, 44, 148, 148), fill=255)          # ...then put the hub disc back
+        for i in range(6):
+            a = math.radians(i * 60)
+            d.line([(96, 96), (96 + math.cos(a) * 52, 96 + math.sin(a) * 52)], fill=255, width=12)
+        d.ellipse((80, 80, 112, 112), fill=255)
+        dd.ellipse((34, 34, 158, 158), fill=128)
+    elif name == "ic_home":
+        d.polygon([(96, 26), (176, 98), (146, 98), (146, 168), (46, 168), (46, 98), (16, 98)], fill=255)
+        dd.rounded_rectangle((80, 118, 112, 168), 8, fill=255)
+    elif name == "ic_map":
+        d.polygon([(16, 58), (70, 34), (122, 56), (176, 32), (176, 152), (122, 170), (70, 148), (16, 172)],
+                  fill=255)
+        for gx in (70, 122):
+            dd.line([(gx, 40), (gx, 158)], fill=255, width=6)
+        for k in range(4):
+            dd.ellipse((44 + k * 22 - 7, 92 + (k % 2) * 22 - 7, 44 + k * 22 + 7, 92 + (k % 2) * 22 + 7), fill=255)
+    elif name == "ic_heart":
+        d.ellipse((20, 34, 104, 118), fill=255)
+        d.ellipse((88, 34, 172, 118), fill=255)
+        d.polygon([(22, 92), (170, 92), (96, 172)], fill=255)
+    elif name == "ic_lock":
+        d.rounded_rectangle((40, 84, 152, 172), 22, fill=255)
+        d.arc((54, 22, 138, 130), 180, 360, fill=255, width=22)
+        dd.ellipse((84, 112, 108, 136), fill=255)
+        dd.rounded_rectangle((90, 128, 102, 156), 5, fill=255)
+    elif name == "ic_plus_moves":
+        d.arc((26, 26, 166, 166), 40, 330, fill=255, width=24)
+        d.polygon([(150, 26), (184, 52), (146, 74)], fill=255)
+        dd.rounded_rectangle((86, 66, 106, 126), 8, fill=255)
+        dd.rounded_rectangle((56, 86, 136, 106), 8, fill=255)
+    elif name == "ic_close":
+        d.line([(44, 44), (148, 148)], fill=255, width=26)
+        d.line([(148, 44), (44, 148)], fill=255, width=26)
+    elif name == "ic_chev_left":
+        d.line([(126, 34), (66, 96), (126, 158)], fill=255, width=28, joint="curve")
+    elif name == "ic_chev_right":
+        d.line([(66, 34), (126, 96), (66, 158)], fill=255, width=28, joint="curve")
+    elif name == "ic_star":
+        d.polygon(_star_poly(96, 96, 78), fill=255)
+    else:
+        return None, None
+    return body, detail
+
+
+def make_icons():
+    made = []
+    for name in ("ic_play", "ic_gear", "ic_hammer", "ic_shuffle", "ic_cart", "ic_wheel",
+                 "ic_home", "ic_map", "ic_heart", "ic_lock", "ic_plus_moves",
+                 "ic_close", "ic_chev_left", "ic_chev_right", "ic_star"):
+        body, detail = icon_masks(name)
+        if body is None:
+            continue
+        S = ICON_SIZE
+        glow = body.filter(ImageFilter.GaussianBlur(4))
+        # body: white with a vertical shading ramp so a flat tint still reads as 3D
+        shade = Image.new("L", (S, S), 0)
+        sd = ImageDraw.Draw(shade)
+        for y in range(S):
+            k = y / (S - 1)
+            sd.line([(0, y), (S, y)], fill=int(255 - 85 * k))
+        alpha = Image.fromarray(np.minimum(np.asarray(body), np.asarray(shade)).astype("uint8"))
+        hi = Image.new("L", (S, S), 0)
+        ImageDraw.Draw(hi).ellipse((26, 18, 128, 92), fill=70)
+        hi = Image.fromarray(np.minimum(np.asarray(hi), np.asarray(body)).astype("uint8"))
+        alpha = Image.fromarray(np.clip(np.asarray(alpha).astype(int) + np.asarray(hi), 0, 255).astype("uint8"))
+        # carved detail (holes / inner marks) are punched back out
+        alpha = Image.fromarray(np.clip(np.asarray(alpha).astype(int) - np.asarray(detail).astype(int) // 2,
+                                        0, 255).astype("uint8"))
+        rgba = Image.new("RGBA", (S, S), (255, 255, 255, 0))
+        rgba.putalpha(alpha)
+        under = Image.new("RGBA", (S, S), (255, 255, 255, 0))
+        under.putalpha(Image.fromarray((np.asarray(glow).astype(int) * 60 // 255).astype("uint8")))
+        out = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+        out.alpha_composite(under)
+        out.alpha_composite(rgba)
+        path = os.path.join(OUT, name + ".png")
+        out.save(path)
+        made.append((name + ".png", out.size, os.path.getsize(path)))
+    return made
+
+
 def main():
     made = []
     for name, src in (("char_idle", "character_base.png"),
@@ -394,6 +574,8 @@ def main():
     make_capsule()
     make_socket()
     make_ornaments()
+    make_plates()
+    make_icons()
 
     for f in sorted(os.listdir(OUT)):
         p = os.path.join(OUT, f)

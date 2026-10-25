@@ -897,6 +897,7 @@ object Art {
     }
 
     fun star(c: Canvas, cx: Float, cy: Float, r: Float, filled: Boolean, color: Int = Palette.GOLD) {
+        if (filled && paintIcon(c, "ic_star", cx, cy, r * 2.45f, color)) return
         val key = (r.toInt() / 2) * 10 + (if (filled) 1 else 0)
         val bmp = starCache.getOrPut(key) { starBitmap(r.toInt().coerceAtLeast(12), filled, color) }
         bitmapPaint.alpha = 255
@@ -980,6 +981,7 @@ object Art {
     }
 
     fun heart(c: Canvas, cx: Float, cy: Float, r: Float, filled: Boolean, color: Int = Palette.DANGER) {
+        if (filled && paintIcon(c, "ic_heart", cx, cy, r * 2.35f, color)) return
         val p = Path()
         p.moveTo(cx, cy + r * 0.75f)
         p.cubicTo(cx - r * 1.4f, cy - r * 0.1f, cx - r * 0.7f, cy - r * 1.05f, cx, cy - r * 0.35f)
@@ -1009,6 +1011,7 @@ object Art {
     }
 
     fun lock(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        if (paintIcon(c, "ic_lock", cx, cy, r * 2.60f, color)) return
         strokePaint.reset()
         strokePaint.isAntiAlias = true
         strokePaint.style = Paint.Style.STROKE
@@ -1024,6 +1027,7 @@ object Art {
     }
 
     fun gear(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        if (paintIcon(c, "ic_gear", cx, cy, r * 2.35f, color)) return
         shapePaint.reset()
         shapePaint.isAntiAlias = true
         shapePaint.color = color
@@ -1042,6 +1046,7 @@ object Art {
     }
 
     fun shuffleIcon(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        if (paintIcon(c, "ic_shuffle", cx, cy, r * 2.55f, color)) return
         strokePaint.reset()
         strokePaint.isAntiAlias = true
         strokePaint.style = Paint.Style.STROKE
@@ -1069,6 +1074,7 @@ object Art {
     }
 
     fun chevronLeft(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        if (paintIcon(c, "ic_chev_left", cx, cy, r * 2.20f, color)) return
         strokePaint.reset()
         strokePaint.isAntiAlias = true
         strokePaint.style = Paint.Style.STROKE
@@ -1084,6 +1090,7 @@ object Art {
 
     /** RTL "back": the arrow that points to the right edge. */
     fun chevronRight(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        if (paintIcon(c, "ic_chev_right", cx, cy, r * 2.20f, color)) return
         strokePaint.reset()
         strokePaint.isAntiAlias = true
         strokePaint.style = Paint.Style.STROKE
@@ -1098,6 +1105,7 @@ object Art {
     }
 
     fun close(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        if (paintIcon(c, "ic_close", cx, cy, r * 2.10f, color)) return
         strokePaint.reset()
         strokePaint.isAntiAlias = true
         strokePaint.style = Paint.Style.STROKE
@@ -1109,6 +1117,7 @@ object Art {
     }
 
     fun play(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        if (paintIcon(c, "ic_play", cx, cy, r * 2.45f, color)) return
         val p = Path()
         p.moveTo(cx - r * 0.45f, cy - r * 0.65f)
         p.lineTo(cx + r * 0.7f, cy)
@@ -1121,6 +1130,7 @@ object Art {
     }
 
     fun hammer(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        if (paintIcon(c, "ic_hammer", cx, cy, r * 2.55f, color)) return
         c.save()
         c.rotate(-22f, cx, cy)
         shapePaint.reset()
@@ -1144,6 +1154,7 @@ object Art {
     }
 
     fun plusMoves(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        if (paintIcon(c, "ic_plus_moves", cx, cy, r * 2.45f, color)) return
         strokePaint.reset()
         strokePaint.isAntiAlias = true
         strokePaint.style = Paint.Style.STROKE
@@ -1155,6 +1166,7 @@ object Art {
     }
 
     fun cart(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        if (paintIcon(c, "ic_cart", cx, cy, r * 2.35f, color)) return
         strokePaint.reset()
         strokePaint.isAntiAlias = true
         strokePaint.style = Paint.Style.STROKE
@@ -1179,6 +1191,7 @@ object Art {
     }
 
     fun wheelIcon(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        if (paintIcon(c, "ic_wheel", cx, cy, r * 2.35f, color)) return
         strokePaint.reset()
         strokePaint.isAntiAlias = true
         strokePaint.style = Paint.Style.STROKE
@@ -1202,6 +1215,7 @@ object Art {
 
     /** Simple gabled house — reads better than a map glyph at button size. */
     fun homeIcon(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        if (paintIcon(c, "ic_home", cx, cy, r * 2.35f, color)) return
         shapePaint.reset()
         shapePaint.isAntiAlias = true
         shapePaint.color = color
@@ -1220,6 +1234,7 @@ object Art {
     }
 
     fun mapIcon(c: Canvas, cx: Float, cy: Float, r: Float, color: Int) {
+        if (paintIcon(c, "ic_map", cx, cy, r * 2.35f, color)) return
         val p = Path()
         p.moveTo(cx - r * 0.9f, cy - r * 0.62f)
         p.lineTo(cx - r * 0.3f, cy - r * 0.82f)
@@ -1276,7 +1291,11 @@ object Art {
             "char_idle", "char_cheer", "char_sad", "bg_garden",
             "frame", "plaque", "btn_lime", "btn_royal", "btn_gold", "btn_danger",
             "capsule", "socket", "crown", "sprig", "strawberry", "lemon", "berries",
-            "flower_pink", "flower_violet", "coin_star"
+            "flower_pink", "flower_violet", "coin_star",
+            "plate_emerald", "card_glass", "pill_dark",
+            "ic_play", "ic_gear", "ic_hammer", "ic_shuffle", "ic_cart", "ic_wheel",
+            "ic_home", "ic_map", "ic_heart", "ic_lock", "ic_plus_moves",
+            "ic_close", "ic_chev_left", "ic_chev_right", "ic_star"
         )) {
             val bmp = openAsset(ctx, "art/$name.webp") ?: openAsset(ctx, "art/$name.png")
             if (bmp != null) skinBitmaps[name] = bmp
@@ -1317,6 +1336,49 @@ object Art {
                 c.drawBitmap(bmp, sliceSrc, sliceDst, bitmapPaint)
             }
         }
+    }
+
+    // Icons are painted as white masks; they get tinted once per colour and
+    // cached, so a screen with twenty icons still allocates a handful of bitmaps.
+    private val tintCache = HashMap<Long, Bitmap>()
+
+    private fun tinted(name: String, color: Int): Bitmap? {
+        val src = skinBitmaps[name] ?: return null
+        val key = (name.hashCode().toLong() shl 32) or (color.toLong() and 0xFFFFFFFFL)
+        tintCache[key]?.let { return it }
+        val out = Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888)
+        val cv = Canvas(out)
+        cv.drawBitmap(src, 0f, 0f, null)
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        paint.color = color
+        paint.xfermode = android.graphics.PorterDuffXfermode(android.graphics.PorterDuff.Mode.SRC_IN)
+        cv.drawRect(0f, 0f, src.width.toFloat(), src.height.toFloat(), paint)
+        if (tintCache.size > 48) tintCache.clear()
+        tintCache[key] = out
+        return out
+    }
+
+    /**
+     * Draws a painted icon centred on (cx, cy). [size] is the icon's visual
+     * height. Returns false when the asset is missing so the caller can fall
+     * back to the vector glyph.
+     */
+    fun paintIcon(c: Canvas, name: String, cx: Float, cy: Float, size: Float, color: Int, alpha: Int = 255): Boolean {
+        val bmp = tinted(name, color) ?: return false
+        if (size <= 1f) return false
+        val h = size * 0.86f
+        val w = h * bmp.width / bmp.height
+        bitmapPaint.alpha = alpha.coerceIn(0, 255)
+        c.drawBitmap(bmp, null, RectF(cx - w / 2f, cy - h / 2f, cx + w / 2f, cy + h / 2f), bitmapPaint)
+        bitmapPaint.alpha = 255
+        return true
+    }
+
+    /** Nine-slices a named skin bitmap; false when the asset is absent. */
+    fun skinPanel(c: Canvas, rect: RectF, name: String, inset: Float): Boolean {
+        val bmp = skinBitmaps[name] ?: return false
+        nineSlice(c, bmp, rect, inset)
+        return true
     }
 
     /** Sprite helper: draws a skin bitmap scaled to [size] around (cx, cy). */
@@ -1973,11 +2035,15 @@ object Art {
             RectF(rect.left + 2f, rect.top + rect.height() * 0.10f, rect.right + 2f, rect.bottom + rect.height() * 0.10f),
             rad, 0x55000000
         )
-        gradRR(c, rect, rad,
-            intArrayOf(lighten(Design.GLASS_TOP, 0.10f), Design.GLASS_TOP, Design.GLASS_BOTTOM, darken(Design.GLASS_BOTTOM, 0.30f)))
-        bevel(c, rect, rad, rect.height() * 0.05f, 0.18f, 0.24f)
-        gloss(c, rect, rad, 0.46f, 0.20f)
-        panel(c, rect, rad, 0x00000000, Math.max(1.4f, rect.height() * 0.035f), withAlpha(accent, 0.70f))
+        if (!skinPanel(c, rect, "card_glass", 52f)) {
+            gradRR(c, rect, rad,
+                intArrayOf(lighten(Design.GLASS_TOP, 0.10f), Design.GLASS_TOP, Design.GLASS_BOTTOM, darken(Design.GLASS_BOTTOM, 0.30f)))
+            bevel(c, rect, rad, rect.height() * 0.05f, 0.18f, 0.24f)
+            gloss(c, rect, rad, 0.46f, 0.20f)
+            panel(c, rect, rad, 0x00000000, Math.max(1.4f, rect.height() * 0.035f), withAlpha(accent, 0.70f))
+        } else if (glowAmount > 0f) {
+            glow(c, rect.centerX(), rect.centerY(), rect.height() * 1.1f, accent, glowAmount * 0.55f)
+        }
         val cap = fit(caption, rect.height() * 0.22f, rect.width() * 0.8f, bold)
         text(c, caption, rect.centerX(), rect.top + rect.height() * 0.32f, cap, Palette.MUTED, Paint.Align.CENTER, regular)
         val val_ = fit(value, rect.height() * 0.42f, rect.width() * 0.74f, black)

@@ -491,11 +491,13 @@ internal fun GameView.drawGame(c: Canvas) {
     val rad = scoreRect.height() * 0.32f
     Art.panel(c, RectF(scoreRect.left + 2f, scoreRect.top + scoreRect.height() * 0.10f,
         scoreRect.right + 2f, scoreRect.bottom + scoreRect.height() * 0.10f), rad, 0x55000000)
-    Art.gradRR(c, scoreRect, rad,
-        intArrayOf(Art.lighten(Design.GLASS_TOP, 0.10f), Design.GLASS_TOP, Design.GLASS_BOTTOM))
-    Art.bevel(c, scoreRect, rad, scoreRect.height() * 0.05f, 0.18f, 0.22f)
-    Art.gloss(c, scoreRect, rad, 0.46f, 0.20f)
-    Art.panel(c, scoreRect, rad, 0x00000000, 1.6f, Art.withAlpha(Palette.GOLD, 0.55f))
+    if (!Art.skinPanel(c, scoreRect, "card_glass", 52f)) {
+        Art.gradRR(c, scoreRect, rad,
+            intArrayOf(Art.lighten(Design.GLASS_TOP, 0.10f), Design.GLASS_TOP, Design.GLASS_BOTTOM))
+        Art.bevel(c, scoreRect, rad, scoreRect.height() * 0.05f, 0.18f, 0.22f)
+        Art.gloss(c, scoreRect, rad, 0.46f, 0.20f)
+        Art.panel(c, scoreRect, rad, 0x00000000, 1.6f, Art.withAlpha(Palette.GOLD, 0.55f))
+    }
 
     val bar = RectF(
         scoreRect.left + scoreRect.width() * 0.045f,
@@ -1661,11 +1663,13 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
     if (chipA > 0.03f) {
         c.save()
         c.scale(0.92f + 0.08f * chipA, 0.92f + 0.08f * chipA, chip.centerX(), chip.centerY())
-        Art.gradRR(c, chip, chipH / 2f,
-            intArrayOf(0xFF9C6234.toInt(), 0xFF6B3F1C.toInt(), 0xFF3E2110.toInt()))
-        Art.bevel(c, chip, chipH / 2f, chipH * 0.07f, 0.20f, 0.26f)
-        Art.gloss(c, chip, chipH / 2f, 0.48f, 0.22f)
-        Art.panel(c, chip, chipH / 2f, 0x00000000, Math.max(1.4f, chipH * 0.05f), Art.withAlpha(Palette.GOLD, 0.80f))
+        if (!Art.skinPanel(c, chip, "pill_dark", 46f)) {
+            Art.gradRR(c, chip, chipH / 2f,
+                intArrayOf(0xFF9C6234.toInt(), 0xFF6B3F1C.toInt(), 0xFF3E2110.toInt()))
+            Art.bevel(c, chip, chipH / 2f, chipH * 0.07f, 0.20f, 0.26f)
+            Art.gloss(c, chip, chipH / 2f, 0.48f, 0.22f)
+            Art.panel(c, chip, chipH / 2f, 0x00000000, Math.max(1.4f, chipH * 0.05f), Art.withAlpha(Palette.GOLD, 0.80f))
+        }
         val lvlName = levels.getOrNull(res.levelId - 1)?.name ?: ""
         val label = if (lvlName.isBlank()) "سطح ${fa(res.levelId)}" else "سطح ${fa(res.levelId)} • $lvlName"
         var csize = chipH * 0.44f
@@ -1754,13 +1758,15 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
         c.scale(0.95f + 0.05f * scoreA, 0.95f + 0.05f * scoreA, score.centerX(), score.centerY())
         Art.panel(c, RectF(score.left + 3f, score.top + 8f, score.right + 3f, score.bottom + 8f),
             scoreH * 0.30f, 0x44031409)
-        Art.gradRR(c, score, scoreH * 0.30f,
-            intArrayOf(0xFF2E9C63.toInt(), deepTop, deepBot, 0xFF03200F.toInt()))
-        Art.bevel(c, score, scoreH * 0.30f, scoreH * 0.05f, 0.22f, 0.20f)
-        Art.gloss(c, score, scoreH * 0.30f, 0.42f, 0.16f)
-        Art.panel(c, score, scoreH * 0.30f, 0x00000000, 2.4f, 0xCCFFD98A.toInt())
-        Art.panel(c, RectF(score.left + 7f, score.top + 7f, score.right - 7f, score.bottom - 7f),
-            scoreH * 0.24f, 0x00000000, 1.1f, 0x3CFFE9C8)
+        if (!Art.skinPanel(c, score, "plate_emerald", 52f)) {
+            Art.gradRR(c, score, scoreH * 0.30f,
+                intArrayOf(0xFF2E9C63.toInt(), deepTop, deepBot, 0xFF03200F.toInt()))
+            Art.bevel(c, score, scoreH * 0.30f, scoreH * 0.05f, 0.22f, 0.20f)
+            Art.gloss(c, score, scoreH * 0.30f, 0.42f, 0.16f)
+            Art.panel(c, score, scoreH * 0.30f, 0x00000000, 2.4f, 0xCCFFD98A.toInt())
+            Art.panel(c, RectF(score.left + 7f, score.top + 7f, score.right - 7f, score.bottom - 7f),
+                scoreH * 0.24f, 0x00000000, 1.1f, 0x3CFFE9C8)
+        }
 
         val labelY = score.top + scoreH * 0.28f
         Art.text(c, "امتیاز", score.centerX(), labelY, scoreH * 0.19f,
