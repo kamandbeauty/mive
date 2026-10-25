@@ -223,10 +223,10 @@ internal fun GameView.drawHome(c: Canvas) {
 
     // --- 2x2 tiles ------------------------------------------------------
     val tiles = listOf(
-        Triple("نقشهٔ سطح‌ها", "${fa(save.level)} از ${fa(levels.size)}", Screen.MAP),
+        Triple("نقشه", "${fa(save.level)} از ${fa(levels.size)}", Screen.MAP),
         Triple("فروشگاه", "بوستر و جان", Screen.SHOP),
-        Triple("چرخ شانس", "هر ۴ ساعت", Screen.WHEEL),
-        Triple("مسیر ستاره", "${fa(save.totalStars)} ستاره", Screen.PASS)
+        Triple("گردونه", "هر ۴ ساعت", Screen.WHEEL),
+        Triple("جایزه‌ها", "${fa(save.totalStars)} ستاره", Screen.PASS)
     )
     val tw = w * 0.435f
     val th = h * 0.112f
@@ -238,8 +238,8 @@ internal fun GameView.drawHome(c: Canvas) {
         val rect = RectF(x, y, x + tw, y + th)
         c.enterGroup(enterK(now, 470f + i * 70f), rect.centerX(), rect.centerY(), h * 0.05f) {
             Art.card(c, rect, th * 0.26f, Palette.GOLD)
-            val badgeR = th * 0.27f
-            val bx = x + th * 0.34f + badgeR
+            val badgeR = th * 0.22f
+            val bx = x + th * 0.28f + badgeR
             Art.badge(c, bx, rect.centerY(), badgeR, 0xFF2F7A4E.toInt(), 0xFF14402C.toInt(), Palette.LIME) { cc, cx, cy, r ->
                 when (i) {
                     0 -> Art.mapIcon(cc, cx, cy, r, Palette.CREAM)
@@ -248,10 +248,10 @@ internal fun GameView.drawHome(c: Canvas) {
                     else -> Art.star(cc, cx, cy, r * 1.1f, true, Palette.GOLD)
                 }
             }
-            Art.text(c, tiles[i].first, rect.right - w * 0.03f, rect.centerY() - th * 0.06f,
-                th * 0.25f, Palette.CREAM, Paint.Align.RIGHT, Art.bold, true)
-            Art.text(c, tiles[i].second, rect.right - w * 0.03f, rect.centerY() + th * 0.24f,
-                th * 0.18f, Palette.MUTED, Paint.Align.RIGHT)
+            Art.text(c, tiles[i].first, rect.right - w * 0.032f, rect.centerY() - th * 0.05f,
+                th * 0.21f, Palette.CREAM, Paint.Align.RIGHT, Art.bold, true)
+            Art.text(c, tiles[i].second, rect.right - w * 0.032f, rect.centerY() + th * 0.26f,
+                th * 0.155f, Palette.MUTED, Paint.Align.RIGHT)
             c.shine(rect, th * 0.26f, t, 0.42f, i * 0.27f, 0.20f)
             hotspots.add(Hotspot(RectF(rect), { screen = tiles[i].third }))
         }
