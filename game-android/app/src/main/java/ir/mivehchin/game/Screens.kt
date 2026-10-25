@@ -1685,34 +1685,27 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
         c.restore()
     }
 
-    /* ------------------------------------------------------- coin capsule */
+    /* -------------------------------------------- reward capsule / extra moves */
     val capK = easeOutBack(((age - 1720f) / 420f).coerceIn(0f, 1f))
     if (capK > 0.03f) {
         c.save()
         c.scale(capK, capK, capsule.centerX(), capsule.centerY())
-        Art.panel(c, capsule, capH / 2f, 0xFFFFF6DF.toInt())
-        Art.panel(c, capsule, capH / 2f, 0x00000000, 2.2f, 0xCCE0A63A.toInt())
-        Art.panel(c, RectF(capsule.left + 6f, capsule.top + 5f, capsule.right - 6f, capsule.centerY() - 2f),
-            capH * 0.46f, 0x33FFFFFF)
-        val coinCx = capsule.right - capH * 0.66f
-        c.save()
-        val flip = if (reduceMotion) 1f else Math.abs(cos(t * 2.4f)) * 0.72f + 0.28f
-        c.scale(flip, 1f, coinCx, capsule.centerY())
-        Art.coin(c, coinCx, capsule.centerY(), capH * 0.34f)
-        c.restore()
-        val label = if (win) "+${fa(res.coins)} سکه" else "بدون جایزه"
-        var csize = capH * 0.46f
-        val cneed = Art.measure(label, csize, Art.black)
-        val croom = capsule.width() - capH * 1.30f
-        if (cneed > croom) csize *= (croom / cneed).coerceIn(0.5f, 1f)
-        Art.text(c, label, capsule.centerX() - capH * 0.28f, capsule.centerY() + csize * 0.36f, csize,
-            if (win) 0xFF8A5A05.toInt() else 0xFF9C8A6A.toInt(), Paint.Align.CENTER, Art.black, true)
-        c.restore()
-
-        if (win && !reduceMotion && !resultCoinSfx && age >= 1720f) {
-            sound(R.raw.sfx_coin)
-            resultCoinSfx = true
+        if (win) {
+            // real payout computed by the engine
+            Art.rewardCapsule(
+                c, capsule, "+${fa(res.coins)} سکه",
+                if (reduceMotion) 1f else Math.abs(cos(t * 2.4f)) * 0.72f + 0.28f
+            )
+            if (!reduceMotion && !resultCoinSfx && age >= 1720f) {
+                sound(R.raw.sfx_coin)
+                resultCoinSfx = true
+            }
+        } else {
+            // no reward on a loss — the only thing offered here is a real second chance
+            button(c, capsule, "۵ حرکت با ${fa(80)} سکه", Style.GOLD,
+                { cc, cx, cy, r -> Art.coin(cc, cx, cy, r) }) { buyMovesForCoins() }
         }
+        c.restore()
     }
 
     /* ------------------------------------------------------------ buttons */
@@ -1736,13 +1729,18 @@ private fun GameView.drawResult(c: Canvas, res: GameView.Result) {
             }
             c.shine(secondary, secondary.height() * 0.40f, if (reduceMotion) 0.1f else t, 0.36f, 0.25f, 0.20f)
         } else {
-            button(c, primary, "۵ حرکت با ۸۰ سکه", Style.GOLD,
-                { cc, cx, cy, r -> Art.coin(cc, cx, cy, r) }) { buyMovesForCoins() }
+            // retry is the primary action and never grants a reward
+            button(c, primary, "تلاش دوباره", Style.PRIMARY,
+                { cc, cx, cy, r -> Art.shuffleIcon(cc, cx, cy, r, Design.INK_ON_LIME) }) {
+                result = null
+                restartLevel()
+            }
             button(c, secondary, "نقشه", Style.ROYAL,
                 { cc, cx, cy, r -> Art.homeIcon(cc, cx, cy, r, 0xFFFFFDF5.toInt()) }) {
                 result = null
                 screen = Screen.MAP
             }
+            c.shine(secondary, secondary.height() * 0.40f, if (reduceMotion) 0.1f else t, 0.36f, 0.25f, 0.20f)
         }
     }
 

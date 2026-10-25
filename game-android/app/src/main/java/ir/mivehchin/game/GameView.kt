@@ -6,8 +6,10 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.media.SoundPool
+import android.os.Build
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowInsets
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.min
@@ -130,6 +132,10 @@ class GameView(context: Context) : View(context) {
         scale == 0f
     }
 
+    /** Pixels reserved for a camera cutout / gesture bar; content never enters them. */
+    internal var insetTop = 0f
+    internal var insetBottom = 0f
+
     internal var pressActive = false
     internal var pressX = 0f
     internal var pressY = 0f
@@ -215,6 +221,15 @@ class GameView(context: Context) : View(context) {
         soundPool.play(s, 0.85f, 0.85f, 1, 0, rate.coerceIn(0.5f, 2f))
     }
 
+    override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val cut = insets.displayCutout
+            insetTop = (cut?.safeInsetTop ?: 0).toFloat()
+            insetBottom = (cut?.safeInsetBottom ?: 0).toFloat()
+        }
+        return super.onApplyWindowInsets(insets)
+    }
+
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
         widthPx = w.toFloat()
@@ -226,8 +241,20 @@ class GameView(context: Context) : View(context) {
 
     override fun onDraw(canvas: Canvas) {
         widthPx = width.toFloat()
-        heightPx = height.toFloat()
+        heightPx = kotlin.math.max(1f, height - insetTop - insetBottom)
         val now = System.currentTimeMillis()
+
+        // fill the cutout bands so nothing reads as a black stripe
+        if (insetTop > 0f || insetBottom > 0f) {
+            canvas.save()
+            val bands = Paint()
+            bands.color = Palette.BG_TOP
+            canvas.drawRect(0f, 0f, widthPx, insetTop + 2f, bands)
+            bands.color = Palette.BG_BOTTOM
+            canvas.drawRect(0f, height - insetBottom, widthPx, height.toFloat(), bands)
+            canvas.restore()
+            canvas.translate(0f, insetTop)
+        }
 
         save.tickLives(now, eco)
         if (screen == Screen.GAME) {
@@ -265,6 +292,7 @@ class GameView(context: Context) : View(context) {
         drawOverlays(canvas)
         drawToast(canvas, now)
 
+        if (insetTop > 0f) canvas.translate(0f, -insetTop)
         postInvalidateOnAnimation()
     }
 
@@ -1060,7 +1088,7 @@ class GameView(context: Context) : View(context) {
 
     override fun onTouchEvent(e: MotionEvent): Boolean {
         val x = e.x
-        val y = e.y
+        val y = e.y - insetTop
         when (e.actionMasked) {
             MotionEvent.ACTION_DOWN -> {
                 downX = x
